@@ -17,10 +17,13 @@ const Item = styled(Typography)(({theme}) => ({
     //  color: theme.palette.text.secondary,
 }));
 
-const setValue = (guild: Guild, val:number) => {
-
-}
 export default function Guilds(props: { myData: Map<string, any> }) {
+    const {addOrUpdateGuild} = useReinc()
+
+    const setValue = (guild: Guild, level: number) => {
+        addOrUpdateGuild(guild, level)
+    }
+
     const {creatorData: creatorData} = useReinc()
     return (
         <SectionBox title='Guilds'>
@@ -42,7 +45,7 @@ export default function Guilds(props: { myData: Map<string, any> }) {
                                                 <NumberInputBasic
                                                     aria-label="guild levels input"
                                                     placeholder="0"
-                                                    onChange={(_event: any, val: number) => setValue(g,val)}
+                                                    onChange={(_event: any, val: number) => setValue(g, val)}
                                                 />
                                             </Box>
                                         </Stack>

@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useContext} from 'react';
+import React, {PropsWithChildren, useContext, useEffect} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {Guild} from '../parsers/guildParser';
 import {Race} from '../parsers/raceParser';
@@ -30,6 +30,10 @@ export const ReincContext = React.createContext<ReincType>(defaultReincContext a
 export const ReincContextProvider = (props: PropsWithChildren) => {
     const ctx = React.useContext(ReincContext)
 
+    const doFilter = () => {
+        console.log("GUILD", ctx.guilds)
+    }
+
     const reincFunctions: Partial<ReincType> = {
         addOrUpdateAbility: (ability: Ability) => {
             const targetArray: Ability[] = ability.type === "skill" ? ctx.skills : ctx.spells
@@ -59,6 +63,7 @@ export const ReincContextProvider = (props: PropsWithChildren) => {
             } else {
                 ctx.guilds[idx] = reincGuild
             }
+            doFilter()
         }
     }
 
