@@ -11,6 +11,7 @@ export type ReincType = {
     skills: Ability[];
     spells: Ability[];
     addOrUpdateAbility: (ability: Ability) => void
+    getAbility: (ability: Partial<Ability>) => Ability | undefined
 };
 export const defaultReincContext: Partial<ReincType> = {
     race: null,
@@ -32,6 +33,17 @@ export const ReincContextProvider = (props: PropsWithChildren) => {
                 targetArray[abilityIndex] = ability
             } else {
                 targetArray.push(ability)
+            }
+        },
+        getAbility: (ability: Partial<Ability>) => {
+            if (ability.type) {
+                return ability.type === "skill" ? ctx.skills.find((a) => a.name === ability.name) : ctx.spells.find((a) => a.name === ability.name)
+            } else {
+                let ability: Ability | undefined = ctx.skills.find((a) => a.name === ability?.name)
+                if (!ability) {
+                    ability = ctx.skills.find((a) => a.name === ability?.name)
+                }
+                return ability
             }
         }
     }

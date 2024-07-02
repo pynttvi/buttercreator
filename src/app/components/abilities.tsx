@@ -1,46 +1,46 @@
 'use client'
+import { Typography } from '@mui/material';
 import Box from '@mui/material/Box';
-import { DataGrid, GridCellEditStopParams, GridCellEditStopReasons, GridColDef, GridRowEditStopParams, MuiEvent } from '@mui/x-data-grid';
-import { Suspense, useCallback, useDeferredValue, useEffect, useState } from 'react';
-import SectionBox from './sectionBox';
-import { nanoid } from 'nanoid'
-import { Stack, Typography } from '@mui/material';
-import { Ability } from '../parsers/abilityCostParser';
+import { DataGrid, GridColDef, GridRowEditStopParams, MuiEvent } from '@mui/x-data-grid';
+import { Suspense, useDeferredValue, useEffect, useState } from 'react';
 import { ReincType, useReinc } from '../contexts/reincContext';
+import { Ability } from '../parsers/abilityCostParser';
+import SectionBox from './sectionBox';
+import Reinc from './reinc';
 
-const columns: GridColDef<(Ability[])[]>[] = [
-    { field: 'name', headerName: 'Name', width: 300, filterable: true },
-    {
-        field: 'trained',
-        headerName: '',
-        type: 'number',
-        width: 100,
-        sortable: true,
-        editable: true,
-        align: 'right',
-        valueParser: (value, row, column, apiRef) => {
-            console.log(row)
-            if (value > 10) {
-                return round5(value);
-            } else {
-                return value
-            }
-        },
-    },
-];
+
 
 const round5 = (n: number) => {
     return Math.ceil(n / 5) * 5;
 }
 
-const setValue = (event, val) => {
-
-}
 export default function AbilityList(props: { type: "skills" | "spells", myData: Promise<Map<string, any>> }) {
     const [data, setData] = useState(new Map<string, any>)
     const deferredData = useDeferredValue(data)
     const reinc: ReincType = useReinc()
 
+    const columns: GridColDef<(Ability)>[] = [
+        { field: 'name', headerName: 'Name', width: 300, filterable: true },
+        {
+            field: 'trained',
+            headerName: '',
+            type: 'number',
+            width: 100,
+            sortable: true,
+            editable: true,
+            align: 'right',
+            valueParser: (value, row, column, apiRef) => {
+                if (value > 10) {
+                    return round5(value);
+                } else {
+                    return value
+                }
+            },
+            valueGetter: (value, row) => {
+                return round5(reinc.getAbility(row)?.trained || row.trained)
+            },
+        },
+    ];
     useEffect(() => {
         props.myData?.then((p) => { setData(p) })
     }, [props.myData])
@@ -54,9 +54,6 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
                         <DataGrid
                             rows={deferredData?.get(props.type)}
                             columns={columns}
-                            initialState={{
-
-                            }}
                             checkboxSelection
                             disableRowSelectionOnClick
                             disableMultipleRowSelection
@@ -64,6 +61,8 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
                             disableColumnSelector
                             onRowEditStop={(params: GridRowEditStopParams, event: MuiEvent) => {
                                 reinc.addOrUpdateAbility({...params.row, trained: round5(params.row.trained)})
+                                params.row.trained = round5(params.row.trained)
+
                                 console.log(reinc.skills)
                             }}
                         />
