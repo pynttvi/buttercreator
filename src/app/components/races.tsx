@@ -4,6 +4,7 @@ import {DataGrid, GridColDef} from '@mui/x-data-grid';
 import {Race} from '../parsers/raceParser';
 import {Suspense, useDeferredValue, useEffect, useState} from 'react';
 import SectionBox from './sectionBox';
+import {useReinc} from "@/app/contexts/reincContext";
 
 const columns: GridColDef<(Race[])[]>[] = [
     {field: 'name', headerName: 'Name', width: 120,},
@@ -105,21 +106,16 @@ const columns: GridColDef<(Race[])[]>[] = [
     },
 ];
 
-export default function RaceList(props: { myData: Promise<Map<string, any>> }) {
-    const [data, setData] = useState(new Map<string, any>)
-    const deferredData = useDeferredValue(data)
-    useEffect(() => {
-        props.myData?.then((p) => {
-            setData(p)
-        })
-    }, [props.myData])
+export default function RaceList(props: { myData: Map<string, any> }) {
+    const {creatorData} = useReinc()
+
     return (
         <SectionBox title='Races'>
             <Suspense fallback="Loading...">
-                {deferredData?.get('races') ? (
+                {creatorData?.get('races') ? (
                     <Box sx={{height: 400, width: '100%'}}>
                         <DataGrid
-                            rows={deferredData?.get('races')}
+                            rows={creatorData?.get('races')}
                             columns={columns}
                             initialState={{}}
                             checkboxSelection

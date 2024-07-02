@@ -1,18 +1,24 @@
-import React, { PropsWithChildren, useContext } from 'react';
-import { Ability } from '../parsers/abilityCostParser';
-import { Guild } from '../parsers/guildParser';
-import { Race } from '../parsers/raceParser';
+import React, {PropsWithChildren, useContext} from 'react';
+import {Ability} from '../parsers/abilityCostParser';
+import {Guild} from '../parsers/guildParser';
+import {Race} from '../parsers/raceParser';
 
-
+export type ReincGuild = {
+    name: string,
+    levels: number
+}
 export type ReincType = {
+    creatorData: Map<string, any> | undefined,
     race: Race | null;
-    guilds: Guild[];
+    guilds: ReincGuild[];
     skills: Ability[];
     spells: Ability[];
     addOrUpdateAbility: (ability: Ability) => void
+    addOrUpdateGuild: (guild: Guild, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
 };
 export const defaultReincContext: Partial<ReincType> = {
+    creatorData: undefined,
     race: null,
     guilds: [],
     skills: [],
@@ -44,11 +50,20 @@ export const ReincContextProvider = (props: PropsWithChildren) => {
                 }
                 return ability
             }
+        },
+        addOrUpdateGuild: (guild: Guild, levels: number) => {
+            const idx = ctx.guilds.findIndex((g) => g.name === guild.name)
+            const reincGuild = {name: guild.name, levels: levels}
+            if (idx === -1) {
+                ctx.guilds.push(reincGuild)
+            } else {
+                ctx.guilds[idx] = reincGuild
+            }
         }
     }
 
     return (
-        <ReincContext.Provider value={{ ...defaultReincContext, ...reincFunctions } as ReincType}>
+        <ReincContext.Provider value={{...defaultReincContext, ...reincFunctions} as ReincType}>
             {props.children}
         </ReincContext.Provider>
     )

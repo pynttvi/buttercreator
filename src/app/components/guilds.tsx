@@ -6,6 +6,8 @@ import Box from '@mui/material/Box';
 import NumberInputBasic from './numberInput';
 import SectionBox from './sectionBox';
 import {useDeferredValue, useEffect, useState} from 'react';
+import {Guild} from "@/app/parsers/guildParser";
+import {useReinc} from "@/app/contexts/reincContext";
 
 const Item = styled(Typography)(({theme}) => ({
     // backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -15,22 +17,16 @@ const Item = styled(Typography)(({theme}) => ({
     //  color: theme.palette.text.secondary,
 }));
 
-const setValue = (event, val) => {
+const setValue = (guild: Guild, val:number) => {
 
 }
-export default function Guilds(props: { myData: Promise<Map<string, any>> }) {
-    const [data, setData] = useState(new Map<string, any>)
-    const deferredData = useDeferredValue(data)
-    useEffect(() => {
-        props.myData?.then((p) => {
-            setData(p)
-        })
-    }, [props.myData])
+export default function Guilds(props: { myData: Map<string, any> }) {
+    const {creatorData: creatorData} = useReinc()
     return (
         <SectionBox title='Guilds'>
-            {deferredData?.get('guilds') ? (
+            {creatorData?.get('guilds') ? (
                     <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                        {deferredData?.get('guilds').map((g) => {
+                        {creatorData?.get('guilds').map((g: Guild) => {
                             return (
                                 <Grid xs={3} key={g.name}>
                                     <Item>
@@ -46,7 +42,7 @@ export default function Guilds(props: { myData: Promise<Map<string, any>> }) {
                                                 <NumberInputBasic
                                                     aria-label="guild levels input"
                                                     placeholder="0"
-                                                    onChange={(event: any, val: any) => setValue(event, val)}
+                                                    onChange={(_event: any, val: number) => setValue(g,val)}
                                                 />
                                             </Box>
                                         </Stack>

@@ -12,9 +12,8 @@ const round5 = (n: number) => {
     return Math.ceil(n / 5) * 5;
 }
 
-export default function AbilityList(props: { type: "skills" | "spells", myData: Promise<Map<string, any>> }) {
-    const [data, setData] = useState(new Map<string, any>)
-    const deferredData = useDeferredValue(data)
+export default function AbilityList(props: { type: "skills" | "spells", myData: Map<string, any> }) {
+    const {creatorData: creatorData} = useReinc()
     const reinc: ReincType = useReinc()
 
     const columns: GridColDef<(Ability)>[] = [
@@ -39,20 +38,16 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
             },
         },
     ];
-    useEffect(() => {
-        props.myData?.then((p) => {
-            setData(p)
-        })
-    }, [props.myData])
+
     return (
         <SectionBox>
             <Suspense fallback="Loading...">
-                {deferredData?.get(props.type) ? (
+                {creatorData?.get(props.type) ? (
                     <Box sx={{height: 400, width: '100%', paddingLeft: '20px'}}>
                         <Typography variant='h4' textTransform={'capitalize'}>{props.type}</Typography>
 
                         <DataGrid
-                            rows={deferredData?.get(props.type)}
+                            rows={creatorData?.get(props.type)}
                             columns={columns}
                             checkboxSelection
                             disableRowSelectionOnClick
