@@ -1,5 +1,5 @@
 import { FileObject } from "./page";
-import ParserFactory, { NON_GUILD_FILES } from "./parserFactory";
+import ParserFactory from "./parserFactory";
 
 export async function getFile(url: string) {
 
@@ -43,7 +43,7 @@ export async function getData(): Promise<Map<string, any>> {
     }
   }
 
-  readFiles(json)
+  await readFiles(json)
  // readFiles(lessImportantFiles)
 
   return myData;

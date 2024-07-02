@@ -1,10 +1,9 @@
 'use client'
 
-import { PropsWithChildren } from "react"
-import RootLayout from "../layout"
+import {PropsWithChildren} from "react"
 import creatorTheme from "../theme"
-import { ThemeProvider } from "@emotion/react"
-import { ReincContextProvider } from "../contexts/reincContext"
+import {ThemeProvider} from "@emotion/react"
+import {ReincContextProvider} from "../contexts/reincContext"
 
 export default function ClientRoot(props: PropsWithChildren<{}>) {
     return (

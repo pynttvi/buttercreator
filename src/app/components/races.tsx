@@ -1,13 +1,12 @@
 'use client'
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef } from '@mui/x-data-grid';
-import { Race } from '../parsers/raceParser';
-import { Suspense, useCallback, useDeferredValue, useEffect, useState } from 'react';
+import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {Race} from '../parsers/raceParser';
+import {Suspense, useDeferredValue, useEffect, useState} from 'react';
 import SectionBox from './sectionBox';
-import { nanoid } from 'nanoid'
 
 const columns: GridColDef<(Race[])[]>[] = [
-    { field: 'name', headerName: 'Name', width: 120, },
+    {field: 'name', headerName: 'Name', width: 120,},
     {
         field: 'str',
         headerName: 'str',
@@ -106,27 +105,23 @@ const columns: GridColDef<(Race[])[]>[] = [
     },
 ];
 
-
-const setValue = (event, val) => {
-
-}
-export default function RaceList(props: {myData: Promise<Map<string, any>>}) {
+export default function RaceList(props: { myData: Promise<Map<string, any>> }) {
     const [data, setData] = useState(new Map<string, any>)
     const deferredData = useDeferredValue(data)
     useEffect(() => {
-        props.myData?.then((p) => { setData(p) })
+        props.myData?.then((p) => {
+            setData(p)
+        })
     }, [props.myData])
     return (
         <SectionBox title='Races'>
             <Suspense fallback="Loading...">
                 {deferredData?.get('races') ? (
-                    <Box sx={{ height: 400, width: '100%' }}>
+                    <Box sx={{height: 400, width: '100%'}}>
                         <DataGrid
                             rows={deferredData?.get('races')}
                             columns={columns}
-                            initialState={{
-
-                            }}
+                            initialState={{}}
                             checkboxSelection
                             disableRowSelectionOnClick
                             disableMultipleRowSelection

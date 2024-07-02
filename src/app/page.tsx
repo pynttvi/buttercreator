@@ -5,7 +5,7 @@ import RaceList from "./components/races";
 import Reinc from "./components/reinc";
 import { getData } from "./fileService";
 import RootLayout from "./layout";
-import { Stack, Typography } from '@mui/material';
+import { Stack } from '@mui/material';
 
 export type FileObject = {
   name: string

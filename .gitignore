@@ -22,7 +22,6 @@ dist/
 
 # Maven
 target/
-dist/
 
 # JetBrains IDE
 .idea/
@@ -68,7 +67,6 @@ Thumbs.db
 /build
 
 # misc
-.DS_Store
 *.pem
 
 # debug
@@ -85,3 +83,4 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+/buttercreator.iml

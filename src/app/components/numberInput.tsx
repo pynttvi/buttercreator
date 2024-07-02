@@ -1,11 +1,11 @@
 'use client'
 import * as React from 'react';
 import {
-    Unstable_NumberInput as BaseNumberInput,
-    NumberInputProps,
     numberInputClasses,
+    NumberInputProps,
+    Unstable_NumberInput as BaseNumberInput,
 } from '@mui/base/Unstable_NumberInput';
-import { styled } from '@mui/system';
+import {styled} from '@mui/system';
 
 const NumberInput = React.forwardRef(function CustomNumberInput(
     props: NumberInputProps,
@@ -37,7 +37,7 @@ export type NumberInputBasicProps = {
     'aria-label'?: string
     placeholder?: string
     value?: number
-    onChange: (event: any, value:any) => void
+    onChange: (event: any, value: any) => void
 }
 export default function NumberInputBasic(props: NumberInputBasicProps) {
     return (
@@ -72,7 +72,7 @@ const grey = {
 };
 
 const StyledInputRoot = styled('div')(
-    ({ theme }) => `
+    ({theme}) => `
   font-family: 'IBM Plex Sans', sans-serif;
   font-weight: 400;
   border-radius: 8px;
@@ -104,7 +104,7 @@ const StyledInputRoot = styled('div')(
 );
 
 const StyledInputElement = styled('input')(
-    ({ theme }) => `
+    ({theme}) => `
   font-size: 0.875rem;
   font-family: inherit;
   font-weight: 400;
@@ -121,7 +121,7 @@ const StyledInputElement = styled('input')(
 );
 
 const StyledButton = styled('button')(
-    ({ theme }) => `
+    ({theme}) => `
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;

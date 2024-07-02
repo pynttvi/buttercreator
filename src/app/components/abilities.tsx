@@ -1,13 +1,11 @@
 'use client'
-import { Typography } from '@mui/material';
+import {Typography} from '@mui/material';
 import Box from '@mui/material/Box';
-import { DataGrid, GridColDef, GridRowEditStopParams, MuiEvent } from '@mui/x-data-grid';
-import { Suspense, useDeferredValue, useEffect, useState } from 'react';
-import { ReincType, useReinc } from '../contexts/reincContext';
-import { Ability } from '../parsers/abilityCostParser';
+import {DataGrid, GridColDef, GridRowEditStopParams, MuiEvent} from '@mui/x-data-grid';
+import {Suspense, useDeferredValue, useEffect, useState} from 'react';
+import {ReincType, useReinc} from '../contexts/reincContext';
+import {Ability} from '../parsers/abilityCostParser';
 import SectionBox from './sectionBox';
-import Reinc from './reinc';
-
 
 
 const round5 = (n: number) => {
@@ -20,7 +18,7 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
     const reinc: ReincType = useReinc()
 
     const columns: GridColDef<(Ability)>[] = [
-        { field: 'name', headerName: 'Name', width: 300, filterable: true },
+        {field: 'name', headerName: 'Name', width: 300, filterable: true},
         {
             field: 'trained',
             headerName: '',
@@ -42,13 +40,15 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
         },
     ];
     useEffect(() => {
-        props.myData?.then((p) => { setData(p) })
+        props.myData?.then((p) => {
+            setData(p)
+        })
     }, [props.myData])
     return (
-        <SectionBox >
+        <SectionBox>
             <Suspense fallback="Loading...">
                 {deferredData?.get(props.type) ? (
-                    <Box sx={{ height: 400, width: '100%', paddingLeft: '20px' }}>
+                    <Box sx={{height: 400, width: '100%', paddingLeft: '20px'}}>
                         <Typography variant='h4' textTransform={'capitalize'}>{props.type}</Typography>
 
                         <DataGrid
