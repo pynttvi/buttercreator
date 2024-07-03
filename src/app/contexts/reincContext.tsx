@@ -4,6 +4,7 @@ import {Guild} from '../parsers/guildParser';
 import {Race} from '../parsers/raceParser';
 import {doFilter} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
+import {GuildLevels} from "@/app/parsers/guildsFileParser";
 
 
 export type ReincGuild = {
@@ -19,8 +20,9 @@ export type ReincType = {
 
 export type ReincFunctionsType = {
     addOrUpdateAbility: (ability: Ability) => void
-    addOrUpdateGuild: (guild: Guild, levels: number) => void
+    addOrUpdateGuild: (guild: GuildLevels, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
+    getGuild: (guild: Partial<GuildLevels>) => ReincGuild | undefined
 };
 export const defaultReincContext: ReincType = {
     guilds: [],
@@ -32,7 +34,7 @@ export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
 export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const ctx = useContext(ReincContext)
-    const creatorDataContext= useCreatorData()
+    const creatorDataContext = useCreatorData()
     const values: ReincType = {
         ...defaultReincContext,
         ...ctx,
@@ -46,7 +48,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
             if (abilityIndex !== -1) {
                 targetArray[abilityIndex] = ability
             } else {
-                if(ability.trained > 0){
+                if (ability.trained > 0) {
                     targetArray.push(ability)
                 }
             }
@@ -64,9 +66,14 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
                 return ability
             }
         },
-        addOrUpdateGuild: (guild: Guild, levels: number) => {
-            const idx = ctx.guilds.findIndex((g) => g.name === guild.name)
-            const reincGuild = {name: guild.name, levels: levels}
+        getGuild: (guild: Partial<ReincGuild>) => {
+            return ctx.guilds.find((rg) => {
+                return rg.name === guild.name
+            })
+        },
+        addOrUpdateGuild: (guild: GuildLevels, levels: number) => {
+            const idx = ctx.guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
+            const reincGuild = {name: guild.name.toLowerCase(), levels: levels}
             if (idx === -1) {
                 ctx.guilds.push(reincGuild)
             } else {
@@ -86,7 +93,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
 
 export const useReinc = (): ReincType & ReincFunctionsType => {
     const ctx: ReincType & ReincFunctionsType = useContext(ReincContext) as ReincType & ReincFunctionsType
-    if(!ctx){
+    if (!ctx) {
         throw new Error("Reinc context configuration error")
     }
     return ctx

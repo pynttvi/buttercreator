@@ -39,9 +39,10 @@ export type NumberInputBasicProps = {
     value?: number
     onChange: (event: any, value: any) => void
 }
-export default function NumberInputBasic(props: NumberInputBasicProps) {
+export default function NumberInputBasic(props: NumberInputBasicProps | NumberInputProps) {
     return (
         <NumberInput
+            {...props}
             aria-label={props['aria-label']}
             placeholder={props.placeholder}
             value={props.value}

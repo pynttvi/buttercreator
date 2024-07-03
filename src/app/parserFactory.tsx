@@ -35,7 +35,7 @@ export type ParserProcess = {
 export type CreatorDataType = {
   skills: Ability[]
   spells: Ability[]
-  guilds: Guild[]
+  guilds: GuildLevels[]
   races: Race[]
   helpRace: RaceHelp[]
   helpSkills: SkillHelp[]

@@ -5,31 +5,46 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import NumberInputBasic from './numberInput';
 import SectionBox from './sectionBox';
-import {Guild} from "@/app/parsers/guildParser";
 import {CreatorDataType} from "@/app/parserFactory";
 import {useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
+import {GuildLevels} from "@/app/parsers/guildsFileParser";
+import {useEffect, useState} from "react";
 
 const Item = styled(Typography)(({theme}) => ({
-    // backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
-    // ...theme.typography.body2,
     padding: theme.spacing(1),
     textAlign: 'left',
-    //  color: theme.palette.text.secondary,
 }));
 
-export default function Guilds(props: { myData: CreatorDataType}) {
-    const {addOrUpdateGuild} = useReinc()
+export default function Guilds(props: { myData: CreatorDataType }) {
+    const {addOrUpdateGuild, getGuild} = useReinc()
     const {creatorData} = useCreatorData()
 
-    const setValue = (guild: Guild, level: number) => {
+    const setValue = (guild: GuildLevels, level: number) => {
         addOrUpdateGuild(guild, level)
     }
+    const [lastClass, setLastClass] = useState("")
+    const focusClass = (className: string) => {
+        (async () => {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            const active: HTMLInputElement | null = document.querySelector(`.${className || 'none'} .base-NumberInput-input`);
+            if (active) {
+                active?.focus();
+                active?.select();
+            }
+        })()
+    }
+
+    useEffect(() => {
+        focusClass(lastClass)
+    }, [lastClass]);
+
     return (
         <SectionBox title='Guilds'>
             {creatorData?.guilds ? (
                     <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                        {creatorData?.guilds.map((g: Guild) => {
+                        {creatorData?.guilds.map((g: GuildLevels) => {
+                            const className = `guild-${g.name}`
                             return (
                                 <Grid xs={3} key={g.name}>
                                     <Item>
@@ -45,7 +60,22 @@ export default function Guilds(props: { myData: CreatorDataType}) {
                                                 <NumberInputBasic
                                                     aria-label="guild levels input"
                                                     placeholder="0"
-                                                    onChange={(_event: any, val: number) => setValue(g, val)}
+                                                    onChange={(event: {
+                                                        currentTarget: HTMLInputElement;
+                                                    }, value: number) => {
+                                                        setValue(g, value);
+                                                    }}
+                                                    className={className}
+                                                    value={getGuild({name: g.name.toLowerCase()})?.levels || 0}
+                                                    onFocus={(event) => {
+                                                        console.log("ON FOCUS");
+                                                        console.log(g)
+                                                        if (!getGuild({name: g.name.toLowerCase()})) {
+                                                            setValue(g, g.value)
+                                                        }
+                                                        setLastClass(className)
+
+                                                    }}
                                                 />
                                             </Box>
                                         </Stack>

@@ -37,9 +37,8 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     useEffect(() => {
         (async () => {
             await new Promise(resolve => setTimeout(resolve, 50));
-            const active: HTMLInputElement | null = document.querySelector(`.${lastEdit} .MuiInputBase-input`);
+            const active: HTMLInputElement | null = document.querySelector(`.${lastEdit || 'none'} .MuiInputBase-input`);
             if (active) {
-                console.log("active")
                 active.focus();
                 active.select();
             }
@@ -60,14 +59,11 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
-            console.log("SETTING 0", {...row, trained: 0})
             reinc.addOrUpdateAbility({...row, trained: 0})
-            console.log(reinc)
         }
     }
 
     const afterEdit = (row: Ability, details: GridCallbackDetails) => {
-        console.log(row)
         reinc.addOrUpdateAbility({...row})
         if (apiRef && apiRef.current) {
         }
