@@ -1,6 +1,7 @@
 import {FileObject} from "../page"
 import {ParserProcess} from "../parserFactory"
 import {getFile} from "../fileService"
+import {GuildLevels} from "@/app/parsers/guildsFileParser";
 
 export type GuildAbility = {
     name: string,
@@ -16,7 +17,7 @@ export type GuildLevel = { stats: GuildStat[], abilities: GuildAbility[] }
 export type Guild = {
     name: string
     levels: Map<string, GuildLevel>,
-    subguilds: object[]
+    subguilds: GuildLevels[]
 }
 
 export default async function GuildParser(data: FileObject): Promise<ParserProcess> {
@@ -31,7 +32,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
     const abilityLevelMatcher = /Level (\d{1,2}) abilities:/
     const abilityMatcher = /May (study|train) (spell|skill) (.+) to (\d{1,3})%/
     const subguildsMatcher = /Subguilds:/
-    const subguilds: object[] = []
+    const subguilds: GuildLevels[] = []
 
     async function parseLine(line: string) {
 
@@ -41,7 +42,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
                 const name = sglMatch?.at(1)?.toLowerCase()
                 const value = sglMatch?.at(2)?.toLowerCase()
                 if (name && value) {
-                    subguilds.push({name, value})
+                    subguilds.push({name, value: parseInt(value)} as GuildLevels)
                 }
                 return
             }
