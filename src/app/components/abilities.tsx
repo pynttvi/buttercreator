@@ -7,6 +7,7 @@ import {ReincType, useReinc} from '../contexts/reincContext';
 import {Ability} from '../parsers/abilityCostParser';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
+import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 
 const round5 = (n: number) => {
@@ -15,7 +16,8 @@ const round5 = (n: number) => {
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc = useReinc()
-    const abilities = props.type === 'skills' ? props.creatorData.skills : props.creatorData.spells
+    const {creatorData} = useCreatorData()
+    const abilities = props.type === 'skills' ? creatorData.skills : creatorData.spells
     const columns: GridColDef<(Ability)>[] = [
         {field: 'name', headerName: 'Name', width: 300, filterable: true},
         {
@@ -52,7 +54,6 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                             hideFooter={true}
                             disableColumnSelector
                             processRowUpdate={(row:Ability, oldRow) => {
-                                console.log("editstop")
                                 reinc.addOrUpdateAbility({...row, trained: round5(row.trained)})
                                 row.trained = round5(row.trained)
                                 return row

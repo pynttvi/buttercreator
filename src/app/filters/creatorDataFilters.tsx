@@ -44,39 +44,53 @@ export const GuildSkillFilter = (creatorDataContext: CreatorDataContextType, rei
     }
 }
 
-export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType,  reinc: ReincType): CreatorDataFilterType => {
-    const {setCreatorData,originalCreatorData} = creatorDataContext
+export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincType): CreatorDataFilterType => {
+    const {setCreatorData, originalCreatorData} = creatorDataContext
 
     return {
         doFilter: (): void => {
             const guilds: Guild[] = []
-            reinc.skills.filter((s) => s.trained > 0 ).forEach((ability) => {
-                Object.entries(originalCreatorData).forEach(entry => {
-                    const key = entry[0].toString()
-                    if (key.startsWith("guild_")) {
-                        // @ts-ignore
-                        const value: Guild = entry[1] as Guild
-                        const g: Guild = value
-                        for (let i = g.levels.size; i > 0; i--) {
-                            const level = g.levels.get(i.toString())
-                            level?.abilities.forEach((guildAbility: GuildAbility) => {
-                                if(ability.name === guildAbility.name && ability.trained <= guildAbility.max){
-                                    if (!guilds.find((guild: Guild) => guild.name === g.name)) {
-                                        guilds.push(g)
-                                    }
-                                }
-                            })
+
+            function filterByAbility(entry: [string, Guild], ability: Ability) {
+                const g: Guild = entry[1] as Guild
+                for (let i = g.levels.size; i > 0; i--) {
+                    const level = g.levels.get(i.toString())
+                    level?.abilities.forEach((guildAbility: GuildAbility) => {
+                        if (ability.name === guildAbility.name && ability.trained <= guildAbility.max) {
+                            if (!guilds.find((guild: Guild) => guild.name === g.name)) {
+                                guilds.push(g)
+                            }
                         }
+                    })
+                }
+            }
+
+            reinc.skills.filter((s) => s.trained > 0).forEach((ability) => {
+                Object.entries(originalCreatorData).forEach(entry => {
+                    if (entry[0].startsWith("guild_")) {
+                        // @ts-ignore
+                        filterByAbility(entry, ability);
                     }
                 })
-
             })
+
+            reinc.spells.filter((s) => s.trained > 0).forEach((ability) => {
+                Object.entries(originalCreatorData).forEach(entry => {
+                    if (entry[0].startsWith("guild_")) {
+                        // @ts-ignore
+                        filterByAbility(entry, ability);
+                    }
+                })
+            })
+
             const newGuilds = originalCreatorData?.guilds?.filter((guild: Guild) => {
                 return guilds.find((g) => g.name.toLowerCase() === guild.name.toLowerCase())
             }) || []
 
-            console.log(originalCreatorData)
-            setCreatorData({...originalCreatorData, guilds: newGuilds.length === 0 ? originalCreatorData.guilds : newGuilds})
+            setCreatorData({
+                ...originalCreatorData,
+                guilds: newGuilds.length === 0 ? originalCreatorData.guilds : newGuilds
+            })
         }
     }
 }
