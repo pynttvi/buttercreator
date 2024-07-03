@@ -42,11 +42,12 @@ export default function Guilds(props: { myData: CreatorDataType }) {
     return (
         <SectionBox title='Guilds'>
             {creatorData?.guilds ? (
-                    <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                        {creatorData?.guilds.map((g: GuildLevels) => {
+                    <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 4, sm: 8, md: 12}} >
+                        {creatorData?.guilds.map((g: GuildLevels, index:number) => {
                             const className = `guild-${g.name}`
                             return (
-                                <Grid xs={3} key={g.name}>
+                                // @ts-ignore
+                                <Grid item xs={12} sm={8} md={4} key={index}>
                                     <Item>
                                         <Stack direction={'row'}>
                                             <Typography variant={'subtitle1'}

@@ -121,7 +121,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             <Suspense fallback="Loading...">
                 {abilities && (
                     <Box sx={{height: 400, width: '100%', paddingLeft: '20px'}}>
-                        <Typography variant='h4' textTransform={'capitalize'}>{props.type}</Typography>
+                        <Typography variant='h4' textTransform={'capitalize'} marginBlock={'40px'}>{props.type}</Typography>
 
                         <DataGrid
                             rows={abilities}

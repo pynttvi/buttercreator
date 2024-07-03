@@ -8,29 +8,40 @@ import {Suspense, useEffect, useState} from "react";
 import {ReincContextProvider} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
 import {CreatorDataContext, CreatorDataContextProvider} from "@/app/contexts/creatorDataContext";
+import Grid from "@mui/material/Unstable_Grid2";
 
-export default function MainContent(props: { myData: Promise<CreatorDataType> }) {
+export default function MainContent(props: { myData: Promise<Partial<CreatorDataType>> }) {
 
     return (
-        <CreatorDataContextProvider creatorData={props.myData}>
+        <CreatorDataContextProvider creatorData={props.myData as Promise<CreatorDataType>}>
             <CreatorDataContext.Consumer>
                 {value => (
                     !value?.creatorData ? (<Typography variant={'h2'}> Loading...</Typography>)
                         : (
                             <ReincContextProvider>
                                 <Suspense fallback={'Loading...'}>
-                                    <Stack direction={"column"}>
-                                        <RaceList myData={value.creatorData}/>
-                                        <Guilds myData={value.creatorData}/>
-                                        <Stack direction={"row"} spacing={"2"}>
+                                    <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 1, sm: 2, md: 2}}>
+                                        {/*@ts-ignore*/}
+                                        <Grid item xs={2} sm={2} md={2} key={'races'}>
+                                            <RaceList myData={value.creatorData}/>
+                                        </Grid>
+                                        {/*@ts-ignore*/}
+                                        <Grid item xs={2} sm={1} md={2} key={'guild'}>
+                                            <Guilds myData={value.creatorData}/>
+                                        </Grid>
+                                        {/*@ts-ignore*/}
+                                        <Grid item xs={2} sm={2} md={1} key={'skills'}>
                                             <AbilityList type={"skills"} creatorData={value.creatorData}/>
+                                        </Grid>
+                                        {/*@ts-ignore*/}
+                                        <Grid item xs={2} sm={2} md={1} key={'spells'}>
                                             <AbilityList type={"spells"} creatorData={value.creatorData}/>
-                                        </Stack>
-                                        <Reinc/>
-                                    </Stack>
-                                </Suspense>
-                            </ReincContextProvider>)
-                )}
+                                        </Grid>
+                                    </Grid>
+                                    <Reinc/>
+                            </Suspense>
+                    </ReincContextProvider>)
+                    )}
             </CreatorDataContext.Consumer>
         </CreatorDataContextProvider>
 
