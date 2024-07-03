@@ -32,8 +32,7 @@ export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
 export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const ctx = useContext(ReincContext)
-    const {creatorData, setCreatorData} = useCreatorData()
-
+    const creatorDataContext= useCreatorData()
     const values: ReincType = {
         ...defaultReincContext,
         ...ctx,
@@ -41,13 +40,18 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
 
     const reincFunctions: ReincFunctionsType = {
         addOrUpdateAbility: (ability: Ability) => {
+            console.log("Update ability")
             const targetArray: Ability[] = ability.type === "skill" ? ctx.skills : ctx.spells
             const abilityIndex = targetArray.findIndex((a) => a.name === ability.name)
             if (abilityIndex !== -1) {
                 targetArray[abilityIndex] = ability
             } else {
-                targetArray.push(ability)
+                if(ability.trained > 0){
+                    targetArray.push(ability)
+                }
             }
+            doFilter(creatorDataContext, ctx)
+
         },
         getAbility: (ability: Partial<Ability>) => {
             if (ability.type) {
@@ -69,7 +73,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
                 ctx.guilds[idx] = reincGuild
             }
             console.log("add guild")
-            doFilter(creatorData, setCreatorData, ctx)
+            doFilter(creatorDataContext, ctx)
         }
     }
 
@@ -80,8 +84,8 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     )
 }
 
-export const useReinc = (): ReincType => {
-    const ctx = useContext(ReincContext)
+export const useReinc = (): ReincType & ReincFunctionsType => {
+    const ctx: ReincType & ReincFunctionsType = useContext(ReincContext) as ReincType & ReincFunctionsType
     if(!ctx){
         throw new Error("Reinc context configuration error")
     }

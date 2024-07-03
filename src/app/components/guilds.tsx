@@ -8,6 +8,7 @@ import SectionBox from './sectionBox';
 import {Guild} from "@/app/parsers/guildParser";
 import {CreatorDataType} from "@/app/parserFactory";
 import {useReinc} from "@/app/contexts/reincContext";
+import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 const Item = styled(Typography)(({theme}) => ({
     // backgroundColor: theme.palette.mode === 'dark' ? '#1A2027' : '#fff',
@@ -19,11 +20,11 @@ const Item = styled(Typography)(({theme}) => ({
 
 export default function Guilds(props: { myData: CreatorDataType}) {
     const {addOrUpdateGuild} = useReinc()
+    const {creatorData} = useCreatorData()
 
     const setValue = (guild: Guild, level: number) => {
         addOrUpdateGuild(guild, level)
     }
-    const creatorData = props.myData
     return (
         <SectionBox title='Guilds'>
             {creatorData?.guilds ? (

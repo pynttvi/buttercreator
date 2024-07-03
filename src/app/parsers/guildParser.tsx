@@ -97,7 +97,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
             parseLine(line)
         });
 
-        return {name: data.name, levels: guildLevels, subguilds: subguilds}
+        return {name: data.name.replaceAll(".chr", ""), levels: guildLevels, subguilds: subguilds}
 
     }
 

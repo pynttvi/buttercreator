@@ -14,7 +14,7 @@ const round5 = (n: number) => {
 }
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
-    const reinc: ReincType = useReinc()
+    const reinc = useReinc()
     const abilities = props.type === 'skills' ? props.creatorData.skills : props.creatorData.spells
     const columns: GridColDef<(Ability)>[] = [
         {field: 'name', headerName: 'Name', width: 300, filterable: true},
@@ -32,9 +32,6 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                 } else {
                     return value
                 }
-            },
-            valueGetter: (value, row) => {
-                return round5(reinc.getAbility(row)?.trained || row.trained)
             },
         },
     ];
@@ -54,9 +51,14 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                             disableMultipleRowSelection
                             hideFooter={true}
                             disableColumnSelector
-                            onRowEditStop={(params: GridRowEditStopParams, event: MuiEvent) => {
-                                reinc.addOrUpdateAbility({...params.row, trained: round5(params.row.trained)})
-                                params.row.trained = round5(params.row.trained)
+                            processRowUpdate={(row:Ability, oldRow) => {
+                                console.log("editstop")
+                                reinc.addOrUpdateAbility({...row, trained: round5(row.trained)})
+                                row.trained = round5(row.trained)
+                                return row
+                            }}
+                            onProcessRowUpdateError={(error) => {
+                                console.error(error)
                             }}
                         />
                     </Box>)

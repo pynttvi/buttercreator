@@ -1,21 +1,22 @@
-import {ReincGuild, ReincType} from "@/app/contexts/reincContext";
+import {ReincType} from "@/app/contexts/reincContext";
 import {Guild, GuildAbility} from "@/app/parsers/guildParser";
 import {Ability} from "@/app/parsers/abilityCostParser";
-import {CreatorDataType} from "@/app/parserFactory";
-import {Dispatch} from "react";
+import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 
 export type CreatorDataFilterType = {
     doFilter: () => void
 }
 
-export const doFilter = (creatorData: CreatorDataType, setCreatorData: Dispatch<CreatorDataType>, reinc: ReincType | null) => {
+export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincType | null) => {
     if (reinc) {
         console.log("filter")
-        GuildSkillFilter(creatorData, setCreatorData, reinc).doFilter()
+        GuildSkillFilter(creatorDataContext, reinc).doFilter()
+        AbilityGuildFilter(creatorDataContext, reinc).doFilter()
     }
 }
 
-export const GuildSkillFilter = (creatorData: CreatorDataType, setCreatorData: Dispatch<CreatorDataType>, reinc: ReincType): CreatorDataFilterType => {
+export const GuildSkillFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincType): CreatorDataFilterType => {
+    const {creatorData, setCreatorData} = creatorDataContext
     return {
         doFilter: (): void => {
             const guildAbilities: GuildAbility[] = []
@@ -39,6 +40,43 @@ export const GuildSkillFilter = (creatorData: CreatorDataType, setCreatorData: D
             }) || []
 
             setCreatorData({...creatorData, skills: newSkills, spells: newSpells})
+        }
+    }
+}
+
+export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType,  reinc: ReincType): CreatorDataFilterType => {
+    const {setCreatorData,originalCreatorData} = creatorDataContext
+
+    return {
+        doFilter: (): void => {
+            const guilds: Guild[] = []
+            reinc.skills.filter((s) => s.trained > 0 ).forEach((ability) => {
+                Object.entries(originalCreatorData).forEach(entry => {
+                    const key = entry[0].toString()
+                    if (key.startsWith("guild_")) {
+                        // @ts-ignore
+                        const value: Guild = entry[1] as Guild
+                        const g: Guild = value
+                        for (let i = g.levels.size; i > 0; i--) {
+                            const level = g.levels.get(i.toString())
+                            level?.abilities.forEach((guildAbility: GuildAbility) => {
+                                if(ability.name === guildAbility.name && ability.trained <= guildAbility.max){
+                                    if (!guilds.find((guild: Guild) => guild.name === g.name)) {
+                                        guilds.push(g)
+                                    }
+                                }
+                            })
+                        }
+                    }
+                })
+
+            })
+            const newGuilds = originalCreatorData?.guilds?.filter((guild: Guild) => {
+                return guilds.find((g) => g.name.toLowerCase() === guild.name.toLowerCase())
+            }) || []
+
+            console.log(originalCreatorData)
+            setCreatorData({...originalCreatorData, guilds: newGuilds.length === 0 ? originalCreatorData.guilds : newGuilds})
         }
     }
 }
