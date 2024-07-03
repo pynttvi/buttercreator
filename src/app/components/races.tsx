@@ -5,8 +5,9 @@ import {Race} from '../parsers/raceParser';
 import {Suspense, useDeferredValue, useEffect, useState} from 'react';
 import SectionBox from './sectionBox';
 import {useReinc} from "@/app/contexts/reincContext";
+import {CreatorDataType} from "@/app/parserFactory";
 
-const columns: GridColDef<(Race[])[]>[] = [
+const columns: GridColDef<(Race)>[] = [
     {field: 'name', headerName: 'Name', width: 120,},
     {
         field: 'str',
@@ -106,16 +107,16 @@ const columns: GridColDef<(Race[])[]>[] = [
     },
 ];
 
-export default function RaceList(props: { myData: Map<string, any> }) {
-    const {creatorData} = useReinc()
+export default function RaceList(props: { myData:CreatorDataType }) {
+    const creatorData = props.myData
 
     return (
         <SectionBox title='Races'>
             <Suspense fallback="Loading...">
-                {creatorData?.get('races') ? (
+                {creatorData?.races? (
                     <Box sx={{height: 400, width: '100%'}}>
                         <DataGrid
-                            rows={creatorData?.get('races')}
+                            rows={props.myData.races}
                             columns={columns}
                             initialState={{}}
                             checkboxSelection

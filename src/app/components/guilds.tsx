@@ -5,8 +5,8 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import NumberInputBasic from './numberInput';
 import SectionBox from './sectionBox';
-import {useDeferredValue, useEffect, useState} from 'react';
 import {Guild} from "@/app/parsers/guildParser";
+import {CreatorDataType} from "@/app/parserFactory";
 import {useReinc} from "@/app/contexts/reincContext";
 
 const Item = styled(Typography)(({theme}) => ({
@@ -17,19 +17,18 @@ const Item = styled(Typography)(({theme}) => ({
     //  color: theme.palette.text.secondary,
 }));
 
-export default function Guilds(props: { myData: Map<string, any> }) {
+export default function Guilds(props: { myData: CreatorDataType}) {
     const {addOrUpdateGuild} = useReinc()
 
     const setValue = (guild: Guild, level: number) => {
         addOrUpdateGuild(guild, level)
     }
-
-    const {creatorData: creatorData} = useReinc()
+    const creatorData = props.myData
     return (
         <SectionBox title='Guilds'>
-            {creatorData?.get('guilds') ? (
+            {creatorData?.guilds ? (
                     <Grid container rowSpacing={1} columnSpacing={{xs: 1, sm: 2, md: 3}}>
-                        {creatorData?.get('guilds').map((g: Guild) => {
+                        {creatorData?.guilds.map((g: Guild) => {
                             return (
                                 <Grid xs={3} key={g.name}>
                                     <Item>

@@ -6,16 +6,16 @@ import {Suspense, useDeferredValue, useEffect, useState} from 'react';
 import {ReincType, useReinc} from '../contexts/reincContext';
 import {Ability} from '../parsers/abilityCostParser';
 import SectionBox from './sectionBox';
+import {CreatorDataType} from "@/app/parserFactory";
 
 
 const round5 = (n: number) => {
     return Math.ceil(n / 5) * 5;
 }
 
-export default function AbilityList(props: { type: "skills" | "spells", myData: Map<string, any> }) {
-    const {creatorData: creatorData} = useReinc()
+export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc: ReincType = useReinc()
-
+    const abilities = props.type === 'skills' ? props.creatorData.skills : props.creatorData.spells
     const columns: GridColDef<(Ability)>[] = [
         {field: 'name', headerName: 'Name', width: 300, filterable: true},
         {
@@ -42,12 +42,12 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
     return (
         <SectionBox>
             <Suspense fallback="Loading...">
-                {creatorData?.get(props.type) ? (
+                {abilities && (
                     <Box sx={{height: 400, width: '100%', paddingLeft: '20px'}}>
                         <Typography variant='h4' textTransform={'capitalize'}>{props.type}</Typography>
 
                         <DataGrid
-                            rows={creatorData?.get(props.type)}
+                            rows={abilities}
                             columns={columns}
                             checkboxSelection
                             disableRowSelectionOnClick
@@ -57,11 +57,9 @@ export default function AbilityList(props: { type: "skills" | "spells", myData: 
                             onRowEditStop={(params: GridRowEditStopParams, event: MuiEvent) => {
                                 reinc.addOrUpdateAbility({...params.row, trained: round5(params.row.trained)})
                                 params.row.trained = round5(params.row.trained)
-
-                                console.log(reinc.skills)
                             }}
                         />
-                    </Box>) : <></>
+                    </Box>)
                 }
             </Suspense>
         </SectionBox>

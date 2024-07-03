@@ -1,6 +1,6 @@
 'use server'
 import {FileObject} from "./page";
-import ParserFactory, {NON_GUILD_FILES} from "./parserFactory";
+import ParserFactory, {CreatorDataType, NON_GUILD_FILES} from "./parserFactory";
 
 export async function getFile(url: string) {
 
@@ -15,9 +15,20 @@ export async function getFile(url: string) {
     return res.text()
 }
 
-export async function getData(important: boolean): Promise<Map<string, any>> {
+export async function getGuildFile(url: string) {
 
-    let myData = new Map<string, any>();
+    const res = await fetch(url)
+
+    if (!res.ok) {
+        throw new Error('Failed to fetch data')
+    }
+
+    return res.text()
+}
+
+export async function getData(important: boolean): Promise<Partial<CreatorDataType>> {
+
+    let myData: Partial<CreatorDataType> = {};
     const res = await fetch('https://api.github.com/repos/juuussi/zCreator_data/contents/data?ref=master');
 
     if (!res.ok) {
@@ -26,15 +37,15 @@ export async function getData(important: boolean): Promise<Map<string, any>> {
 
     const factory = ParserFactory();
     const json = await res.json();
-    const lessImportantFiles: FileObject[] = []
 
     async function readFiles(fileList: Promise<FileObject[]>) {
         for await (const f of await json) {
-            if ((important && NON_GUILD_FILES.includes((f.name))) || (!important && !NON_GUILD_FILES.includes((f.name)))) {
-                const process = await factory.createProcessForFile(f);
-                const dataField = {key: process.key, data: await process.run()};
-                myData.set(dataField.key, dataField.data);
-            }
+            // if ((important && NON_GUILD_FILES.includes((f.name))) || (!important && !NON_GUILD_FILES.includes((f.name)))) {
+            const process = await factory.createProcessForFile(f);
+            const dataField = {key: process.key, data: await process.run()};
+            // @ts-ignore
+            myData[dataField.key] = dataField.data
+            //}
         }
     }
 

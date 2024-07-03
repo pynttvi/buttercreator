@@ -3,14 +3,11 @@
 import {PropsWithChildren} from "react"
 import creatorTheme from "../theme"
 import {ThemeProvider} from "@emotion/react"
-import {ReincContextProvider} from "../contexts/reincContext"
 
 export default function ClientRoot(props: PropsWithChildren<{}>) {
     return (
         <ThemeProvider theme={creatorTheme}>
-            <ReincContextProvider>
-                {props.children}
-            </ReincContextProvider>
+            {props.children}
         </ThemeProvider>
     )
 }

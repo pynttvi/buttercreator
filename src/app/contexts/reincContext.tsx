@@ -2,39 +2,44 @@ import React, {PropsWithChildren, useContext, useEffect} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {Guild} from '../parsers/guildParser';
 import {Race} from '../parsers/raceParser';
+import {doFilter} from "@/app/filters/creatorDataFilters";
+import {useCreatorData} from "@/app/contexts/creatorDataContext";
+
 
 export type ReincGuild = {
     name: string,
     levels: number
 }
 export type ReincType = {
-    creatorData: Map<string, any> | undefined,
-    race: Race | null;
+    race: Race | null | undefined;
     guilds: ReincGuild[];
     skills: Ability[];
     spells: Ability[];
+};
+
+export type ReincFunctionsType = {
     addOrUpdateAbility: (ability: Ability) => void
     addOrUpdateGuild: (guild: Guild, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
 };
-export const defaultReincContext: Partial<ReincType> = {
-    creatorData: undefined,
-    race: null,
+export const defaultReincContext: ReincType = {
     guilds: [],
     skills: [],
     spells: [],
+    race: null
 };
+export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
-export const ReincContext = React.createContext<ReincType>(defaultReincContext as ReincType)
+export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
+    const ctx = useContext(ReincContext)
+    const {creatorData, setCreatorData} = useCreatorData()
 
-export const ReincContextProvider = (props: PropsWithChildren) => {
-    const ctx = React.useContext(ReincContext)
-
-    const doFilter = () => {
-        console.log("GUILD", ctx.guilds)
+    const values: ReincType = {
+        ...defaultReincContext,
+        ...ctx,
     }
 
-    const reincFunctions: Partial<ReincType> = {
+    const reincFunctions: ReincFunctionsType = {
         addOrUpdateAbility: (ability: Ability) => {
             const targetArray: Ability[] = ability.type === "skill" ? ctx.skills : ctx.spells
             const abilityIndex = targetArray.findIndex((a) => a.name === ability.name)
@@ -63,17 +68,22 @@ export const ReincContextProvider = (props: PropsWithChildren) => {
             } else {
                 ctx.guilds[idx] = reincGuild
             }
-            doFilter()
+            console.log("add guild")
+            doFilter(creatorData, setCreatorData, ctx)
         }
     }
 
     return (
-        <ReincContext.Provider value={{...defaultReincContext, ...reincFunctions} as ReincType}>
+        <ReincContext.Provider value={{...values, ...reincFunctions}}>
             {props.children}
         </ReincContext.Provider>
     )
 }
 
 export const useReinc = (): ReincType => {
-    return useContext(ReincContext)
+    const ctx = useContext(ReincContext)
+    if(!ctx){
+        throw new Error("Reinc context configuration error")
+    }
+    return ctx
 }
