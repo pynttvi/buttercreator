@@ -65,7 +65,8 @@ export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType, r
                 }
             }
 
-            reinc.skills.filter((s) => s.trained > 0).forEach((ability) => {
+            const trainedSkills = reinc.skills.filter((s) => s.trained > 0)
+            trainedSkills.forEach((ability) => {
                 Object.entries(originalCreatorData).forEach(entry => {
                     if (entry[0].startsWith("guild_")) {
                         // @ts-ignore
@@ -74,7 +75,8 @@ export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType, r
                 })
             })
 
-            reinc.spells.filter((s) => s.trained > 0).forEach((ability) => {
+            const trainedSpells = reinc.spells.filter((s) => s.trained > 0)
+            trainedSpells.forEach((ability) => {
                 Object.entries(originalCreatorData).forEach(entry => {
                     if (entry[0].startsWith("guild_")) {
                         // @ts-ignore
@@ -89,7 +91,7 @@ export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType, r
 
             setCreatorData({
                 ...originalCreatorData,
-                guilds: newGuilds.length === 0 ? originalCreatorData.guilds : newGuilds
+                guilds: newGuilds.length === 0 && trainedSkills.length === 0 && trainedSpells.length === 0 ? originalCreatorData.guilds : newGuilds
             })
         }
     }
