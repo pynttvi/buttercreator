@@ -6,29 +6,31 @@ import {
     GRID_CHECKBOX_SELECTION_COL_DEF,
     GridCallbackDetails,
     GridCellParams,
-    GridColDef, GridRenderEditCellParams, GridRowParams,
-    GridRowSelectionModel, MuiBaseEvent, MuiEvent, useGridApiContext
+    GridColDef,
+    GridRenderEditCellParams, GridRowModel,
+    GridRowSelectionModel
 } from '@mui/x-data-grid';
-import React, {Children, Suspense, useEffect, useState} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import {useReinc} from '../contexts/reincContext';
 import {Ability} from '../parsers/abilityCostParser';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
-import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {width} from "@mui/system";
-import {number} from "prop-types";
 
 
-const round5 = (n: number) => {
+const roundUp5 = (n: number) => {
     return Math.ceil(n / 5) * 5;
+}
+
+const roundDown5 = (n: number) => {
+    return Math.floor(n / 5) * 5;
 }
 
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc = useReinc()
-    const {creatorData} = useCreatorData()
-    const abilities = props.type === 'skills' ? creatorData.skills : creatorData.spells
+
+    const abilities = props.type === 'skills' ? reinc.skills : reinc.spells
 
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -52,24 +54,58 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     const checkBoxChanged = (params: GridCellParams) => {
         const {value, row, colDef} = params
         if (value === false) {
-            reinc.addOrUpdateAbility({...row, trained: 100})
+            //      reinc.addOrUpdateAbility({...row, trained: 100})
             if (apiRef && apiRef.current) {
                 apiRef.current.startCellEditMode({id: row.id, field: 'trained'})
             }
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
-            reinc.addOrUpdateAbility({...row, trained: 0})
+            //     reinc.addOrUpdateAbility({...row, trained: 0})
         }
     }
 
     const afterEdit = (row: Ability, details: GridCallbackDetails) => {
-        reinc.addOrUpdateAbility({...row})
-        if (apiRef && apiRef.current) {
-        }
+        // reinc.addOrUpdateAbility({...row})
+        // if (apiRef && apiRef.current) {
+        // }
     }
 
 
+    const TrainedInput = (props: { params: GridRenderEditCellParams<Ability> }) => {
+        const [value, setValue] = useState(100)
+        const params = props.params
+        const parse = (newValue: number) => {
+            if (newValue > 10) {
+                const rounded = (newValue > value) ? roundUp5(newValue) : roundDown5(newValue)
+                setValue(rounded || 0)
+            } else {
+                setValue(newValue)
+            }
+        }
+
+        useEffect(() => {
+            params.api.setEditCellValue({
+                id: params.id,
+                field: params.field,
+                value: value,
+            });
+        }, [value]);
+
+
+        return (
+            <Input
+                value={value}
+                type={'number'}
+                className={`edit-ability${params.row.id} ${params.cellMode === 'edit' ? 'active-ability' : ''}`}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                    const updatedValue = e.target.value || "0";
+                    parse(parseInt(updatedValue))
+                }}
+            />
+        );
+
+    }
     const dataColumns: GridColDef<(Ability)>[] = [
         {field: 'name', headerName: 'Name', width: 300, filterable: true},
         {
@@ -80,20 +116,8 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             sortable: true,
             editable: true,
             align: 'right',
-            valueParser: (value, row, column, apiRef) => {
-                if (value > 10) {
-                    return round5(value);
-                } else {
-                    return value
-                }
-            },
-            valueGetter: (value, row) => {
-                const reincValue = reinc.getAbility(row)?.trained
-                return reincValue !== undefined ? reincValue : row.trained
-
-            },
-            valueSetter: (value, row) => {
-                return {...row, trained: value}
+            renderEditCell: (params) => {
+                return <TrainedInput params={params}/>
             },
             cellClassName: (params => {
                 if (params.cellMode === 'edit') {
@@ -116,12 +140,19 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         [dataColumns],
     );
 
+
+
+    const processRowUpdate = (newRow: Ability) => {
+        return reinc.updateAbility(props.type, newRow);
+    };
+
     return (
         <SectionBox>
             <Suspense fallback="Loading...">
                 {abilities && (
                     <Box sx={{height: 400, width: '100%', paddingLeft: '20px'}}>
-                        <Typography variant='h4' textTransform={'capitalize'} marginBlock={'40px'}>{props.type}</Typography>
+                        <Typography variant='h4' textTransform={'capitalize'}
+                                    marginBlock={'40px'}>{props.type}</Typography>
 
                         <DataGrid
                             rows={abilities}
@@ -130,11 +161,8 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                             disableRowSelectionOnClick
                             hideFooter={true}
                             disableColumnSelector
-                            processRowUpdate={(row: Ability, oldRow) => {
-                                reinc.addOrUpdateAbility({...row, trained: round5(row.trained)})
-                                row.trained = round5(row.trained)
-                                return row
-                            }}
+                            ro
+                            processRowUpdate={processRowUpdate}
                             onProcessRowUpdateError={(error) => {
                                 console.error(error)
                             }}

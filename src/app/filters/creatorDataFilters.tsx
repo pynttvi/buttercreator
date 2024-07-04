@@ -65,8 +65,6 @@ export const AbilityGuildFilter = (creatorDataContext: CreatorDataContextType, r
                         const level = g.levels.get(i.toString())
                         level?.abilities.forEach((guildAbility: GuildAbility) => {
                             if(guildAbility.name === "advanced martial arts"){
-                                console.log("NAME", ability.name, guildAbility.name)
-                                console.log("Ability", ability.trained, guildAbility.max)
                             }
                             if (ability.name.trim() === guildAbility.name.trim() && ability.trained <= guildAbility.max) {
                                 addGuild(g)

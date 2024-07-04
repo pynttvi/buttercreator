@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useContext} from 'react';
+import React, {Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useState} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {Guild} from '../parsers/guildParser';
 import {Race} from '../parsers/raceParser';
@@ -19,7 +19,7 @@ export type ReincType = {
 };
 
 export type ReincFunctionsType = {
-    addOrUpdateAbility: (ability: Ability) => void
+    updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
     addOrUpdateGuild: (guild: GuildLevels, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
     getReincGuildByGuildLevels: (guild: Partial<GuildLevels>) => ReincGuild | undefined
@@ -27,6 +27,8 @@ export type ReincFunctionsType = {
     getSubguildsFromGuild: (guild: Guild) => GuildLevels[]
     getSubguildsByGuildName: (name: string) => GuildLevels[]
     getAllGuildsAndSubguilds: () => Guild[]
+    setSkills: Dispatch<SetStateAction<Ability[]>>
+    setSpells: Dispatch<SetStateAction<Ability[]>>
 };
 
 export type ReincContextType = ReincType & ReincFunctionsType
@@ -41,9 +43,21 @@ export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const ctx = useContext(ReincContext)
     const creatorDataContext = useCreatorData()
+    const {creatorData} = creatorDataContext
+    const [skills, setSkills] = useState<Ability[]>([...creatorData.skills])
+    const [spells, setSpells] = useState<Ability[]>([...creatorData.spells])
     const values: ReincType = {
         ...defaultReincContext,
         ...ctx,
+        skills,
+        spells
+    }
+
+    if (values.skills.length === 0) {
+        values.skills.push(...creatorData.skills)
+    }
+    if (values.spells.length === 0) {
+        values.spells.push(...creatorData.spells)
     }
 
     const getGuildByGuildLevels = (guild: Partial<GuildLevels>): Guild | undefined => {
@@ -64,18 +78,14 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         return getSubguildsFromGuild(getGuildByGuildLevels({name}))
     }
 
-    const addOrUpdateAbility = (ability: Ability) => {
-        console.log("Update ability")
-        const targetArray: Ability[] = ability.type === "skill" ? ctx.skills : ctx.spells
-        const abilityIndex = targetArray.findIndex((a) => a.name === ability.name)
-        if (abilityIndex !== -1) {
-            targetArray[abilityIndex] = ability
+    const addOrUpdateAbility = (type: 'skills' | 'spells', ability: Ability) => {
+        const updatedRow = {...ability};
+        if (type === "skills") {
+            setSkills(skills.map((skill) => (skill.id === ability.id ? updatedRow : skill)))
         } else {
-            if (ability.trained > 0) {
-                targetArray.push(ability)
-            }
+            setSpells(spells.map((spell) => (spell.id === ability.id ? updatedRow : spell)))
         }
-        filterData()
+        return updatedRow;
     }
 
     const getReincGuildByGuildLevels = (guild: Partial<ReincGuild>) => {
@@ -87,11 +97,11 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         if (ability.type) {
             return ability.type === "skill" ? ctx.skills.find((a) => a.name === ability.name) : ctx.spells.find((a) => a.name === ability.name)
         } else {
-            let ability: Ability | undefined = ctx.skills.find((a) => a.name === ability?.name)
-            if (!ability) {
-                ability = ctx.skills.find((a) => a.name === ability?.name)
+            let a: Ability | undefined = ctx.skills.find((a) => a.name === ability.name)
+            if (!a) {
+                a = ctx.skills.find((a) => a.name === ability?.name)
             }
-            return ability
+            return a
         }
     }
 
@@ -103,7 +113,6 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         } else {
             ctx.guilds[idx] = reincGuild
         }
-        console.log("add guild")
         filterData()
     }
 
@@ -142,14 +151,16 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     }
 
     const reincFunctions: ReincFunctionsType = {
-        addOrUpdateAbility,
+        updateAbility: addOrUpdateAbility,
         getAbility,
         getReincGuildByGuildLevels,
         addOrUpdateGuild,
         getGuildByGuildLevels,
         getSubguildsFromGuild,
         getSubguildsByGuildName,
-        getAllGuildsAndSubguilds
+        getAllGuildsAndSubguilds,
+        setSkills,
+        setSpells,
     }
 
     const context = {...values, ...reincFunctions}
