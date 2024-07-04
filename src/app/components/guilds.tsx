@@ -10,6 +10,8 @@ import {ReincGuild, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Dispatch, FocusEventHandler, SetStateAction, useEffect, useState} from "react";
+import {Guild} from "@/app/parsers/guildParser";
+import {getAllMemoryUsageSpans} from "next/dist/lib/memory/trace";
 
 const Item = styled(Typography)(({theme}) => ({
     padding: theme.spacing(1),
@@ -17,17 +19,18 @@ const Item = styled(Typography)(({theme}) => ({
 }));
 
 const setValue = (guild: GuildLevels, level: number, addOrUpdateGuild: (guild: GuildLevels, levels: number) => void) => {
-    addOrUpdateGuild(guild, level)
+    addOrUpdateGuild({...guild, name: guild.name.toLowerCase().replaceAll("_", " ")}, level)
 }
 
 function GuildItem(props: {
     g: GuildLevels,
     onChange: (event: { currentTarget: HTMLInputElement }, value: number) => void,
     className: string,
-    guild: ReincGuild | undefined,
+    guild: Guild | undefined,
     onFocus: FocusEventHandler<Element>
     isSubguild?: boolean
 }) {
+    const reinc = useReinc()
     return (
         // @ts-ignore
         <Grid item direction={"row"} xs={12} sm={6} md={4} key={'index-' + props.g.name}>
@@ -51,7 +54,7 @@ function GuildItem(props: {
                             placeholder="0"
                             onChange={props.onChange}
                             className={props.className}
-                            value={props.guild?.levels || 0}
+                            value={reinc.getReincGuildByName(props.g.name)?.levels || 0}
                             onFocus={props.onFocus}
                         />
                     </Box>
@@ -67,7 +70,7 @@ const SubguildsList = (props: {
     setLastClass: Dispatch<SetStateAction<string>>,
     addOrUpdateGuild: (guild: GuildLevels, levels: number) => void
 }) => {
-    const {getReincGuildByGuildLevels, getSubguildsByGuildName} = useReinc()
+    const {getReincGuildByGuildLevels, getSubguildsByGuildName, getGuildByGuildLevels, addOrUpdateGuild} = useReinc()
 
     const subguilds = getSubguildsByGuildName(props.guild.name)
     if (!subguilds || subguilds.length === 0) {
@@ -76,7 +79,7 @@ const SubguildsList = (props: {
 
     subguilds.forEach((sg, index: number) => {
         if (sg.name === props.guild.name) {
-            subguilds[index].value += sg.value
+            subguilds[index].levels += sg.levels
         } else {
             const subSubGuilds = getSubguildsByGuildName(sg.name)
             if (subSubGuilds.length > 0) {
@@ -100,10 +103,11 @@ const SubguildsList = (props: {
                                setValue(sg, value, props.addOrUpdateGuild);
                            }}
                            className={props.className}
-                           guild={getReincGuildByGuildLevels({name: sg.name.toLowerCase()})}
+                           guild={getGuildByGuildLevels({name: sg.name.toLowerCase()})}
                            onFocus={(event) => {
-                               if (!getReincGuildByGuildLevels({name: sg.name.toLowerCase()})) {
-                                   setValue(sg, sg.value, props.addOrUpdateGuild)
+                               const reincGuild = getReincGuildByGuildLevels({name: sg.name.toLowerCase()})
+                               if (!reincGuild || reincGuild?.levels === 0) {
+                                   setValue(sg, sg.levels, addOrUpdateGuild)
                                }
                                props.setLastClass(props.className)
 
@@ -118,7 +122,14 @@ const SubguildsList = (props: {
 }
 
 export default function Guilds(props: { myData: CreatorDataType }) {
-    const {addOrUpdateGuild, getReincGuildByGuildLevels, getSubguildsByGuildName} = useReinc()
+    const {
+        addOrUpdateGuild,
+        getReincGuildByGuildLevels,
+        getSubguildsByGuildName,
+        getGuildByGuildLevels,
+        getAllGuildAndSubguildLevels,
+        filteredData
+    } = useReinc()
     const {creatorData} = useCreatorData()
 
 
@@ -138,13 +149,13 @@ export default function Guilds(props: { myData: CreatorDataType }) {
         focusClass(lastClass)
     }, [lastClass]);
 
-
+    const data = filteredData  //creatorData
     return (
         <SectionBox title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
-                {creatorData?.guilds ? (
+                {data?.guilds ? (
                         <>
-                            {creatorData?.guilds.sort((a, b) => b.value - a.value).map((g: GuildLevels, index: number) => {
+                            {data?.guilds.sort((a, b) => b.levels - a.levels).map((g: GuildLevels, index: number) => {
                                 const className = `guild-${g.name}`
                                 return (
                                     // @ts-ignore
@@ -156,10 +167,10 @@ export default function Guilds(props: { myData: CreatorDataType }) {
                                                        setValue(g, value, addOrUpdateGuild);
                                                    }}
                                                    className={className}
-                                                   guild={getReincGuildByGuildLevels({name: g.name.toLowerCase()})}
+                                                   guild={getGuildByGuildLevels({name: g.name.toLowerCase()})}
                                                    onFocus={(event) => {
                                                        if (!getReincGuildByGuildLevels({name: g.name.toLowerCase()})) {
-                                                           setValue(g, g.value, addOrUpdateGuild)
+                                                           setValue(g, g.levels, addOrUpdateGuild)
                                                        }
                                                        setLastClass(className)
 

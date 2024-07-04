@@ -1,8 +1,8 @@
 'use client'
 import Box from '@mui/material/Box';
-import {DataGrid, GridColDef} from '@mui/x-data-grid';
+import {DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel} from '@mui/x-data-grid';
 import {Race} from '../parsers/raceParser';
-import {Suspense, useDeferredValue, useEffect, useState} from 'react';
+import React, {Suspense, useDeferredValue, useEffect, useState} from 'react';
 import SectionBox from './sectionBox';
 import {useReinc} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
@@ -93,24 +93,32 @@ const columns: GridColDef<(Race)>[] = [
     },
 ];
 
-export default function RaceList(props: { myData:CreatorDataType }) {
+export default function RaceList(props: { myData: CreatorDataType }) {
     const creatorData = props.myData
-
+    const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
+    const reinc = useReinc()
+    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
+        const race: Race | null = details.api.getRow(rowSelectionModel[0]) || null
+        reinc.setRace(race)
+        setSelectionModel(rowSelectionModel)
+    }
     return (
         <SectionBox title='Races'>
             <Suspense fallback="Loading...">
-                {creatorData?.races? (
-                        <DataGrid
-                            sx={{height: 400, width: '100%'}}
-                            rows={props.myData.races}
-                            columns={columns}
-                            initialState={{}}
-                            checkboxSelection
-                            disableRowSelectionOnClick
-                            disableMultipleRowSelection
-                            hideFooter={true}
-                            disableVirtualization
-                        />
+                {creatorData?.races ? (
+                    <DataGrid
+                        sx={{height: 400, width: '100%'}}
+                        rows={props.myData.races}
+                        columns={columns}
+                        initialState={{}}
+                        checkboxSelection
+                        disableRowSelectionOnClick
+                        disableMultipleRowSelection
+                        rowSelectionModel={selectionModel}
+                        onRowSelectionModelChange={changeSelectionMode}
+                        hideFooter={true}
+                        disableVirtualization
+                    />
                 ) : <></>
                 }
             </Suspense>

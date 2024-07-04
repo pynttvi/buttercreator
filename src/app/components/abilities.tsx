@@ -16,6 +16,7 @@ import {Ability} from '../parsers/abilityCostParser';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
+import {onlyUnique} from "@/app/filters/creatorDataFilters";
 
 
 const roundUp5 = (n: number) => {
@@ -29,10 +30,8 @@ const roundDown5 = (n: number) => {
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc = useReinc()
-
-    const abilities = props.type === 'skills' ? reinc.skills : reinc.spells
-
-    const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
+    const abilityType = props.type
+    let abilities = props.type === 'skills' ? reinc.skills : reinc.spells
     const apiRef = React.useRef<GridApiCommunity | undefined>();
     const [lastEdit, setLastEdit] = useState("")
 
@@ -48,6 +47,8 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
     }, [lastEdit]);
 
+    const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
+
     const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
         setSelectionModel(rowSelectionModel)
     }
@@ -61,7 +62,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
-            //     reinc.addOrUpdateAbility({...row, trained: 0})
+             reinc.updateAbility(props.type, {...row, trained: 0})
         }
     }
 
@@ -73,9 +74,13 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
 
     const TrainedInput = (props: { params: GridRenderEditCellParams<Ability> }) => {
-        const [value, setValue] = useState(100)
+        const max = abilityType === "skills" ? reinc.skillMax : reinc.spellMax
+        const [value, setValue] = useState(max)
         const params = props.params
         const parse = (newValue: number) => {
+            newValue = Math.min(newValue, max)
+            newValue = Math.max(newValue, 0)
+
             if (newValue > 10) {
                 const rounded = (newValue > value) ? roundUp5(newValue) : roundDown5(newValue)
                 setValue(rounded || 0)
@@ -141,8 +146,10 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     );
 
 
-
     const processRowUpdate = (newRow: Ability) => {
+        if(newRow.trained > 0 && newRow.trained < 10){
+            newRow.trained = 5
+        }
         return reinc.updateAbility(props.type, newRow);
     };
 

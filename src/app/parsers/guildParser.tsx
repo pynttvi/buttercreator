@@ -42,7 +42,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
                 const name = sglMatch?.at(1)?.toLowerCase()
                 const value = sglMatch?.at(2)?.toLowerCase()
                 if (name && value) {
-                    subguilds.push({name, value: parseInt(value)} as GuildLevels)
+                    subguilds.push({name, levels: parseInt(value)} as GuildLevels)
                 }
                 return
             }
@@ -99,7 +99,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
         });
 
         return {
-            name: data.name.replaceAll(".chr", "").replaceAll("_", " ")
+            name: data.name.replaceAll(".chr", "").toLowerCase().replaceAll("_", " ")
             , levels: guildLevels,
             subguilds: subguilds
         }
