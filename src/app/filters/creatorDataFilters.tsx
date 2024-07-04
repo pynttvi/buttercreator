@@ -125,8 +125,6 @@ export const AbilityGuildFilter = (filteredData: FilteredData, creatorDataContex
             const newGuilds: GuildLevels[] = guilds?.map((guild: Guild) => {
                 return reinc.getGuildLevelsFromGuild(guild)
             })
-            console.log("NEWGF", newGuilds)
-
             return newGuilds?.length === 0 ? creatorDataContext.originalCreatorData.guilds : newGuilds
         }
     }

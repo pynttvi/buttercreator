@@ -5,12 +5,14 @@ import {Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
+import {GuildType} from "@/app/components/guilds";
 
 export const MAX_LEVEL = 0
 export type ReincGuild = {
     name: string,
     levels: number,
     trained: number,
+    guildType: GuildType,
     subGuilds: ReincGuild[]
 }
 export type ReincType = {
@@ -28,7 +30,7 @@ export type ReincAbility = Ability & { max?: boolean }
 
 export type ReincFunctionsType = {
     updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
-    addOrUpdateGuild: (guild: GuildLevels, levels: number) => void
+    addOrUpdateGuild: (guildType: GuildType, guild: ReincGuild, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
     getReincGuildByGuildLevels: (guild: Partial<GuildLevels>) => GuildLevels | undefined
     getReincGuildByName: (name: string) => GuildLevels | undefined
@@ -112,7 +114,6 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         }
     }
     useEffect(() => {
-        console.log("CHANGE", filteredData)
         filterData()
     }, [skills]);
 
@@ -185,10 +186,10 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         }
     }
 
-    const addOrUpdateGuild = (guild: GuildLevels, levels: number) => {
+    const addOrUpdateGuild = (guildType: GuildType, guild: ReincGuild, levels: number) => {
         const idx = ctx.guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
         if (idx === -1) {
-            setGuilds([...guilds, {...guilds[idx], levels: levels, name: guild.name.toLowerCase().replaceAll("_"," ")}])
+            setGuilds([...guilds, {...guilds[idx], guildType: guildType, levels: levels, name: guild.name.toLowerCase().replaceAll("_"," ")}])
         } else {
             setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], levels: levels}])
         }

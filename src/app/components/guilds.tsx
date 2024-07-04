@@ -10,7 +10,7 @@ import {ReincGuild, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Dispatch, FocusEventHandler, SetStateAction, useEffect, useState} from "react";
-import {Guild} from "@/app/parsers/guildParser";
+import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {getAllMemoryUsageSpans} from "next/dist/lib/memory/trace";
 
 const Item = styled(Typography)(({theme}) => ({
@@ -18,8 +18,9 @@ const Item = styled(Typography)(({theme}) => ({
     textAlign: 'left',
 }));
 
-const setValue = (guild: GuildLevels, level: number, addOrUpdateGuild: (guild: GuildLevels, levels: number) => void) => {
-    addOrUpdateGuild({...guild, name: guild.name.toLowerCase().replaceAll("_", " ")}, level)
+export type GuildType = 'main' | 'sub'
+const setValue = (guildType: GuildType, guild: ReincGuild, level: number, addOrUpdateGuild: (guildType: GuildType, guild: ReincGuild, levels: number) => void) => {
+    addOrUpdateGuild(guildType, {...guild, name: guild.name.toLowerCase().replaceAll("_", " ")}, level)
 }
 
 function GuildItem(props: {
@@ -65,10 +66,10 @@ function GuildItem(props: {
 }
 
 const SubguildsList = (props: {
-    guild: GuildLevels,
+    guild: GuildLevels | ReincGuild,
     className: string,
     setLastClass: Dispatch<SetStateAction<string>>,
-    addOrUpdateGuild: (guild: GuildLevels, levels: number) => void
+    addOrUpdateGuild: ( guildType: GuildType, guild: ReincGuild, levels: number) => void
 }) => {
     const {getReincGuildByGuildLevels, getSubguildsByGuildName, getGuildByGuildLevels, addOrUpdateGuild} = useReinc()
 
@@ -100,14 +101,14 @@ const SubguildsList = (props: {
                            onChange={(event: {
                                currentTarget: HTMLInputElement;
                            }, value: number) => {
-                               setValue(sg, value, props.addOrUpdateGuild);
+                               setValue('sub', sg as ReincGuild, sg.levels, addOrUpdateGuild);
                            }}
                            className={props.className}
                            guild={getGuildByGuildLevels({name: sg.name.toLowerCase()})}
                            onFocus={(event) => {
                                const reincGuild = getReincGuildByGuildLevels({name: sg.name.toLowerCase()})
                                if (!reincGuild || reincGuild?.levels === 0) {
-                                   setValue(sg, sg.levels, addOrUpdateGuild)
+                                   setValue('sub', (sg as ReincGuild), sg.levels, addOrUpdateGuild)
                                }
                                props.setLastClass(props.className)
 
@@ -164,13 +165,13 @@ export default function Guilds(props: { myData: CreatorDataType }) {
                                                    onChange={(event: {
                                                        currentTarget: HTMLInputElement;
                                                    }, value: number) => {
-                                                       setValue(g, value, addOrUpdateGuild);
+                                                       setValue('main', g  as ReincGuild, value, addOrUpdateGuild);
                                                    }}
                                                    className={className}
                                                    guild={getGuildByGuildLevels({name: g.name.toLowerCase()})}
                                                    onFocus={(event) => {
                                                        if (!getReincGuildByGuildLevels({name: g.name.toLowerCase()})) {
-                                                           setValue(g, g.levels, addOrUpdateGuild)
+                                                           setValue('main', g as ReincGuild, g.levels, addOrUpdateGuild)
                                                        }
                                                        setLastClass(className)
 
