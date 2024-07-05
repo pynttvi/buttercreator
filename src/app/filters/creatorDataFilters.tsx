@@ -1,14 +1,16 @@
 import {FilteredData, MAX_LEVEL, ReincContextType} from "@/app/contexts/reincContext";
-import {Guild, GuildAbility, GuildLevel} from "@/app/parsers/guildParser";
 import {Ability} from "@/app/parsers/abilityCostParser";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
+import {MainGuild} from "@/app/service/guildService";
+import {GuildAbility} from "@/app/parsers/guildParser";
 
 export type CreatorDataFilterType = {
     doFilter: () => any
 }
-export function onlyUnique(value: {name: string}, index: any, array: any[]) {
-    return array.findIndex((v: {name: string}) => {
+
+export function onlyUnique(value: { name: string }, index: any, array: any[]) {
+    return array.findIndex((v: { name: string }) => {
         return value.name === v.name
     }) === index;
 }
@@ -79,53 +81,46 @@ export const AbilityGuildFilter = (filteredData: FilteredData, creatorDataContex
 
     return {
         doFilter: (): GuildLevels[] => {
-            const guilds: Guild[] = []
+            const guilds: MainGuild[] = []
+            const mainGuilds = reinc.guildService.getMainGuilds()
 
-            function addGuild(guild: Guild) {
-                if (!guilds.find((g: Guild) => g.name === guild.name)) {
+            function addGuild(guild: MainGuild) {
+                if (!guilds.find((g: MainGuild) => g.name === guild.name)) {
                     guilds.push(guild)
                 }
             }
 
-            function filterByAbility(ability: Ability) {
-                reinc.getAllGuildsAndSubguilds().forEach((g) => {
-                    for (let i = g.levelMap.size; i > 0; i--) {
-                        const level = g.levelMap.get(i.toString())
-                        level?.abilities.forEach((guildAbility: GuildAbility) => {
-                            if (ability.name.trim() === guildAbility.name.trim() && ability.trained <= guildAbility.max) {
-                                addGuild(g)
-                            }
-                        })
-                    }
-                })
+            function filterByAbility(g: MainGuild, ability: Ability) {
+                for (let i = g.levelMap.size; i > 0; i--) {
+                    const level = g.levelMap.get(i.toString())
+                    level?.abilities.forEach((guildAbility: GuildAbility) => {
+                        if (ability.name.trim() === guildAbility.name.trim() && ability.trained <= guildAbility.max) {
+                            addGuild(g)
+                        }
+                    })
+                    g.subGuilds.forEach((sg => {
+                        filterByAbility(sg,ability)
+                    }))
+                }
 
             }
 
             const trainedSkills = reinc.skills.filter((s) => s.trained > 0)
             trainedSkills.forEach((ability) => {
-                Object.entries(originalCreatorData).forEach(entry => {
-                    if (entry[0].startsWith("guild_")) {
-                        // @ts-ignore
-                        filterByAbility(ability);
-
-                    }
+                mainGuilds.forEach((g) => {
+                    filterByAbility(g, ability);
                 })
             })
 
             const trainedSpells = reinc.spells.filter((s) => s.trained > 0)
             trainedSpells.forEach((ability) => {
-                Object.entries(originalCreatorData).forEach(entry => {
-                    if (entry[0].startsWith("guild_")) {
-                        // @ts-ignore
-                        filterByAbility(ability);
-                    }
+                mainGuilds.forEach((g) => {
+                    filterByAbility(g, ability);
                 })
             })
 
-            const newGuilds: GuildLevels[] = guilds?.map((guild: Guild) => {
-                return reinc.getGuildLevelsFromGuild(guild)
-            })
-            return newGuilds?.length === 0 ? creatorDataContext.originalCreatorData.guilds : newGuilds
+            const newGuilds: MainGuild[] = [...guilds]
+            return newGuilds?.length === 0 ? reinc.guildService.getMainGuilds() : newGuilds
         }
     }
 }

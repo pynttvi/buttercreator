@@ -1,6 +1,5 @@
 import React, {Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useState} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
-import {Guild, GuildLevel} from '../parsers/guildParser';
 import {Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
@@ -9,17 +8,11 @@ import {GuildType} from "@/app/components/guilds";
 import {GuildService, GuildServiceType, MainGuild} from "@/app/service/guildService";
 
 export const MAX_LEVEL = 0
-export type ReincGuild = {
-    name: string,
-    levels: number,
-    trained: number,
-    guildType: GuildType,
-    subGuilds: ReincGuild[]
-}
+
 export type ReincType = {
     filteredData: FilteredData
     race: Race | null | undefined;
-    guilds: ReincGuild[];
+    guilds: MainGuild[];
     skills: ReincAbility[];
     spells: ReincAbility[];
     skillMax: number;
@@ -33,13 +26,12 @@ export type ReincFunctionsType = {
     updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
     addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
-    getReincGuildByGuildLevels: (guild: Partial<GuildLevels>) => GuildLevels | undefined
-    getReincGuildByName: (name: string) => GuildLevels | undefined
     setSkills: Dispatch<SetStateAction<Ability[]>>
     setSpells: Dispatch<SetStateAction<Ability[]>>
     setRace: Dispatch<SetStateAction<Race | null>>
     setFilteredData: Dispatch<SetStateAction<FilteredData>>
     guildService: GuildServiceType
+    getReincGuildByName: (name: string) => MainGuild | undefined
 };
 
 export type FilteredData = {
@@ -71,7 +63,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [race, setRace] = useState<Race | null>(null)
     const [skills, setSkills] = useState<Ability[]>([...creatorData.skills.filter(onlyUnique)])
     const [spells, setSpells] = useState<Ability[]>([...creatorData.spells.filter(onlyUnique)])
-    const [guilds, setGuilds] = useState<ReincGuild[]>([])
+    const [guilds, setGuilds] = useState<MainGuild[]>([])
     const [filteredData, setFilteredData] = useState<FilteredData>({
         ...defaultFilteredData,
 
@@ -140,12 +132,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         return updatedRow;
     }
 
-    const getReincGuildByGuildLevels = (guild: Partial<ReincGuild>): GuildLevels | undefined => {
-        return guilds.find((rg) => {
-            return rg.name === guild.name
-        })
-    }
-    const getReincGuildByName = (name: string): ReincGuild | undefined => {
+    const getReincGuildByName = (name: string): MainGuild | undefined => {
         return guilds.find((rg) => {
             return rg.name === name
         })
@@ -162,20 +149,20 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         }
     }
 
-    const addOrUpdateGuild = (guildType: GuildType, guild: MainGuild, levels: number) => {
+    const addOrUpdateGuild = (guildType: GuildType, guild: MainGuild, trained: number) => {
         const idx = ctx.guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
         if (idx === -1) {
-            setGuilds([...guilds, {...guilds[idx], guildType: guildType, levels: levels, name: guild.name.toLowerCase().replaceAll("_"," ")}])
+            setGuilds([...guilds, {...guilds[idx], guildType: guildType, trained: trained, name: guild.name.toLowerCase().replaceAll("_"," ")}])
         } else {
-            setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], levels: levels}])
+            setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], trained: trained}])
         }
+        console.log("EDIT guilds", guilds)
     }
 
 
     const reincFunctions: ReincFunctionsType = {
         updateAbility: addOrUpdateAbility,
         getAbility,
-        getReincGuildByGuildLevels,
         getReincGuildByName,
         addOrUpdateGuild,
         setSkills,

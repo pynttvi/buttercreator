@@ -14,19 +14,22 @@ export interface SubGuild extends MainGuild {
     name: string
     levels: number
     levelMap: Map<string, GuildLevel>
+    subGuilds: SubGuild[]
 }
 
 export interface MainGuild {
     subGuilds: SubGuild[]
+    guildType: GuildType
     name: string
     levels: number
+    trained: number
     levelMap: Map<string, GuildLevel>
 }
 
 export function GuildService(creatorDataContext: CreatorDataContextType, reincContext: ReincContextType): GuildServiceType {
     const getGuildByGuildLevels = (guild: Partial<GuildLevels>): Guild | undefined => {
         // @ts-ignore
-        return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase()}`]
+        return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase().replaceAll(" ","_")}`]
     }
     const getGuildLevelsFromGuild = (guild: Guild): GuildLevels => {
         return {name: guild.name, levels: Object.keys(guild.levelMap.keys()).length}
@@ -89,6 +92,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         const guilds = creatorDataContext.originalCreatorData.guilds.map((gl) => {
             const guild = getGuildByGuildLevels(gl)
             if (!guild) {
+                console.log("Error getting guild", gl)
                 throw new Error("Error getting guild")
             }
             const subGuildsPartial = guild.subGuildLevels.map((sgl) => {
@@ -101,6 +105,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
             })
             const mainGuildPartial: Partial<MainGuild> = {
                 ...guild,
+                ...gl,
             }
 
             class MainGuildImpl implements MainGuild {
@@ -119,19 +124,24 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                     this.trained = 0
                     this.subGuilds = subGuildsPartial.map((sgp) => {
                         const subGuild: SubGuild = {
-                            name: sgp.name || "",
+                            name: sgp.name?.toLowerCase().replaceAll("_", " ") || "",
+                            guildType: 'sub',
                             mainGuild: this,
                             levels: sgp.levels || -1,
+                            //levels: Object.keys((sgp as SubGuild).levelMap?.keys())?.length || -1,
                             levelMap: sgp.levelMap || new Map<string, GuildLevel>,
-                            subGuilds: []
+                            subGuilds: [],
+                            trained: 0,
                         }
                         subGuild.subGuilds = sgp.subGuilds?.map((sgp) => {
                             const subGuild: SubGuild = {
                                 name: sgp.name?.toLowerCase().replaceAll("_", " ") || "",
                                 mainGuild: this,
+                                guildType: 'sub',
                                 levels: sgp.levels || -1,
                                 levelMap: sgp.levelMap || new Map<string, GuildLevel>,
-                                subGuilds: []
+                                subGuilds: [],
+                                trained: 0,
                             }
                             return subGuild
                         }) || []

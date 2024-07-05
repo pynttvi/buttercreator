@@ -8,8 +8,7 @@ import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import {GuildLevels} from "@/app/parsers/guildsFileParser";
-import {Dispatch, FocusEventHandler, SetStateAction, useEffect, useState} from "react";
+import React, {Dispatch, FocusEventHandler, SetStateAction, useEffect, useState} from "react";
 import {MainGuild} from "@/app/service/guildService";
 
 const Item = styled(Typography)(({theme}) => ({
@@ -18,12 +17,12 @@ const Item = styled(Typography)(({theme}) => ({
 }));
 
 export type GuildType = 'main' | 'sub'
-const setValue = (guildType: GuildType, guild: MainGuild, level: number, addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, levels: number) => void) => {
-    addOrUpdateGuild(guildType, {...guild, name: guild.name.toLowerCase().replaceAll("_", " ")}, level)
+const updateValue = (guildType: GuildType, guild: MainGuild, level: number, addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, levels: number) => void) => {
+    addOrUpdateGuild(guildType, {...guild, name: guild.name}, level)
 }
 
 function GuildItem(props: {
-    g: GuildLevels,
+    g: MainGuild,
     onChange: (event: { currentTarget: HTMLInputElement }, value: number) => void,
     className: string,
     guild: MainGuild | undefined,
@@ -31,6 +30,12 @@ function GuildItem(props: {
     isSubguild?: boolean
 }) {
     const reinc = useReinc()
+    const [value, setValue] = useState(0)
+
+    useEffect(() => {
+        setValue(reinc.getReincGuildByName(props.g.name)?.trained || 0)
+    }, [reinc.guilds]);
+
     return (
         // @ts-ignore
         <Grid item direction={"row"} xs={12} sm={6} md={4} key={'index-' + props.g.name}>
@@ -54,7 +59,7 @@ function GuildItem(props: {
                             placeholder="0"
                             onChange={props.onChange}
                             className={props.className}
-                            value={reinc.getReincGuildByName(props.g.name)?.levels || 0}
+                            value={ value}
                             onFocus={props.onFocus}
                         />
                     </Box>
@@ -66,9 +71,8 @@ function GuildItem(props: {
 
 const SubguildsList = (props: {
     guild: MainGuild,
-    className: string,
     setLastClass: Dispatch<SetStateAction<string>>,
-    addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, levels: number) => void
+    addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, trained: number) => void
 }) => {
     const {guildService, addOrUpdateGuild} = useReinc()
 
@@ -77,59 +81,44 @@ const SubguildsList = (props: {
         getGuildByName
     } = guildService
 
-    const subguilds = getMainGuilds().find((mg) => mg.name === props.guild.name)?.subGuilds
+    const subguilds = props.guild.subGuilds
     if (!subguilds || subguilds.length === 0) {
         return <></>
     }
 
-    subguilds.forEach((sg, index: number) => {
-        if (sg.name === props.guild.name) {
-            subguilds[index].levels += sg.levels
-        } else {
-            const subSubGuilds = getMainGuilds().find((mg) => mg.name === sg.name)?.subGuilds || []
-            if (subSubGuilds.length > 0) {
-                subSubGuilds.forEach((ssg) => {
-                    if (sg.name !== ssg.name) {
-                        subguilds.push(ssg)
-                    }
-                })
-            }
-        }
-    })
-
-
     return <>
-        {subguilds.length > 0 && subguilds.map((sg) => (
-            <>
-                <GuildItem g={sg}
-                           onChange={(event: {
-                               currentTarget: HTMLInputElement;
-                           }, value: number) => {
-                               setValue('sub', sg, sg.levels, addOrUpdateGuild);
-                           }}
-                           className={props.className}
-                           guild={getGuildByName(sg.name)}
-                           onFocus={(event) => {
-                               const reincGuild = getGuildByName(sg.name)
-                               if (!reincGuild || reincGuild?.levels === 0) {
-                                   setValue('sub', (sg), sg.levels, addOrUpdateGuild)
-                               }
-                               props.setLastClass(props.className)
+        {subguilds.length > 0 && subguilds.map((sg) => {
+            const className = `guild-${sg.name}`
+            return (
+                <>
+                    <GuildItem g={sg}
+                               onChange={(event: {
+                                   currentTarget: HTMLInputElement;
+                               }, value: number) => {
+                                   updateValue('sub', sg, value, addOrUpdateGuild);
+                               }}
+                               className={className}
+                               guild={getGuildByName(sg.name)}
+                               onFocus={(event) => {
+                                   const reincGuild = getGuildByName(sg.name)
+                                   if (!reincGuild || reincGuild?.levels === 0) {
+                                       updateValue('sub', (sg), sg.levels, addOrUpdateGuild)
+                                   }
+                                   props.setLastClass(className)
 
-                           }}
-                           isSubguild={true}
-                />
-                {/*<SubguildsList guild={sg} className={props.className} setLastClass={props.setLastClass}/>*/}
-            </>
-        ))}
-
+                               }}
+                               isSubguild={true}
+                    />
+                    {/*<SubguildsList guild={sg} className={props.className} setLastClass={props.setLastClass}/>*/}
+                </>
+            )
+        })}
     </>;
 }
 
 export default function Guilds(props: { myData: CreatorDataType }) {
     const {
         addOrUpdateGuild,
-        getReincGuildByGuildLevels,
         guildService,
         filteredData,
     } = useReinc()
@@ -158,6 +147,7 @@ export default function Guilds(props: { myData: CreatorDataType }) {
     }, [lastClass]);
 
     const data = filteredData  //creatorData
+    console.log("DATA", data)
     return (
         <SectionBox title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
@@ -172,18 +162,15 @@ export default function Guilds(props: { myData: CreatorDataType }) {
                                                    onChange={(event: {
                                                        currentTarget: HTMLInputElement;
                                                    }, value: number) => {
-                                                       setValue('main', g, value, addOrUpdateGuild);
+                                                       updateValue('main', g, value, addOrUpdateGuild);
                                                    }}
                                                    className={className}
                                                    guild={getGuildByName(g.name)}
-                                                   onFocus={(event) => {
-                                                       if (!getGuildByName(g.name)) {
-                                                           setValue('main', g, g.levels, addOrUpdateGuild)
-                                                       }
+                                                   onFocus={(event:React.FocusEvent<HTMLInputElement>) => {
+                                                       updateValue('main', g, g.levels, addOrUpdateGuild)
                                                        setLastClass(className)
-
                                                    }}/>
-                                        <SubguildsList guild={g} className={className} setLastClass={setLastClass}
+                                        <SubguildsList guild={g} setLastClass={setLastClass}
                                                        addOrUpdateGuild={addOrUpdateGuild}/>
                                     </Box>
                                 )
