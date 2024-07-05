@@ -1,15 +1,17 @@
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
-import {ReincContextType} from "@/app/contexts/reincContext";
+import {MAX_LEVEL, ReincContextType} from "@/app/contexts/reincContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
 import {onlyUnique} from "@/app/filters/creatorDataFilters";
 
+export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
     getMainGuilds: () => MainGuild[]
-    getGuildByName: (name: string) => MainGuild | undefined
+    getGuildByName: (name: string) => FullGuild | undefined
     maxSubguildsTrained: (guild: FullGuild) => boolean
     trainedLevelForGuild: (guild: FullGuild) => number
+    totalTrainedLevels: () => number
 }
 
 export interface SubGuild extends MainGuild {
@@ -122,12 +124,20 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
             return g.trained
         }).forEach((n) => trained = trained + n)
 
-        return trained
+        return Math.min(MAX_GUILD_LEVELS, trained)
     }
 
     const maxSubguildsTrained = (guild: FullGuild) => {
-        return trainedLevelForGuild(guild) <= 60
+        return trainedLevelForGuild(guild) >= MAX_GUILD_LEVELS
     }
+
+    const totalTrainedLevels = () => {
+        let trained = 0
+        trained = (reincContext?.guilds?.map((g) => g.trained) || [0])?.reduce((a, b) => a + b, 0)
+        return Math.min(trained, MAX_LEVEL)
+    }
+
+
     const getMainGuilds = (): MainGuild[] => {
         const guilds = creatorDataContext.originalCreatorData.guilds.map((gl) => {
             const guild = getGuildByGuildLevels(gl)
@@ -196,13 +206,14 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
 
         return guilds
     }
-    const getGuildByName = (name: string): MainGuild | undefined => {
-        return getMainGuilds().find((g) => g.name === name)
+    const getGuildByName = (name: string): FullGuild | undefined => {
+        return getMainGuilds().find((g) => g.name === name) as FullGuild
     }
     return {
         getMainGuilds,
         getGuildByName,
         maxSubguildsTrained,
-        trainedLevelForGuild
+        trainedLevelForGuild,
+        totalTrainedLevels,
     }
 }

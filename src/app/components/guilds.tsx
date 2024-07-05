@@ -3,13 +3,15 @@ import {styled} from '@mui/material/styles';
 import {Typography} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
-import NumberInputBasic from './numberInput';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
-import {useReinc} from "@/app/contexts/reincContext";
+import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import React, {Dispatch, FocusEventHandler, SetStateAction, useEffect, useState} from "react";
-import {FullGuild, MainGuild} from "@/app/service/guildService";
+import React, {Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState} from "react";
+import {FullGuild, GuildService, MAX_GUILD_LEVELS} from "@/app/service/guildService";
+import NumberInputBasic from "@/app/components/numberInput";
+import {GridDeleteIcon} from "@mui/x-data-grid";
+import {Guild} from "@/app/parsers/guildParser";
 
 const Item = styled(Typography)(({theme}) => ({
     padding: theme.spacing(1),
@@ -17,119 +19,122 @@ const Item = styled(Typography)(({theme}) => ({
 }));
 
 export type GuildType = 'main' | 'sub'
-const updateValue = (guildType: GuildType, guild: FullGuild, level: number, addOrUpdateGuild: (guildType: GuildType, guild: FullGuild, levels: number) => void) => {
-    addOrUpdateGuild(guildType, {...guild, name: guild.name}, level)
-}
+
 
 function GuildItem(props: {
-    g: FullGuild,
-    onChange: (event: { currentTarget: HTMLInputElement }, value: number) => void,
-    className: string,
-    guild: FullGuild | undefined,
-    onFocus: FocusEventHandler<Element>
-    isSubguild?: boolean
-}) {
-    const reinc = useReinc()
-    const [value, setValue] = useState(0)
-
-    useEffect(() => {
-        setValue(reinc.getReincGuildByName(props.g.name)?.trained || 0)
-    }, [reinc.guilds]);
-
-    return (
-        // @ts-ignore
-        <Grid item direction={"row"} xs={12} sm={6} md={4} key={'index-' + props.g.name}>
-            <Box sx={{minWidth: "400px"}}>
-
-                <Item>
-                    <Typography variant={"subtitle1"}
-                                sx={{
-                                    width: "70%",
-                                    textTransform: 'capitalize',
-                                    ...(props.isSubguild ? {paddingLeft: '20px'} : {})
-                                }}>{props.g.name.replaceAll("_", " ")}</Typography>
-                    <Box sx={{
-                        width: "50px",
-                        height: "30px",
-                        marginLeft: "15px",
-                        alignItems: "center"
-                    }}>
-                        <NumberInputBasic
-                            aria-label="guild levels input"
-                            placeholder="0"
-                            onChange={props.onChange}
-                            className={props.className}
-                            value={value}
-                            onFocus={props.onFocus}
-                        />
-                    </Box>
-                </Item>
-            </Box>
-        </Grid>
-    )
-}
-
-const SubguildsList = (props: {
-    guild: MainGuild,
+    guild: FullGuild,
+    isSubguild: boolean,
     setLastClass: Dispatch<SetStateAction<string>>,
-    addOrUpdateGuild: (guildType: GuildType, guild: FullGuild, trained: number) => void
-}) => {
-    const {guildService, addOrUpdateGuild} = useReinc()
 
+}) {
+    const [value, setValue] = useState(0)
+    const [trainedForGuild, setTrainedFroGuild] = useState(0)
+    const [disabled, setDisabled] = useState(false)
+    const reinc = useReinc()
     const {
-        getMainGuilds,
-        getGuildByName,
-        maxSubguildsTrained
-    } = guildService
+        addOrUpdateGuild,
+        level, guilds,
+    } = reinc
 
-    const subguilds = props.guild.subGuilds
-    if (!subguilds || subguilds.length === 0) {
-        return <></>
+    const creatorDataContext = useCreatorData()
+
+    const onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+        if (value === 0) {
+            setValue(Math.min(props.guild.levels, MAX_GUILD_LEVELS - trainedForGuild, MAX_LEVEL - level) || 0)
+        }
+        props.setLastClass(className)
     }
 
-    return <>
-        {subguilds.length > 0 && subguilds.map((sg) => {
-            const className = `guild-${sg.name}`
-            return (
-                <>
-                    <GuildItem g={sg}
-                               onChange={(event: {
-                                   currentTarget: HTMLInputElement;
-                               }, value: number) => {
-                                   updateValue('sub', sg, value, addOrUpdateGuild);
-                               }}
-                               className={className}
-                               guild={getGuildByName(sg.name) as FullGuild}
-                               onFocus={(event) => {
-                                   const reincGuild = getGuildByName(sg.name)
-                                   if (!reincGuild || reincGuild?.levels === 0) {
-                                       updateValue('sub', (sg), sg.levels, addOrUpdateGuild)
-                                   }
-                                   props.setLastClass(className)
-                                   maxSubguildsTrained(sg)
+    useEffect(() => {
+        addOrUpdateGuild(props.guild.guildType, props.guild, value)
+    }, [value]);
 
-                               }}
-                               isSubguild={true}
-                    />
-                    {/*<SubguildsList guild={sg} className={props.className} setLastClass={props.setLastClass}/>*/}
-                </>
-            )
-        })}
-    </>;
+    function checkGuilds() {
+        const trained = GuildService(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
+        setTrainedFroGuild(trained)
+        setDisabled(trainedForGuild >= MAX_GUILD_LEVELS || level >= MAX_LEVEL || (props.isSubguild && trainedForGuild < 45))
+    }
+
+    useMemo(() => {
+        checkGuilds();
+    }, [guilds]);
+
+    useEffect(() => {
+        checkGuilds()
+    }, [reinc.guilds, value, props.guild]);
+
+    const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
+
+    const onChange = (value: number | null) => {
+        setValue(value || 0)
+    }
+
+    function deleteGuild(guild: FullGuild) {
+        if (disabled || level === MAX_LEVEL) {
+            setValue(1)
+            addOrUpdateGuild(guild.guildType, guild, 1)
+            props.setLastClass(className)
+        } else {
+            setValue(0)
+            addOrUpdateGuild(guild.guildType, guild, 0)
+        }
+    }
+
+    const onDelete = () => {
+        deleteGuild(props.guild)
+    };
+    return (
+        <>
+            {/*// @ts-ignore*/}
+            <Grid item direction={"row"} xs={12} sm={6} md={4} key={'index-' + props.guild.name}>
+                <Box sx={{minWidth: "400px"}}>
+
+                    <Item>
+                        <Typography variant={"subtitle1"}
+                                    sx={{
+                                        width: "70%",
+                                        textTransform: 'capitalize',
+                                        ...(props.isSubguild ? {paddingLeft: '20px'} : {})
+                                    }}>{props.guild.name.replaceAll("_", " ")}
+                            {value > 0 && !(!props.isSubguild && trainedForGuild > 45) && (
+                                < GridDeleteIcon sx={{marginLeft: '10px'}} onClick={onDelete}/>)}</Typography>
+                        <Box sx={{
+                            width: "50px",
+                            height: "30px",
+                            marginLeft: "15px",
+                            alignItems: "center"
+                        }}>
+                            <NumberInputBasic
+                                aria-label="guild levels input"
+                                placeholder="0"
+                                onChange={(_event: any, value1: number | null) => onChange(value1)}
+                                className={className}
+                                value={value}
+                                onFocus={onFocus}
+                                disabled={disabled}
+                            />
+                        </Box>
+                    </Item>
+                </Box>
+            </Grid>
+            {props.guild.subGuilds.map((sg) => {
+                return (
+                    <>
+                        <GuildItem guild={sg} setLastClass={props.setLastClass} isSubguild={true}/>
+                    </>
+                )
+            })}
+        </>
+    )
 }
 
 export default function Guilds(props: { myData: CreatorDataType }) {
     const {
         addOrUpdateGuild,
-        guildService,
         filteredData,
         guilds
     } = useReinc()
 
-    const {
-        getGuildByName,
-        maxSubguildsTrained,
-    } = guildService
 
     const {creatorData} = useCreatorData()
 
@@ -163,22 +168,7 @@ export default function Guilds(props: { myData: CreatorDataType }) {
                                 return (
                                     // @ts-ignore
                                     <Box sx={{minWidth: "400px"}}>
-                                        <GuildItem g={g as FullGuild}
-                                                   onChange={(event: {
-                                                       currentTarget: HTMLInputElement;
-                                                   }, value: number) => {
-                                                       updateValue('main', g, value, addOrUpdateGuild);
-                                                   }}
-                                                   className={className}
-                                                   guild={getGuildByName(g.name) as FullGuild}
-                                                   onFocus={(event: React.FocusEvent<HTMLInputElement>) => {
-                                                       updateValue('main', g, g.levels, addOrUpdateGuild)
-                                                       setLastClass(className)
-                                                       maxSubguildsTrained(g as FullGuild)
-
-                                                   }}/>
-                                        <SubguildsList guild={g} setLastClass={setLastClass}
-                                                       addOrUpdateGuild={addOrUpdateGuild}/>
+                                        <GuildItem guild={g as FullGuild} isSubguild={false} setLastClass={setLastClass}/>
                                     </Box>
                                 )
                             })}

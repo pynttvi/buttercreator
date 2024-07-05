@@ -7,7 +7,7 @@ import {
 } from '@mui/base/Unstable_NumberInput';
 import {styled} from '@mui/system';
 
-const NumberInput = React.forwardRef(function CustomNumberInput(
+export const NumberInput = React.forwardRef(function CustomNumberInput(
     props: NumberInputProps,
     ref: React.ForwardedRef<HTMLDivElement>,
 ) {
@@ -39,7 +39,7 @@ export type NumberInputBasicProps = {
     value?: number
     onChange: (event: any, value: any) => void
 }
-export default function NumberInputBasic(props: NumberInputBasicProps | NumberInputProps) {
+export default function NumberInputBasic(props: NumberInputBasicProps & NumberInputProps) {
     return (
         <NumberInput
             {...props}
@@ -97,10 +97,12 @@ const StyledInputRoot = styled('div')(
     border-color: ${blue[400]};
   }
 
+   
   // firefox
   &:focus-visible {
     outline: 0;
   }
+ 
 `,
 );
 
@@ -118,6 +120,10 @@ const StyledInputElement = styled('input')(
   border-radius: inherit;
   padding: 8px 12px;
   outline: 0;
+  &.${numberInputClasses.disabled} {
+    text-decoration: line-through;
+    color: ${grey[600]}
+}
 `,
 );
 
