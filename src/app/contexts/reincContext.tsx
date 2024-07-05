@@ -6,6 +6,7 @@ import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {GuildType} from "@/app/components/guilds";
+import {GuildService, GuildServiceType, MainGuild} from "@/app/service/guildService";
 
 export const MAX_LEVEL = 0
 export type ReincGuild = {
@@ -30,24 +31,19 @@ export type ReincAbility = Ability & { max?: boolean }
 
 export type ReincFunctionsType = {
     updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
-    addOrUpdateGuild: (guildType: GuildType, guild: ReincGuild, levels: number) => void
+    addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
     getReincGuildByGuildLevels: (guild: Partial<GuildLevels>) => GuildLevels | undefined
     getReincGuildByName: (name: string) => GuildLevels | undefined
-    getGuildByGuildLevels: (guild: Partial<GuildLevels>) => Guild | undefined
-    getSubguildsFromGuild: (guild: Guild) => GuildLevels[]
-    getSubguildsByGuildName: (name: string) => GuildLevels[]
-    getAllGuildsAndSubguilds: () => Guild[]
-    getAllGuildAndSubguildLevels: () => GuildLevels[]
-    getGuildLevelsFromGuild: (guild: Guild) => GuildLevels
     setSkills: Dispatch<SetStateAction<Ability[]>>
     setSpells: Dispatch<SetStateAction<Ability[]>>
     setRace: Dispatch<SetStateAction<Race | null>>
     setFilteredData: Dispatch<SetStateAction<FilteredData>>
+    guildService: GuildServiceType
 };
 
 export type FilteredData = {
-    guilds?: GuildLevels [] | undefined
+    guilds?: MainGuild [] | undefined
     skills?: Ability[] | undefined
     spells?: Ability[] | undefined
     filteredAbilities?: () => Ability[] | undefined
@@ -127,26 +123,6 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         return skills.filter((s) => s.trained > 0)?.concat(spells.filter((s) => s.trained > 0))
     }
 
-    const getGuildByGuildLevels = (guild: Partial<GuildLevels>): Guild | undefined => {
-        // @ts-ignore
-        return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase()}`]
-    }
-    const getGuildLevelsFromGuild = (guild: Guild): GuildLevels => {
-        return {name: guild.name, levels: Object.keys(guild.levels.keys()).length}
-    }
-    const getSubguildsFromGuild = (guild: Guild | undefined): GuildLevels[] => {
-        const subGuilds: GuildLevels[] = []
-        if (guild) {
-            Object.entries(guild.subguilds).forEach((entry) => {
-                subGuilds.push({...entry[1], name: entry[1].name.toLowerCase().replaceAll("_", " ")})
-            })
-        }
-        return subGuilds
-    }
-
-    const getSubguildsByGuildName = (name: string): GuildLevels[] => {
-        return getSubguildsFromGuild(getGuildByGuildLevels({name}))
-    }
 
     const addOrUpdateAbility = (type: 'skills' | 'spells', ability: Ability) => {
         const updatedRow: ReincAbility = {...ability};
@@ -186,7 +162,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         }
     }
 
-    const addOrUpdateGuild = (guildType: GuildType, guild: ReincGuild, levels: number) => {
+    const addOrUpdateGuild = (guildType: GuildType, guild: MainGuild, levels: number) => {
         const idx = ctx.guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
         if (idx === -1) {
             setGuilds([...guilds, {...guilds[idx], guildType: guildType, levels: levels, name: guild.name.toLowerCase().replaceAll("_"," ")}])
@@ -195,45 +171,6 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         }
     }
 
-    const getAllGuildAndSubguildLevels = (): GuildLevels[] => {
-        return getAllGuildsAndSubguilds().map((g: Guild): GuildLevels => {
-            return {name: g.name, levels: Object.keys(g.levels.keys()).length}
-        })
-    }
-
-    const getAllGuildsAndSubguilds = () => {
-        const dataGuilds: Guild[] = []
-
-        function addDataGuild(guild: Guild) {
-            if (!dataGuilds.find((g: Guild) => g.name === guild.name)) {
-                dataGuilds.push(guild)
-            }
-        }
-
-        Object.entries(creatorDataContext.originalCreatorData).forEach((entry) => {
-            if (entry[0].startsWith("guild_")) {
-                const guild: Guild = entry[1] as Guild
-                dataGuilds.push(guild)
-                dataGuilds.forEach((g: Guild) => {
-
-                    getSubguildsByGuildName(g.name).forEach((sg) => {
-                        const subguild = getGuildByGuildLevels(sg)
-
-                        if (subguild) {
-                            addDataGuild(subguild)
-                        }
-                        subguild?.subguilds.forEach((sg1) => {
-                            const subguild1 = getGuildByGuildLevels(sg1)
-                            if (subguild1 && sg1.name !== sg.name) {
-                                addDataGuild(subguild1)
-                            }
-                        })
-                    })
-                })
-            }
-        })
-        return dataGuilds
-    }
 
     const reincFunctions: ReincFunctionsType = {
         updateAbility: addOrUpdateAbility,
@@ -241,16 +178,11 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         getReincGuildByGuildLevels,
         getReincGuildByName,
         addOrUpdateGuild,
-        getGuildByGuildLevels,
-        getSubguildsFromGuild,
-        getSubguildsByGuildName,
-        getAllGuildsAndSubguilds,
-        getAllGuildAndSubguildLevels,
         setSkills,
         setSpells,
         setRace,
         setFilteredData,
-        getGuildLevelsFromGuild,
+        guildService: GuildService(creatorDataContext, values as ReincContextType)
     }
 
     const level = 0

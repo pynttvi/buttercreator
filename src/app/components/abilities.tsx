@@ -7,7 +7,7 @@ import {
     GridCallbackDetails,
     GridCellParams,
     GridColDef,
-    GridRenderEditCellParams, GridRowModel,
+    GridRenderEditCellParams,
     GridRowSelectionModel
 } from '@mui/x-data-grid';
 import React, {Suspense, useEffect, useState} from 'react';
@@ -16,7 +16,6 @@ import {Ability} from '../parsers/abilityCostParser';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {onlyUnique} from "@/app/filters/creatorDataFilters";
 
 
 const roundUp5 = (n: number) => {

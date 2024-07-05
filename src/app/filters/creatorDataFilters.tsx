@@ -54,7 +54,7 @@ export const GuildSkillFilter = (filteredData: FilteredData, creatorDataContext:
                 const g: Guild = creatorData[guildFileName]
 
                 for (let i = guild.levels; i > 0; i--) {
-                    const level = g.levels.get(i.toString())
+                    const level = g.levelMap.get(i.toString())
                     level?.abilities.forEach((guildAbility: GuildAbility) => {
                         if (!guildAbilities.find((ga: GuildAbility) => ga.name === guildAbility.name)) {
                             guildAbilities.push(guildAbility)
@@ -89,8 +89,8 @@ export const AbilityGuildFilter = (filteredData: FilteredData, creatorDataContex
 
             function filterByAbility(ability: Ability) {
                 reinc.getAllGuildsAndSubguilds().forEach((g) => {
-                    for (let i = g.levels.size; i > 0; i--) {
-                        const level = g.levels.get(i.toString())
+                    for (let i = g.levelMap.size; i > 0; i--) {
+                        const level = g.levelMap.get(i.toString())
                         level?.abilities.forEach((guildAbility: GuildAbility) => {
                             if (ability.name.trim() === guildAbility.name.trim() && ability.trained <= guildAbility.max) {
                                 addGuild(g)

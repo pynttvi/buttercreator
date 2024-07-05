@@ -10,6 +10,7 @@ import QpCostParser, {QpCost} from "./parsers/qpCostParser"
 import AblitiyCostsParser, {Ability} from "./parsers/abilityCostParser"
 import WishCostParser, {WishCost} from "./parsers/wishCostParser"
 import RacesFileParser, {Race} from "./parsers/raceParser"
+import {ReincGuild} from "@/app/contexts/reincContext";
 
 export const NON_GUILD_FILES = [
     'guilds.chr',
@@ -117,6 +118,7 @@ export type GuildNames =
 type GuildEntry = {
     [key in GuildNames]: Guild
 }
+
 
 export type ParserProcess = {
     run: () => Promise<Ability[]> | Promise<GuildLevels[]> | Promise<Race[]> | Promise<Guild> | Promise<RaceHelp[]> | Promise<SkillHelp[]> | Promise<SpellHelp[]> | Promise<LevelCost> | Promise<QpCost> | Promise<StatCost> | Promise<WishCost>

@@ -16,8 +16,8 @@ export type GuildStat = {
 export type GuildLevel = { stats: GuildStat[], abilities: GuildAbility[] }
 export type Guild = {
     name: string
-    levels: Map<string, GuildLevel>,
-    subguilds: GuildLevels[]
+    levelMap: Map<string, GuildLevel>,
+    subGuildLevels: GuildLevels[]
 }
 
 export default async function GuildParser(data: FileObject): Promise<ParserProcess> {
@@ -100,8 +100,8 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
 
         return {
             name: data.name.replaceAll(".chr", "").toLowerCase().replaceAll("_", " ")
-            , levels: guildLevels,
-            subguilds: subguilds
+            , levelMap: guildLevels,
+            subGuildLevels: subguilds
         }
 
     }
