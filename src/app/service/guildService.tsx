@@ -3,10 +3,13 @@ import {ReincContextType} from "@/app/contexts/reincContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
+import {onlyUnique} from "@/app/filters/creatorDataFilters";
 
 export type GuildServiceType = {
     getMainGuilds: () => MainGuild[]
     getGuildByName: (name: string) => MainGuild | undefined
+    maxSubguildsTrained: (guild: FullGuild) => boolean
+    trainedLevelForGuild: (guild: FullGuild) => number
 }
 
 export interface SubGuild extends MainGuild {
@@ -26,10 +29,12 @@ export interface MainGuild {
     levelMap: Map<string, GuildLevel>
 }
 
+export type FullGuild = SubGuild & MainGuild
+
 export function GuildService(creatorDataContext: CreatorDataContextType, reincContext: ReincContextType): GuildServiceType {
     const getGuildByGuildLevels = (guild: Partial<GuildLevels>): Guild | undefined => {
         // @ts-ignore
-        return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase().replaceAll(" ","_")}`]
+        return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase().replaceAll(" ", "_")}`]
     }
     const getGuildLevelsFromGuild = (guild: Guild): GuildLevels => {
         return {name: guild.name, levels: Object.keys(guild.levelMap.keys()).length}
@@ -88,6 +93,41 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         })
     }
 
+    const trainedLevelForGuild = (guild: FullGuild) => {
+        let trained = 0
+        if (!guild) {
+            return 0
+        }
+        const matchinSiblings = []
+        matchinSiblings.push(...reincContext.guilds.filter((g) => {
+                return g.name === guild.name
+            })
+        )
+
+        matchinSiblings.push(...reincContext.guilds.filter((g) => {
+                return (g.mainGuild && guild.mainGuild && g.mainGuild?.name === guild.mainGuild?.name)
+            })
+        )
+        matchinSiblings.push(...reincContext.guilds.filter((g) => {
+                return g.name === guild.mainGuild?.name
+            })
+        )
+        matchinSiblings.push(...reincContext.guilds.filter((g) => {
+                return g.mainGuild?.name === guild.name
+            })
+        )
+
+
+        matchinSiblings.filter(onlyUnique).map((g) => {
+            return g.trained
+        }).forEach((n) => trained = trained + n)
+
+        return trained
+    }
+
+    const maxSubguildsTrained = (guild: FullGuild) => {
+        return trainedLevelForGuild(guild) <= 60
+    }
     const getMainGuilds = (): MainGuild[] => {
         const guilds = creatorDataContext.originalCreatorData.guilds.map((gl) => {
             const guild = getGuildByGuildLevels(gl)
@@ -156,11 +196,13 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
 
         return guilds
     }
-    const getGuildByName = (name: string) : MainGuild | undefined => {
+    const getGuildByName = (name: string): MainGuild | undefined => {
         return getMainGuilds().find((g) => g.name === name)
     }
     return {
         getMainGuilds,
-        getGuildByName
+        getGuildByName,
+        maxSubguildsTrained,
+        trainedLevelForGuild
     }
 }

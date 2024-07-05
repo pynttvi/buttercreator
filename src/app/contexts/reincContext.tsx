@@ -3,16 +3,15 @@ import {Ability} from '../parsers/abilityCostParser';
 import {Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {GuildType} from "@/app/components/guilds";
-import {GuildService, GuildServiceType, MainGuild} from "@/app/service/guildService";
+import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildService";
 
 export const MAX_LEVEL = 0
 
 export type ReincType = {
     filteredData: FilteredData
     race: Race | null | undefined;
-    guilds: MainGuild[];
+    guilds: FullGuild[];
     skills: ReincAbility[];
     spells: ReincAbility[];
     skillMax: number;
@@ -24,18 +23,18 @@ export type ReincAbility = Ability & { max?: boolean }
 
 export type ReincFunctionsType = {
     updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
-    addOrUpdateGuild: (guildType: GuildType, guild: MainGuild, levels: number) => void
+    addOrUpdateGuild: (guildType: GuildType, guild: FullGuild, levels: number) => void
     getAbility: (ability: Partial<Ability>) => Ability | undefined
     setSkills: Dispatch<SetStateAction<Ability[]>>
     setSpells: Dispatch<SetStateAction<Ability[]>>
     setRace: Dispatch<SetStateAction<Race | null>>
     setFilteredData: Dispatch<SetStateAction<FilteredData>>
     guildService: GuildServiceType
-    getReincGuildByName: (name: string) => MainGuild | undefined
+    getReincGuildByName: (name: string) => FullGuild | undefined
 };
 
 export type FilteredData = {
-    guilds?: MainGuild [] | undefined
+    guilds?: FullGuild [] | undefined
     skills?: Ability[] | undefined
     spells?: Ability[] | undefined
     filteredAbilities?: () => Ability[] | undefined
@@ -63,7 +62,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [race, setRace] = useState<Race | null>(null)
     const [skills, setSkills] = useState<Ability[]>([...creatorData.skills.filter(onlyUnique)])
     const [spells, setSpells] = useState<Ability[]>([...creatorData.spells.filter(onlyUnique)])
-    const [guilds, setGuilds] = useState<MainGuild[]>([])
+    const [guilds, setGuilds] = useState<FullGuild[]>([])
     const [filteredData, setFilteredData] = useState<FilteredData>({
         ...defaultFilteredData,
 
@@ -132,7 +131,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         return updatedRow;
     }
 
-    const getReincGuildByName = (name: string): MainGuild | undefined => {
+    const getReincGuildByName = (name: string): FullGuild | undefined => {
         return guilds.find((rg) => {
             return rg.name === name
         })
@@ -149,10 +148,16 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         }
     }
 
-    const addOrUpdateGuild = (guildType: GuildType, guild: MainGuild, trained: number) => {
-        const idx = ctx.guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
+    const addOrUpdateGuild = (guildType: GuildType, guild: FullGuild, trained: number) => {
+        const idx = guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
         if (idx === -1) {
-            setGuilds([...guilds, {...guilds[idx], guildType: guildType, trained: trained, name: guild.name.toLowerCase().replaceAll("_"," ")}])
+            const newGuild: FullGuild = {
+                ...guild,
+                guildType: guildType,
+                trained: trained,
+                name: guild.name.toLowerCase().replaceAll("_", " ")
+            }
+            setGuilds([...guilds, newGuild])
         } else {
             setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], trained: trained}])
         }
