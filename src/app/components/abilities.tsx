@@ -30,7 +30,19 @@ const roundDown5 = (n: number) => {
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc = useReinc()
     const abilityType = props.type
-    let abilities = props.type === 'skills' ? reinc.skills : reinc.spells
+    let abi: Ability[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
+
+    const [abilities, setAbilities] = useState<Ability[]>(abi)
+
+    useEffect(() => {
+        console.log("LVL0", reinc.filteredData)
+        if (abi.length === 0 || reinc.level === 0) {
+             abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
+        }
+        setAbilities(abi)
+    }, [reinc.level, reinc.filteredData.skills, reinc.filteredData.spells]);
+
+
     const apiRef = React.useRef<GridApiCommunity | undefined>();
     const [lastEdit, setLastEdit] = useState("")
 
@@ -61,7 +73,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
-             reinc.updateAbility(props.type, {...row, trained: 0})
+            reinc.updateAbility(props.type, {...row, trained: 0})
         }
     }
 
@@ -146,7 +158,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
 
     const processRowUpdate = (newRow: Ability) => {
-        if(newRow.trained > 0 && newRow.trained < 10){
+        if (newRow.trained > 0 && newRow.trained < 10) {
             newRow.trained = 5
         }
         return reinc.updateAbility(props.type, newRow);

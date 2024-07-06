@@ -9,6 +9,7 @@ export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
     getMainGuilds: () => MainGuild[]
     getGuildByName: (name: string) => FullGuild | undefined
+    getReincGuildByName: (name: string) => FullGuild | undefined
     maxSubguildsTrained: (guild: FullGuild) => boolean
     trainedLevelForGuild: (guild: FullGuild) => number
     totalTrainedLevels: () => number
@@ -209,11 +210,15 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
     const getGuildByName = (name: string): FullGuild | undefined => {
         return getMainGuilds().find((g) => g.name === name) as FullGuild
     }
+    const getReincGuildByName = (name: string): FullGuild | undefined => {
+        return reincContext.guilds.find((g) => g.name === name) as FullGuild
+    }
     return {
         getMainGuilds,
         getGuildByName,
         maxSubguildsTrained,
         trainedLevelForGuild,
         totalTrainedLevels,
+        getReincGuildByName
     }
 }

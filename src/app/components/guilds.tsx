@@ -7,11 +7,11 @@ import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import React, {Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import {FullGuild, GuildService, MAX_GUILD_LEVELS} from "@/app/service/guildService";
 import NumberInputBasic from "@/app/components/numberInput";
 import {GridDeleteIcon} from "@mui/x-data-grid";
-import {Guild} from "@/app/parsers/guildParser";
+import {trainedAbilities} from "@/app/filters/creatorDataFilters";
 
 const Item = styled(Typography)(({theme}) => ({
     padding: theme.spacing(1),
@@ -24,10 +24,9 @@ export type GuildType = 'main' | 'sub'
 function GuildItem(props: {
     guild: FullGuild,
     isSubguild: boolean,
-    setLastClass: Dispatch<SetStateAction<string>>,
 
 }) {
-    const [value, setValue] = useState(0)
+    const [value, setValue] = useState(props.guild.trained)
     const [trainedForGuild, setTrainedFroGuild] = useState(0)
     const [disabled, setDisabled] = useState(false)
     const reinc = useReinc()
@@ -38,30 +37,32 @@ function GuildItem(props: {
 
     const creatorDataContext = useCreatorData()
 
-    const onFocus = (event: React.FocusEvent<HTMLInputElement>) => {
+    const onClick = () => {
         if (value === 0) {
             setValue(Math.min(props.guild.levels, MAX_GUILD_LEVELS - trainedForGuild, MAX_LEVEL - level) || 0)
         }
-        props.setLastClass(className)
+        focusClass(className)
     }
 
     useEffect(() => {
-        addOrUpdateGuild(props.guild.guildType, props.guild, value)
+        if (!(props.guild.trained === 0 && value === 0)) {
+            addOrUpdateGuild(props.guild.guildType, props.guild, value)
+        }
     }, [value]);
 
     function checkGuilds() {
         const trained = GuildService(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
         setTrainedFroGuild(trained)
-        setDisabled(trainedForGuild >= MAX_GUILD_LEVELS || level >= MAX_LEVEL || (props.isSubguild && trainedForGuild < 45))
+        setDisabled(trainedForGuild >= MAX_GUILD_LEVELS || level >= MAX_LEVEL || (props.guild.guildType === "sub" && trainedForGuild < 45))
     }
 
     useMemo(() => {
         checkGuilds();
-    }, [guilds]);
+    }, [level]);
 
     useEffect(() => {
         checkGuilds()
-    }, [reinc.guilds, value, props.guild]);
+    }, [level]);
 
     const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
 
@@ -69,20 +70,37 @@ function GuildItem(props: {
         setValue(value || 0)
     }
 
-    function deleteGuild(guild: FullGuild) {
+    async function deleteGuild(guild: FullGuild): Promise<number> {
+        let value = 0
         if (disabled || level === MAX_LEVEL) {
-            setValue(1)
-            addOrUpdateGuild(guild.guildType, guild, 1)
-            props.setLastClass(className)
+            value = 1
+            addOrUpdateGuild(guild.guildType, guild, value)
+            focusClass(className)
         } else {
-            setValue(0)
-            addOrUpdateGuild(guild.guildType, guild, 0)
+            value = 0
+            addOrUpdateGuild(guild.guildType, guild, value)
         }
+        return value
     }
 
     const onDelete = () => {
-        deleteGuild(props.guild)
+        deleteGuild(props.guild).then((n) => {
+            setValue(n)
+        })
     };
+
+    const focusClass = (className: string) => {
+        (async () => {
+            await new Promise(resolve => setTimeout(resolve, 50));
+            const active: HTMLInputElement | null = document.querySelector(`.${className || 'none'} .base-NumberInput-input`);
+            if (active) {
+                active?.focus();
+                active?.select();
+            }
+        })()
+    }
+
+
     return (
         <>
             {/*// @ts-ignore*/}
@@ -109,18 +127,19 @@ function GuildItem(props: {
                                 placeholder="0"
                                 onChange={(_event: any, value1: number | null) => onChange(value1)}
                                 className={className}
-                                value={value}
-                                onFocus={onFocus}
+                                value={props.guild.trained || 0}
+                                onClick={onClick}
+                                key={"guild-input" + props.guild.name}
                                 disabled={disabled}
                             />
                         </Box>
                     </Item>
                 </Box>
             </Grid>
-            {props.guild.subGuilds.map((sg) => {
+            {!(trainedAbilities(reinc).totalCount > 0 && level === 0) && props.guild.subGuilds.map((sg) => {
                 return (
                     <>
-                        <GuildItem guild={sg} setLastClass={props.setLastClass} isSubguild={true}/>
+                        <GuildItem guild={sg} isSubguild={true}/>
                     </>
                 )
             })}
@@ -129,46 +148,30 @@ function GuildItem(props: {
 }
 
 export default function Guilds(props: { myData: CreatorDataType }) {
+    const reinc = useReinc()
     const {
-        addOrUpdateGuild,
         filteredData,
-        guilds
-    } = useReinc()
+        level
+    } = reinc
 
+    let data = filteredData?.guilds  //creatorData
 
-    const {creatorData} = useCreatorData()
-
-
-    const [lastClass, setLastClass] = useState("")
-    const focusClass = (className: string) => {
-        (async () => {
-            await new Promise(resolve => setTimeout(resolve, 50));
-            const active: HTMLInputElement | null = document.querySelector(`.${className || 'none'} .base-NumberInput-input`);
-            if (active) {
-                active?.focus();
-                active?.select();
-            }
-        })()
-    }
-
+    //console.log("FILTERED", data, level)
+    console.log("Reinc", reinc.guilds)
     useEffect(() => {
-        focusClass(lastClass)
-    }, [lastClass]);
 
-    const data = filteredData  //creatorData
-    console.log("DATA", data)
-    console.log("REINC", guilds)
+    }, [filteredData]);
     return (
         <SectionBox title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
-                {data?.guilds ? (
+                {data ? (
                         <>
-                            {data?.guilds.sort((a, b) => b.levels - a.levels).map((g: FullGuild, index: number) => {
+                            {data?.sort((a, b) => b.levels - a.levels).map((g: FullGuild, index: number) => {
                                 const className = `guild-${g.name}`
                                 return (
                                     // @ts-ignore
                                     <Box sx={{minWidth: "400px"}}>
-                                        <GuildItem guild={g as FullGuild} isSubguild={false} setLastClass={setLastClass}/>
+                                        <GuildItem guild={g as FullGuild} isSubguild={false}/>
                                     </Box>
                                 )
                             })}

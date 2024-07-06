@@ -1,4 +1,4 @@
-import React, {Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useState} from 'react';
+import React, {Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useState} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
@@ -16,11 +16,10 @@ export type ReincType = {
     spells: ReincAbility[];
     skillMax: number;
     spellMax: number
-};
-
-export type TransientReincType = {
     level: number
 };
+
+export type TransientReincType = {};
 
 export type ReincAbility = Ability & { max?: boolean }
 
@@ -41,8 +40,11 @@ export type FilteredData = {
     skills?: Ability[] | undefined
     spells?: Ability[] | undefined
     filteredAbilities?: () => Ability[] | undefined
+    filterCount: number
 }
-const defaultFilteredData: FilteredData = {}
+const defaultFilteredData: FilteredData = {
+    filterCount: 0
+}
 
 export type ReincContextType = ReincType & ReincFunctionsType & TransientReincType
 export const defaultReincContext: ReincType = {
@@ -53,6 +55,7 @@ export const defaultReincContext: ReincType = {
     race: null,
     skillMax: 100,
     spellMax: 100,
+    level: 0
 };
 export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
@@ -60,6 +63,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const ctx = useContext(ReincContext)
     const creatorDataContext = useCreatorData()
     const {creatorData} = creatorDataContext
+    const [level, setLevel] = useState<number>(0)
     const [freeLevels, setFreeLevels] = useState<number>(0)
     const [race, setRace] = useState<Race | null>(null)
     const [skills, setSkills] = useState<Ability[]>([...creatorData.skills.filter(onlyUnique)])
@@ -67,8 +71,10 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [guilds, setGuilds] = useState<FullGuild[]>([])
     const [filteredData, setFilteredData] = useState<FilteredData>({
         ...defaultFilteredData,
-
+        skills: skills,
+        spells: spells,
     })
+
     const skillMax = race?.skill_max || 100
     const spellMax = race?.skill_max || 100
     const values: ReincType = {
@@ -81,6 +87,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         race,
         skillMax,
         spellMax,
+        level,
     }
 
     if (values.skills.length === 0) {
@@ -89,6 +96,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     if (values.spells.length === 0) {
         values.spells.push(...creatorData.spells)
     }
+
 
     const getDefaultFilters = () => {
         return {
@@ -100,15 +108,6 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
             }
         }
     }
-    useEffect(() => {
-        filterData()
-    }, [skills]);
-
-    // useEffect(() => {
-    //     if (guildLevels === 0 && getTrainedAbilities()?.length === 0) {
-    //         //  setFilteredData(getDefaultFilters)
-    //     }
-    // }, [guildLevels]);
 
     const getTrainedAbilities = (): Ability[] | undefined => {
         return skills.filter((s) => s.trained > 0)?.concat(spells.filter((s) => s.trained > 0))
@@ -149,26 +148,45 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     }
 
     const addOrUpdateGuild = (guildType: GuildType, guild: FullGuild, trained: number) => {
-        const idx = guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
-        if (idx === -1) {
-            const newGuild: FullGuild = {
-                ...guild,
-                guildType: guildType,
-                trained: trained,
-                name: guild.name.toLowerCase().replaceAll("_", " ")
+        console.log("UPDATING GUILD:", guild, trained)
+        if (guildType === 'main') {
+            const idx = guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
+            if (idx === -1) {
+                const newGuild: FullGuild = {
+                    ...guild,
+                    guildType: guildType,
+                    trained: trained,
+                    name: guild.name.toLowerCase().replaceAll("_", " ")
+                }
+                setGuilds([...guilds, newGuild])
+            } else {
+                setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], trained: trained}])
             }
-            setGuilds([...guilds, newGuild])
         } else {
-            setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], trained: trained}])
+
+            const otherGuilds = guilds.filter((g) => g.name.toLowerCase() !== guild.mainGuild?.name.toLowerCase())
+            const main = guilds.find((g) => g.name === guild.mainGuild?.name)
+            if (!main) {
+                throw new Error("Subguild added without main")
+            }
+            const sub = main.subGuilds.find((sg) => {
+                return sg.name === guild.name
+            })
+            if (sub) {
+                sub.trained = trained
+
+                const otherSubs = main.subGuilds.filter((sg) => {
+                    return sg.name !== guild.name
+                })
+
+                setGuilds([...otherGuilds, {...main, subGuilds: [sub, ...otherSubs]}])
+            }
         }
-        console.log("EDIT guilds", guilds)
     }
 
 
     const guildService = GuildService(creatorDataContext, values as ReincContextType)
-    const transientContex = {
-            level: guildService.totalTrainedLevels() + freeLevels,
-        }
+    const transientContex = {}
 
     const reincFunctions: ReincFunctionsType = {
         updateAbility: addOrUpdateAbility,
@@ -182,11 +200,34 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         guildService,
     }
 
-    const level = 0
     const context = {...values, ...reincFunctions, ...transientContex}
+
     const filterData = () => {
         doFilter(creatorDataContext, context as ReincContextType)
     }
+
+    useEffect(() => {
+        const guildService = GuildService(creatorDataContext, values as ReincContextType)
+        setLevel(guildService.totalTrainedLevels() + freeLevels)
+        const untrainedGuilds = guilds.filter((g) => {
+            return g.trained === 0
+        })
+
+        console.log("G", guilds)
+        if (untrainedGuilds.length > 0) {
+            setGuilds(guilds.filter((g) => {
+                return g.trained > 0
+            }))
+        }
+        filterData()
+
+    }, [skills, spells, guilds]);
+    useMemo(() => {
+        const guildService = GuildService(creatorDataContext, values as ReincContextType)
+        setLevel(guildService.totalTrainedLevels() + freeLevels)
+        filterData()
+
+    }, [skills, spells, guilds]);
 
     return (
         <ReincContext.Provider value={context}>
