@@ -35,10 +35,10 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     const [abilities, setAbilities] = useState<Ability[]>(abi)
 
     useEffect(() => {
-        if (abi.length === 0 || reinc.level === 0) {
-             abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
+        if (abi.length === 0 && reinc.level === 0) {
+            abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }
-        console.log("Abilities", abilities)
+        console.debug("Abilities", abilities)
         setAbilities(abi)
     }, [reinc]);
 
@@ -86,10 +86,11 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
     const TrainedInput = (props: { params: GridRenderEditCellParams<Ability> }) => {
         const max = abilityType === "skills" ? reinc.skillMax : reinc.spellMax
-        const [value, setValue] = useState(max)
         const params = props.params
+        const [value, setValue] = useState(reinc.level === 0 ? max : reinc.guildService.maxForGuilds(params.row, reinc.guilds))
         const parse = (newValue: number) => {
-            newValue = Math.min(newValue, max)
+            console.debug("ABILITY", params.row)
+            newValue = Math.min(newValue, max, (reinc.guildService.maxForGuilds(params.row, reinc.guilds) || max))
             newValue = Math.max(newValue, 0)
 
             if (newValue > 10) {

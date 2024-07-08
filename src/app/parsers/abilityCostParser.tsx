@@ -1,16 +1,22 @@
 import {FileObject} from "../page"
 import {getFile} from "../fileService";
 import {ParserProcess} from "../parserFactory";
+import {FullGuild} from "@/app/service/guildService";
 
 export type Ability = {
     id: number
     name: string
     value: number
     trained: number
+    maxed?: boolean
     type: "skill" | "spell"
+    guild?: FullGuild
+    maxForGuild?: () => number
 }
 
-export default async function AblitiyCostsParser(data: FileObject, abilityType: 'skills' | 'spells'): Promise<ParserProcess> {
+export default async function
+
+    AblitiyCostsParser(data: FileObject, abilityType: 'skills' | 'spells'): Promise<ParserProcess> {
 
     const ablitiyCosts: Ability[] = []
 
@@ -31,7 +37,12 @@ export default async function AblitiyCostsParser(data: FileObject, abilityType: 
             lines.forEach((line: string, i: number) => {
                 const l = parseLine(line)
                 if (l) {
-                    ablitiyCosts.push({id: i, trained: 0, type: abilityType === "skills" ? "skill" : "spell", ...l})
+                    ablitiyCosts.push({
+                        id: i,
+                        trained: 0,
+                        type: abilityType === "skills" ? "skill" : "spell",
+                        ...l
+                    })
                 }
             });
 

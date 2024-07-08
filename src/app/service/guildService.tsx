@@ -6,6 +6,7 @@ import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
 import {onlyUnique} from "@/app/filters/creatorDataFilters";
 import {sortByName} from "@/app/filters/utils";
+import {Ability} from "@/app/parsers/abilityCostParser";
 
 export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
@@ -15,6 +16,7 @@ export type GuildServiceType = {
     maxSubguildsTrained: (guild: FullGuild) => boolean
     trainedLevelForGuild: (guild: FullGuild) => number
     totalTrainedLevels: () => number
+    maxForGuilds: (ability: Ability, guilds: FullGuild[], max?: number) => number
 }
 
 export interface SubGuild extends MainGuild {
@@ -228,14 +230,38 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         return getMainGuilds().find((g) => g.name === name) as FullGuild
     }
     const getReincGuildByName = (name: string): FullGuild | undefined => {
-        return reincContext.guilds.find((g) => g.name === name) as FullGuild
+        let guild = reincContext.guilds.find((g) => g.name === name)
+        if (!guild) {
+            const subs = reincContext?.guilds?.map((g) => g.subGuilds).reduce((a, b) => a.concat(b), [])
+            guild = subs.find((sg) => sg.name === name)
+        }
+        return guild
     }
+    const maxForGuilds = (ability: Ability, guilds: FullGuild[], max: number = 0): number => {
+        guilds?.forEach((guild) => {
+            for (let i = guild.trained; i > 0; i--) {
+                const level = guild.levelMap.get(i.toString())
+                level?.abilities.forEach((a) => {
+                    if (a.name === ability.name && a.max > max) {
+                        max = a.max
+                        console.log("MAX GUILD", guild)
+                    }
+                })
+            }
+            if (guild.subGuilds.length > 0) {
+                return maxForGuilds(ability, guild.subGuilds, max)
+            }
+        })
+        return max;
+    }
+
     return {
         getMainGuilds,
         getGuildByName,
         maxSubguildsTrained,
         trainedLevelForGuild,
         totalTrainedLevels,
-        getReincGuildByName
+        getReincGuildByName,
+        maxForGuilds
     }
 }

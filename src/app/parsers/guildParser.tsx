@@ -2,13 +2,14 @@ import {FileObject} from "../page"
 import {ParserProcess} from "../parserFactory"
 import {getFile} from "../fileService"
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
-import {number} from "prop-types";
+import {FullGuild} from "@/app/service/guildService";
 
 export type GuildAbility = {
     id?: number,
     name: string,
     max: number,
     type: 'skill' | 'spell'
+    guild?: FullGuild
 }
 
 export type GuildStat = {

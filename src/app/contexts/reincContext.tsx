@@ -124,14 +124,14 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         const updatedRow: ReincAbility = {...ability};
         if (type === "skills") {
             if (updatedRow.trained === skillMax) {
-                updatedRow.max = true
+                updatedRow.maxed = true
             }
-            setSkills(skills.map((skill) => (skill.id === ability.id ? updatedRow : skill)))
+            setSkills(skills.map((skill) => (skill.name === ability.name ? updatedRow : skill)))
         } else {
             if (updatedRow.trained === spellMax) {
-                updatedRow.max = true
+                updatedRow.maxed = true
             }
-            setSpells(spells.map((spell) => (spell.id === ability.id ? updatedRow : spell)))
+            setSpells(spells.map((spell) => (spell.name=== ability.name ? updatedRow : spell)))
         }
         return updatedRow;
     }
@@ -241,6 +241,25 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         filterData()
 
     }, [skills, spells, guilds]);
+
+    useEffect(() => {
+        const guildService = GuildService(creatorDataContext, context as ReincContextType)
+        setLevel(guildService.totalTrainedLevels() + freeLevels)
+        const untrainedGuilds = guilds.filter((g) => {
+            return g.trained === 0
+        })
+
+        console.debug("GUILDS", guilds)
+        if (untrainedGuilds.length > 0) {
+            setGuilds(guilds.filter((g) => {
+                return g.trained > 0
+            }))
+        }
+        filterData()
+
+    }, [skills, spells, guilds]);
+
+
     useMemo(() => {
         const guildService = GuildService(creatorDataContext, context as ReincContextType)
         setLevel(guildService.totalTrainedLevels() + freeLevels)
