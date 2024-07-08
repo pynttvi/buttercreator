@@ -38,8 +38,9 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         if (abi.length === 0 || reinc.level === 0) {
              abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }
+        console.log("Abilities", abilities)
         setAbilities(abi)
-    }, [reinc.level, reinc.filteredData.skills, reinc.filteredData.spells]);
+    }, [reinc]);
 
 
     const apiRef = React.useRef<GridApiCommunity | undefined>();

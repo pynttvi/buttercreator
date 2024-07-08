@@ -4,6 +4,7 @@ import {Ability} from "@/app/parsers/abilityCostParser";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {FullGuild} from "@/app/service/guildService";
 import {GuildAbility} from "@/app/parsers/guildParser";
+import {sortByName} from "@/app/filters/utils";
 
 export type CreatorDataFilterType = {
     doFilter: () => FilteredData
@@ -86,7 +87,7 @@ export const AbilitiesByGuildsFilter = (filteredData: FilteredData, creatorDataC
 
     return {
         doFilter: (): FilteredData => {
-            const guildAbilities: GuildAbility[] = []
+            let guildAbilities: GuildAbility[] = []
             let guilds: FullGuild[] = []
             const allGuilds = reinc.guildService.getMainGuilds() as FullGuild[]
             //
@@ -110,16 +111,25 @@ export const AbilitiesByGuildsFilter = (filteredData: FilteredData, creatorDataC
                     guilds: reinc.guilds
                 }
             }
+            let guildIdx: number = 0
+            console.debug("FILTERING GUILDS", guilds)
             guilds?.forEach((guild) => {
+                guildIdx = guildIdx + 1000
                 for (let i = guild.levels; i > 0; i--) {
                     const level = guild.levelMap.get(i.toString())
-                    level?.abilities.forEach((guildAbility: GuildAbility) => {
+                    level?.abilities.forEach((guildAbility: GuildAbility, idx) => {
                         if (!guildAbilities.find((ga: GuildAbility) => ga.name === guildAbility.name)) {
-                            guildAbilities.push(guildAbility)
+                            guildAbilities.push({...guildAbility, id: guildIdx + idx})
                         }
                     })
                 }
             })
+
+            guildAbilities = sortByName<GuildAbility>(guildAbilities.filter(onlyUnique)).map((ga, idx) => {
+                return {...ga, id: idx}
+            })
+
+            console.debug("FILTERING ABILITIES", guildAbilities)
 
             let newSkills: Ability[] = []
             let newSpells: Ability[] = []
@@ -133,12 +143,14 @@ export const AbilitiesByGuildsFilter = (filteredData: FilteredData, creatorDataC
                     return guildAbilities.find((ga) => ga.name === spell.name)
                 }) || []
             } else {
-                newSkills = (filteredData.skills || reinc?.skills)?.filter((skill: Ability) => {
-                    return guildAbilities.find((ga) => ga.name === skill.name)
+                newSkills = guildAbilities.filter((ga) => ga.type === "skill").map((ga, id) => {
+                    return {...ga, value: ga.max, trained: 0} as Ability
                 }) || []
-                newSpells = (filteredData.spells || reinc?.spells)?.filter((spell: Ability) => {
-                    return guildAbilities.find((ga) => ga.name === spell.name)
+
+                newSpells = guildAbilities.filter((ga) => ga.type === "spell").map((ga, id) => {
+                    return {...ga, value: ga.max, trained: 0} as Ability
                 }) || []
+
             }
 
             let count = filteredData.filterCount

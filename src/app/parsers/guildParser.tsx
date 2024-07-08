@@ -2,8 +2,10 @@ import {FileObject} from "../page"
 import {ParserProcess} from "../parserFactory"
 import {getFile} from "../fileService"
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
+import {number} from "prop-types";
 
 export type GuildAbility = {
+    id?: number,
     name: string,
     max: number,
     type: 'skill' | 'spell'
@@ -35,7 +37,6 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
     const subguilds: GuildLevels[] = []
 
     async function parseLine(line: string) {
-
         if (subguildsMatched) {
             const sglMatch = line.match(/([a-zA-z_]+)\s*(\d{1,2})/)
             if (sglMatch) {
