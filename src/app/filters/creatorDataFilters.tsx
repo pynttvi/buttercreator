@@ -1,9 +1,8 @@
 'use client'
-import {FilteredData, MAX_LEVEL, ReincContextType} from "@/app/contexts/reincContext";
+import {FilteredData, ReincContextType} from "@/app/contexts/reincContext";
 import {Ability} from "@/app/parsers/abilityCostParser";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
-import {GuildLevels} from "@/app/parsers/guildsFileParser";
-import {FullGuild, MainGuild} from "@/app/service/guildService";
+import {FullGuild} from "@/app/service/guildService";
 import {GuildAbility} from "@/app/parsers/guildParser";
 
 export type CreatorDataFilterType = {
@@ -67,16 +66,8 @@ export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: Rein
             }
         )
 
-
-        console.log("Guildcount", newFilteredData.guilds?.length)
-        console.log("Skillcount", newFilteredData.skills?.length)
-        console.log("Spellcount", newFilteredData.spells?.length)
-
-
         const count = (filteredData.guilds?.length || 0) +
             (filteredData?.filteredAbilities && filteredData.filteredAbilities()?.length || 0)
-
-        console.log("FILTERCOUNT", filteredData.filterCount)
 
 
         if (count === lastCount) {
@@ -235,7 +226,6 @@ export const GuildsByAbilitiesFilter = (filteredData: FilteredData, creatorDataC
 
             }
             newGuilds = (newGuilds?.length === 0 ? guilds : newGuilds) as FullGuild[]
-            console.log("NEWGUILDS", newGuilds)
 
             let filterCount = 0
             if (newGuilds.length > 0) {

@@ -35,7 +35,6 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     const [abilities, setAbilities] = useState<Ability[]>(abi)
 
     useEffect(() => {
-        console.log("LVL0", reinc.filteredData)
         if (abi.length === 0 || reinc.level === 0) {
              abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }

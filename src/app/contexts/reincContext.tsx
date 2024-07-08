@@ -9,6 +9,7 @@ import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildServ
 export const MAX_LEVEL = 120
 
 export type ReincType = {
+    allGuilds: FullGuild[]
     filteredData: FilteredData
     race: Race | null | undefined;
     guilds: FullGuild[];
@@ -31,8 +32,10 @@ export type ReincFunctionsType = {
     setSpells: Dispatch<SetStateAction<Ability[]>>
     setRace: Dispatch<SetStateAction<Race | null>>
     setFilteredData: Dispatch<SetStateAction<FilteredData>>
-    guildService: GuildServiceType
     getReincGuildByName: (name: string) => FullGuild | undefined
+    setAllGuilds: Dispatch<SetStateAction<FullGuild[]>>
+    guildService: GuildServiceType
+
 };
 
 export type FilteredData = {
@@ -50,6 +53,7 @@ export type ReincContextType = ReincType & ReincFunctionsType & TransientReincTy
 export const defaultReincContext: ReincType = {
     filteredData: defaultFilteredData,
     guilds: [],
+    allGuilds: [],
     skills: [],
     spells: [],
     race: null,
@@ -68,6 +72,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [race, setRace] = useState<Race | null>(null)
     const [skills, setSkills] = useState<Ability[]>([...creatorData.skills.filter(onlyUnique)])
     const [spells, setSpells] = useState<Ability[]>([...creatorData.spells.filter(onlyUnique)])
+    const [allGuilds, setAllGuilds] = useState<FullGuild[]>([])
     const [guilds, setGuilds] = useState<FullGuild[]>([])
     const [filteredData, setFilteredData] = useState<FilteredData>({
         ...defaultFilteredData,
@@ -88,6 +93,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         skillMax,
         spellMax,
         level,
+        allGuilds,
     }
 
     if (values.skills.length === 0) {
@@ -148,7 +154,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     }
 
     const addOrUpdateGuild = (guildType: GuildType, guild: FullGuild, trained: number) => {
-        console.log("UPDATING GUILD:", guild, trained)
+        console.debug("UPDATING GUILD:", guild, trained)
         if (guildType === 'main') {
             const idx = guilds.findIndex((g) => g.name.toLowerCase() === guild.name.toLowerCase())
             if (idx === -1) {
@@ -160,33 +166,39 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
                 }
                 setGuilds([...guilds, newGuild])
             } else {
-                setGuilds([...guilds.filter((g) => g.name !== guild.name), {...guilds[idx], trained: trained}])
+                const updatedGuild = {...guilds[idx], trained: trained}
+                if (trained === 0) {
+                    updatedGuild.subGuilds.forEach((sg) => {
+                        sg.trained = 0
+                    })
+                }
+                console.debug("UPDATED GUILD:", updatedGuild)
+                setGuilds([...guilds.filter((g) => g.name !== guild.name), updatedGuild])
             }
         } else {
-
             const otherGuilds = guilds.filter((g) => g.name.toLowerCase() !== guild.mainGuild?.name.toLowerCase())
             const main = guilds.find((g) => g.name === guild.mainGuild?.name)
-            if (!main) {
-                throw new Error("Subguild added without main")
-            }
-            const sub = main.subGuilds.find((sg) => {
-                return sg.name === guild.name
-            })
-            if (sub) {
-                sub.trained = trained
-
-                const otherSubs = main.subGuilds.filter((sg) => {
-                    return sg.name !== guild.name
+            if (main) {
+                const sub = main.subGuilds.find((sg) => {
+                    return sg.name === guild.name
                 })
+                if (sub) {
+                    console.log("UPDATING SUBGUILD", sub)
+                    sub.trained = trained
 
-                setGuilds([...otherGuilds, {...main, subGuilds: [sub, ...otherSubs]}])
+                    const otherSubs = main.subGuilds.filter((sg) => {
+                        return sg.name !== guild.name
+                    })
+
+                    setGuilds([...otherGuilds, {...main, subGuilds: [sub, ...otherSubs]}])
+                }
             }
         }
     }
 
 
+    let transientContex = {}
     const guildService = GuildService(creatorDataContext, values as ReincContextType)
-    const transientContex = {}
 
     const reincFunctions: ReincFunctionsType = {
         updateAbility: addOrUpdateAbility,
@@ -197,23 +209,30 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         setSpells,
         setRace,
         setFilteredData,
-        guildService,
+        setAllGuilds,
+        guildService
     }
 
-    const context = {...values, ...reincFunctions, ...transientContex}
+    let context = {...values, ...reincFunctions, ...transientContex,}
+    context = {
+        ...values, ...reincFunctions, ...transientContex,
+        guildService: GuildService(creatorDataContext, context as ReincContextType)
+    }
+
+    transientContex = {...transientContex}
 
     const filterData = () => {
         doFilter(creatorDataContext, context as ReincContextType)
     }
 
     useEffect(() => {
-        const guildService = GuildService(creatorDataContext, values as ReincContextType)
+        const guildService = GuildService(creatorDataContext, context as ReincContextType)
         setLevel(guildService.totalTrainedLevels() + freeLevels)
         const untrainedGuilds = guilds.filter((g) => {
             return g.trained === 0
         })
 
-        console.log("G", guilds)
+        console.log("GUILDS", guilds)
         if (untrainedGuilds.length > 0) {
             setGuilds(guilds.filter((g) => {
                 return g.trained > 0
@@ -223,14 +242,14 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
 
     }, [skills, spells, guilds]);
     useMemo(() => {
-        const guildService = GuildService(creatorDataContext, values as ReincContextType)
+        const guildService = GuildService(creatorDataContext, context as ReincContextType)
         setLevel(guildService.totalTrainedLevels() + freeLevels)
         filterData()
 
     }, [skills, spells, guilds]);
 
     return (
-        <ReincContext.Provider value={context}>
+        <ReincContext.Provider value={{...context, ...transientContex}}>
             {props.children}
         </ReincContext.Provider>
     )

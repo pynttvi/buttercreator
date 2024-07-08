@@ -10,7 +10,6 @@ import QpCostParser, {QpCost} from "./parsers/qpCostParser"
 import AblitiyCostsParser, {Ability} from "./parsers/abilityCostParser"
 import WishCostParser, {WishCost} from "./parsers/wishCostParser"
 import RacesFileParser, {Race} from "./parsers/raceParser"
-import {ReincGuild} from "@/app/contexts/reincContext";
 
 export const NON_GUILD_FILES = [
     'guilds.chr',

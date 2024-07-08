@@ -12,6 +12,7 @@ import {FullGuild, GuildService, MAX_GUILD_LEVELS} from "@/app/service/guildServ
 import NumberInputBasic from "@/app/components/numberInput";
 import {GridDeleteIcon} from "@mui/x-data-grid";
 import {trainedAbilities} from "@/app/filters/creatorDataFilters";
+import {sortByName} from "@/app/filters/utils";
 
 const Item = styled(Typography)(({theme}) => ({
     padding: theme.spacing(1),
@@ -38,14 +39,20 @@ function GuildItem(props: {
     const creatorDataContext = useCreatorData()
 
     const onClick = () => {
-        if (value === 0) {
+        console.debug("Trained for guild", props.guild, trainedForGuild, level)
+
+        if (props.guild.trained === 0) {
             setValue(Math.min(props.guild.levels, MAX_GUILD_LEVELS - trainedForGuild, MAX_LEVEL - level) || 0)
         }
         focusClass(className)
     }
 
     useEffect(() => {
-        if (!(props.guild.trained === 0 && value === 0)) {
+        const existingGuild = reinc.guilds.find((g) => {
+            return g.name === props.guild.name || g?.mainGuild?.name === g.name
+        })
+        console.debug("Existing guild", existingGuild, value)
+        if (existingGuild || (!existingGuild && value !== 0)) {
             addOrUpdateGuild(props.guild.guildType, props.guild, value)
         }
     }, [value]);
@@ -70,23 +77,25 @@ function GuildItem(props: {
         setValue(value || 0)
     }
 
-    async function deleteGuild(guild: FullGuild): Promise<number> {
+    function deleteGuild(guild: FullGuild): void {
         let value = 0
         if (disabled || level === MAX_LEVEL) {
             value = 1
             addOrUpdateGuild(guild.guildType, guild, value)
-            focusClass(className)
+          //  focusClass(className)
         } else {
             value = 0
             addOrUpdateGuild(guild.guildType, guild, value)
         }
-        return value
+        setValue(value)
+    //    return value
     }
 
     const onDelete = () => {
-        deleteGuild(props.guild).then((n) => {
-            setValue(n)
-        })
+        deleteGuild(props.guild)
+        //     .then((n) => {
+        //
+        // })
     };
 
     const focusClass = (className: string) => {
@@ -114,8 +123,8 @@ function GuildItem(props: {
                                         textTransform: 'capitalize',
                                         ...(props.isSubguild ? {paddingLeft: '20px'} : {})
                                     }}>{props.guild.name.replaceAll("_", " ")}
-                            {value > 0 && !(!props.isSubguild && trainedForGuild > 45) && (
-                                < GridDeleteIcon sx={{marginLeft: '10px'}} onClick={onDelete}/>)}</Typography>
+                            {props.guild.trained > 0 && (
+                                < GridDeleteIcon key={'delete-button-' + props.guild.name} sx={{marginLeft: '10px'}} onClick={onDelete}/>)}</Typography>
                         <Box sx={{
                             width: "50px",
                             height: "30px",
@@ -136,7 +145,7 @@ function GuildItem(props: {
                     </Item>
                 </Box>
             </Grid>
-            {!(trainedAbilities(reinc).totalCount > 0 && level === 0) && props.guild.subGuilds.map((sg) => {
+            {!(trainedAbilities(reinc).totalCount > 0 && level === 0) && sortByName<FullGuild>(props.guild.subGuilds)?.map((sg) => {
                 return (
                     <>
                         <GuildItem guild={sg} isSubguild={true}/>
@@ -156,8 +165,6 @@ export default function Guilds(props: { myData: CreatorDataType }) {
 
     let data = filteredData?.guilds  //creatorData
 
-    //console.log("FILTERED", data, level)
-    console.log("Reinc", reinc.guilds)
     useEffect(() => {
 
     }, [filteredData]);
