@@ -34,13 +34,26 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
     const [abilities, setAbilities] = useState<Ability[]>(abi)
 
+    function getAbilityMax(ability: Ability){
+        return reinc.guildService.maxForGuilds(ability, reinc.guilds)
+    }
     useEffect(() => {
         if (abi.length === 0 && reinc.level === 0) {
             abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }
+        if (props.type === 'skills') {
+            abi.forEach((a) => {
+                a.max = (a.max === 0 ? 100 : getAbilityMax(a) || 100) - (100 - reinc.skillMax)
+            })
+        }
+        if (props.type === 'spells') {
+            abi.forEach((a) => {
+                a.max = (a.max === 0 ? 100 : getAbilityMax(a) || 100) - (100 - reinc.spellMax)
+            })
+        }
         console.debug("Abilities", abilities)
-        setAbilities(abi)
-    }, [reinc]);
+        setAbilities([...abi])
+    }, [reinc.race, reinc.filteredData, reinc.skillMax, reinc.spellMax]);
 
 
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -89,8 +102,8 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         const params = props.params
         const [value, setValue] = useState(reinc.level === 0 ? max : reinc.guildService.maxForGuilds(params.row, reinc.guilds))
         const parse = (newValue: number) => {
-            console.debug("ABILITY", params.row)
-            newValue = Math.min(newValue, max, (reinc.guildService.maxForGuilds(params.row, reinc.guilds) || max))
+            console.log("ABILITY", params.row)
+            newValue = Math.min(newValue, max)
             newValue = Math.max(newValue, 0)
 
             if (newValue > 10) {
@@ -123,11 +136,12 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         );
 
     }
+
     const dataColumns: GridColDef<(Ability)>[] = [
-        {field: 'name', headerName: 'Name', width: 300, filterable: true},
+        {field: 'name', headerName: 'Name', filterable: true, width: 200},
         {
             field: 'trained',
-            headerName: '',
+            headerName: 'trained',
             type: 'number',
             width: 100,
             sortable: true,
@@ -144,6 +158,14 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                 }
             })
         },
+        {
+            field: 'max',
+            headerName: 'max',
+            filterable: true,
+            editable: false,
+            width: 100,
+        },
+
     ];
 
     const columns: GridColDef[] = React.useMemo(

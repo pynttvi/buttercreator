@@ -8,6 +8,7 @@ export type Ability = {
     name: string
     value: number
     trained: number
+    max: number
     maxed?: boolean
     type: "skill" | "spell"
     guild?: FullGuild
@@ -41,6 +42,7 @@ export default async function
                         id: i,
                         trained: 0,
                         type: abilityType === "skills" ? "skill" : "spell",
+                        max: 0,
                         ...l
                     })
                 }

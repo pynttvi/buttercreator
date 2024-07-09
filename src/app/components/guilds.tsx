@@ -1,6 +1,6 @@
 'use client'
 import {styled} from '@mui/material/styles';
-import {Typography} from '@mui/material';
+import {Stack, Typography} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import SectionBox from './sectionBox';
@@ -36,6 +36,7 @@ function GuildItem(props: {
         level, guilds,
     } = reinc
 
+    //console.log(props.guild)
     const creatorDataContext = useCreatorData()
 
     const onClick = () => {
@@ -82,13 +83,13 @@ function GuildItem(props: {
         if (disabled || level === MAX_LEVEL) {
             value = 1
             addOrUpdateGuild(guild.guildType, guild, value)
-          //  focusClass(className)
+            //  focusClass(className)
         } else {
             value = 0
             addOrUpdateGuild(guild.guildType, guild, value)
         }
         setValue(value)
-    //    return value
+        //    return value
     }
 
     const onDelete = () => {
@@ -117,35 +118,41 @@ function GuildItem(props: {
                 <Box sx={{minWidth: "400px"}}>
 
                     <Item>
-                        <Typography variant={"subtitle1"}
-                                    sx={{
-                                        width: "70%",
-                                        textTransform: 'capitalize',
-                                        ...(props.isSubguild ? {paddingLeft: '20px'} : {})
-                                    }}>{props.guild.name.replaceAll("_", " ")}
-                            {props.guild.trained > 0 && (
-                                < GridDeleteIcon key={'delete-button-' + props.guild.name} sx={{marginLeft: '10px'}} onClick={onDelete}/>)}</Typography>
-                        <Box sx={{
-                            width: "50px",
-                            height: "30px",
-                            marginLeft: "15px",
-                            alignItems: "center"
-                        }}>
-                            <NumberInputBasic
-                                aria-label="guild levels input"
-                                placeholder="0"
-                                onChange={(_event: any, value1: number | null) => onChange(value1)}
-                                className={className}
-                                value={props.guild.trained || 0}
-                                onClick={onClick}
-                                key={"guild-input" + props.guild.name}
-                                disabled={disabled}
-                            />
-                        </Box>
+                        {/*// @ts-ignore*/}
+                        <Stack item direction={"row"} xs={12} sm={6} md={4} key={'index-stack' + props.guild.name}>
+
+                            <Typography variant={"subtitle1"}
+                                        sx={{
+                                            width: "70%",
+                                            textTransform: 'capitalize',
+                                            ...(props.isSubguild ? {paddingLeft: '20px'} : {})
+                                        }}>{props.guild.name.replaceAll("_", " ")}
+                                {props.guild.trained > 0 && (
+                                    < GridDeleteIcon key={'delete-button-' + props.guild.name} sx={{marginLeft: '10px'}}
+                                                     onClick={onDelete}/>)}</Typography>
+                            <Box sx={{
+                                width: "50px",
+                                height: "30px",
+                                marginLeft: "15px",
+                                alignItems: "center"
+                            }}>
+                                <NumberInputBasic
+                                    aria-label="guild levels input"
+                                    placeholder="0"
+                                    onChange={(_event: any, value1: number | null) => onChange(value1)}
+                                    className={className}
+                                    value={props.guild.trained || 0}
+                                    onClick={onClick}
+                                    key={"guild-input" + props.guild.name}
+                                    disabled={disabled}
+                                />
+                            </Box>
+                        </Stack>
                     </Item>
                 </Box>
             </Grid>
-            {!(trainedAbilities(reinc).totalCount > 0 && level === 0) && sortByName<FullGuild>(props.guild.subGuilds)?.map((sg) => {
+            {/*!(trainedAbilities(reinc).totalCount > 0 && level === 0) &&*/}
+            {sortByName<FullGuild>(props.guild.subGuilds)?.map((sg) => {
                 return (
                     <>
                         <GuildItem guild={sg} isSubguild={true}/>

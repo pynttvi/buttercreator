@@ -155,12 +155,12 @@ export const AbilitiesByGuildsFilter = (filteredData: FilteredData, creatorDataC
             } else {
                 newSkills = guildAbilities.filter((ga) => ga.type === "skill").map((ga, id) => {
                     const reincSkill = reinc.skills.find((rs) => rs.name === ga.name)
-                    return {...ga, value: ga.max, ...reincSkill} as Ability
+                    return {...ga, max: ga.max, ...reincSkill} as Ability
                 }) || []
 
                 newSpells = guildAbilities.filter((ga) => ga.type === "spell").map((ga, id) => {
                     const reincSpell = reinc.spells.find((rs) => rs.name === ga.name)
-                    return {...ga, value: ga.max, ...reincSpell} as Ability
+                    return {...ga, max: ga.max, ...reincSpell} as Ability
                 }) || []
 
             }

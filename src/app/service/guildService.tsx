@@ -157,75 +157,104 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
             return reincContext.allGuilds
         }
         const guilds = creatorDataContext.originalCreatorData.guilds.map((gl) => {
-            const guild = getGuildByGuildLevels(gl)
-            if (!guild) {
-                console.log("Error getting guild", gl)
-                throw new Error("Error getting guild")
-            }
-            const subGuildsPartial = guild.subGuildLevels.map((sgl) => {
-                const sg = getGuildByGuildLevels(sgl)
-                const subGuild: Partial<SubGuild> = {
-                    ...sg,
-                    ...sgl
+                const guild = getGuildByGuildLevels(gl)
+                if (!guild) {
+                    console.log("Error getting guild", gl)
+                    throw new Error("Error getting guild")
                 }
-                return subGuild
-            })
-            const mainGuildPartial: Partial<MainGuild> = {
-                ...guild,
-                ...gl,
-            }
 
-            class MainGuildImpl implements MainGuild {
-                guildType: GuildType;
-                levelMap: Map<string, GuildLevel>;
-                levels: number;
-                name: string;
-                subGuilds: SubGuild[];
-                trained: number;
+                function getSubGuilds(guild: GuildLevels) {
+                    const g = getGuildByGuildLevels(guild)
 
-                constructor(mainGuildPartial: Partial<MainGuild>, subGuildsPartial: Partial<SubGuild>[]) {
-                    this.guildType = 'main'
-                    this.levels = mainGuildPartial.levels || -1
-                    this.levelMap = mainGuildPartial.levelMap || new Map<string, GuildLevel>
-                    this.name = mainGuildPartial.name?.toLowerCase().replaceAll("_", " ") || ""
-                    this.trained = 0
-                    this.subGuilds = sortByName<SubGuild>(subGuildsPartial as SubGuild[]).map((sgp: SubGuild) => {
+                    const subGuilds = g?.subGuildLevels.map((sgl) => {
+                        const sg = getGuildByGuildLevels(sgl)
                         const subGuild: SubGuild = {
-                            name: sgp.name?.toLowerCase().replaceAll("_", " ") || "",
-                            guildType: 'sub',
-                            mainGuild: this,
-                            levels: sgp.levels || -1,
-                            //levels: Object.keys((sgp as SubGuild).levelMap?.keys())?.length || -1,
-                            levelMap: sgp.levelMap || new Map<string, GuildLevel>,
-                            subGuilds: [],
-                            trained: 0,
+                            ...sg,
+                            ...sgl,
+                        } as unknown as SubGuild
+                        // subGuild.subGuilds = getSubGuilds(gl) || []
+                        return subGuild
+                    })
+                    return subGuilds || []
+
+                }
+
+                let subGuilds = getSubGuilds(gl)
+                const flatSubguilds: SubGuild[] = []
+                subGuilds.forEach((sg) => {
+                    flatSubguilds.push(sg)
+                    getSubGuilds(sg).forEach((sg1) => {
+                        const foundIdx = flatSubguilds.findIndex((sg2) => sg1.name == sg2.name)
+                        if (foundIdx !== -1) {
+                            flatSubguilds[foundIdx].levels += sg1.levels
+                        } else {
+                            flatSubguilds.push(sg1)
                         }
-                        subGuild.subGuilds = sgp.subGuilds?.map((sgp) => {
+                    })
+                })
+                subGuilds = flatSubguilds
+
+                console.debug("GUILD LEVELS", guild)
+
+
+                const mainGuildPartial: Partial<MainGuild> = {
+                    ...guild,
+                    ...gl,
+                }
+
+                class MainGuildImpl implements MainGuild {
+                    guildType: GuildType;
+                    levelMap: Map<string, GuildLevel>;
+                    levels: number;
+                    name: string;
+                    subGuilds: SubGuild[];
+                    trained: number;
+
+                    constructor(mainGuildPartial: Partial<MainGuild>, subGuildsPartial: Partial<SubGuild>[]) {
+                        this.guildType = 'main'
+                        this.levels = mainGuildPartial.levels || -1
+                        this.levelMap = mainGuildPartial.levelMap || new Map<string, GuildLevel>
+                        this.name = mainGuildPartial.name?.toLowerCase().replaceAll("_", " ") || ""
+                        this.trained = 0
+                        this.subGuilds = sortByName<SubGuild>(subGuildsPartial as SubGuild[]).map((sgp: SubGuild) => {
                             const subGuild: SubGuild = {
                                 name: sgp.name?.toLowerCase().replaceAll("_", " ") || "",
-                                mainGuild: this,
                                 guildType: 'sub',
+                                mainGuild: this,
                                 levels: sgp.levels || -1,
+                                //levels: Object.keys((sgp as SubGuild).levelMap?.keys())?.length || -1,
                                 levelMap: sgp.levelMap || new Map<string, GuildLevel>,
                                 subGuilds: [],
                                 trained: 0,
                             }
+                            subGuild.subGuilds = sgp.subGuilds?.map((sgp) => {
+                                const subGuild: SubGuild = {
+                                    name: sgp.name?.toLowerCase().replaceAll("_", " ") || "",
+                                    mainGuild: this,
+                                    guildType: 'sub',
+                                    levels: sgp.levels || -1,
+                                    levelMap: sgp.levelMap || new Map<string, GuildLevel>,
+                                    subGuilds: [],
+                                    trained: 0,
+                                }
+                                return subGuild
+                            }) || []
+
                             return subGuild
-                        }) || []
-
-                        return subGuild
-                    })
+                        })
+                    }
                 }
-            }
 
-            return new MainGuildImpl(mainGuildPartial, subGuildsPartial)
-        })
+                return new MainGuildImpl(mainGuildPartial, subGuilds)
+            }
+        )
         if (reincContext.setAllGuilds) {
             console.debug("SETTING ALL GUILDS")
             reincContext.setAllGuilds(guilds as FullGuild[])
         }
         return guilds
     }
+
     const getGuildByName = (name: string): FullGuild | undefined => {
         return getMainGuilds().find((g) => g.name === name) as FullGuild
     }
@@ -244,7 +273,6 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                 level?.abilities.forEach((a) => {
                     if (a.name === ability.name && a.max > max) {
                         max = a.max
-                        console.log("MAX GUILD", guild)
                     }
                 })
             }

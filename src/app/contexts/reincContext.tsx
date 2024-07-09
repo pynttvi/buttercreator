@@ -1,4 +1,13 @@
-import React, {Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useState} from 'react';
+import React, {
+    Dispatch,
+    PropsWithChildren,
+    SetStateAction,
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState
+} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
@@ -22,7 +31,7 @@ export type ReincType = {
 
 export type TransientReincType = {};
 
-export type ReincAbility = Ability & { max?: boolean }
+export type ReincAbility = Ability
 
 export type ReincFunctionsType = {
     updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
@@ -80,8 +89,8 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         spells: spells,
     })
 
-    const skillMax = race?.skill_max || 100
-    const spellMax = race?.skill_max || 100
+    const [skillMax, setSkillMax] = useState(race?.skill_max || 100)
+    const [spellMax, setSpellMax] = useState(race?.skill_max || 100)
     const values: ReincType = {
         ...defaultReincContext,
         ...ctx,
@@ -131,7 +140,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
             if (updatedRow.trained === spellMax) {
                 updatedRow.maxed = true
             }
-            setSpells(spells.map((spell) => (spell.name=== ability.name ? updatedRow : spell)))
+            setSpells(spells.map((spell) => (spell.name === ability.name ? updatedRow : spell)))
         }
         return updatedRow;
     }
@@ -232,7 +241,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
             return g.trained === 0
         })
 
-        console.log("GUILDS", guilds)
+        console.debug("GUILDS", guilds)
         if (untrainedGuilds.length > 0) {
             setGuilds(guilds.filter((g) => {
                 return g.trained > 0
@@ -255,10 +264,33 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
                 return g.trained > 0
             }))
         }
+
         filterData()
 
-    }, [skills, spells, guilds]);
+    }, [guilds]);
 
+    useEffect(() => {
+        const guildService = GuildService(creatorDataContext, context as ReincContextType)
+
+        const overTrainedSkills = skills.filter((s) => {
+            return s.trained > 0
+        }).map((s) => {
+            const newMax = guildService.maxForGuilds(s, guilds)
+            return {...s, trained: Math.min(newMax || 0, s.trained), max: newMax}
+        })
+        console.debug("OVERTRAINED SKILLS", overTrainedSkills)
+        setSkills([...skills.filter((s) => overTrainedSkills.find((s1) => s1.name !== s.name)), ...overTrainedSkills])
+
+        const overTrainedSpells = spells.filter((s) => {
+            return s.trained > 0
+        }).map((s) => {
+            const newMax = guildService.maxForGuilds(s, guilds)
+            return {...s, trained: Math.min(newMax || 0, s.trained), max: newMax}
+        })
+        setSpells([...spells.filter((s) => overTrainedSpells.find((s1) => s1.name !== s.name)), ...overTrainedSpells])
+
+        filterData()
+    }, [level]);
 
     useMemo(() => {
         const guildService = GuildService(creatorDataContext, context as ReincContextType)
@@ -266,6 +298,14 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         filterData()
 
     }, [skills, spells, guilds]);
+
+    useEffect(() => {
+        if (race) {
+            console.log("SETTING MAXES", skillMax, spellMax)
+            setSkillMax(race?.skill_max || 100)
+            setSpellMax(race?.spell_max || 100)
+        }
+    }, [race, skillMax, spellMax])
 
     return (
         <ReincContext.Provider value={{...context, ...transientContex}}>
