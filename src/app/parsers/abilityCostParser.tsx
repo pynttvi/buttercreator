@@ -6,7 +6,7 @@ import {FullGuild} from "@/app/service/guildService";
 export type Ability = {
     id: number
     name: string
-    value: number
+    cost: number
     trained: number
     max: number
     maxed?: boolean
@@ -24,9 +24,9 @@ export default async function
     function parseLine(line: string) {
         const split = line.split(":")
         const name = split?.at(0)
-        const value = parseInt(split?.at(1) || "0")
+        const cost = parseInt(split?.at(1) || "0")
         if (name) {
-            return {name, value}
+            return {name, cost}
         }
     }
 

@@ -1,15 +1,16 @@
 'use client'
-import {Stack, Typography} from "@mui/material";
+import {Typography} from "@mui/material";
 import RaceList from "@/app/components/races";
 import Guilds from "@/app/components/guilds";
 import AbilityList from "@/app/components/abilities";
 import Reinc from "@/app/components/reinc";
-import {Suspense, useEffect, useState} from "react";
+import {Suspense} from "react";
 import {ReincContextProvider} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
 import {CreatorDataContext, CreatorDataContextProvider} from "@/app/contexts/creatorDataContext";
 import Grid from "@mui/material/Unstable_Grid2";
 import StatsList from "@/app/components/stats";
+import WishList from "@/app/components/wish";
 
 export default function MainContent(props: { myData: Promise<Partial<CreatorDataType>> }) {
 
@@ -32,16 +33,20 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                                             <Guilds myData={value.creatorData}/>
                                         </Grid>
                                         {/*@ts-ignore*/}
-                                        <Grid item xs={12} sm={12} md={6} lg={4} key={'skills'}>
+                                        <Grid item xs={12} sm={12} md={12} lg={6} key={'skills'}>
                                             <AbilityList type={"skills"} creatorData={value.creatorData}/>
                                         </Grid>
                                         {/*@ts-ignore*/}
-                                        <Grid item xs={12} sm={12} md={6} lg={4} key={'spells'}>
+                                        <Grid item xs={12} sm={12} md={12} lg={6} key={'spells'}>
                                             <AbilityList type={"spells"} creatorData={value.creatorData}/>
                                         </Grid>
                                         {/*@ts-ignore*/}
-                                        <Grid item xs={12} sm={12} md={6} lg={4} key={'stats'}>
+                                        <Grid item xs={12} sm={12} md={6} lg={6} key={'stats'}>
                                             <StatsList/>
+                                        </Grid>
+                                        {/*@ts-ignore*/}
+                                        <Grid item xs={12} sm={12} md={6} lg={6} key={'wishes'}>
+                                            <WishList/>
                                         </Grid>
                                     </Grid>
                                     <Reinc/>

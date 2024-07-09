@@ -14,6 +14,7 @@ import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildType} from "@/app/components/guilds";
 import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildService";
+import {Wish} from "@/app/data/wishes";
 
 export const MAX_LEVEL = 120
 export const MAX_STAT = 50
@@ -35,6 +36,7 @@ export type ReincType = {
     spellMax: number
     level: number
     stats: ReincStat[]
+    wishes: Wish[]
 };
 
 export type TransientReincType = {};
@@ -53,6 +55,7 @@ export type ReincFunctionsType = {
     setAllGuilds: Dispatch<SetStateAction<FullGuild[]>>
     guildService: GuildServiceType
     setStats: Dispatch<SetStateAction<ReincStat[]>>
+    setWishes: Dispatch<SetStateAction<Wish[]>>
 };
 
 export type FilteredData = {
@@ -84,7 +87,8 @@ export const defaultReincContext: ReincType = {
         {id: 4, name: "int", trained: 0},
         {id: 5, name: "wis", trained: 0},
         {id: 6, name: "cha", trained: 0},
-    ]
+    ],
+    wishes: []
 };
 export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
@@ -100,6 +104,8 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [allGuilds, setAllGuilds] = useState<FullGuild[]>([])
     const [guilds, setGuilds] = useState<FullGuild[]>([])
     const [stats, setStats] = useState<ReincStat[]>(defaultReincContext.stats)
+    const [wishes, setWishes] = useState<Wish[]>([])
+
     const [filteredData, setFilteredData] = useState<FilteredData>({
         ...defaultFilteredData,
         skills: skills,
@@ -120,7 +126,8 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         spellMax,
         level,
         allGuilds,
-        stats
+        stats,
+        wishes
     }
 
     if (values.skills.length === 0) {
@@ -238,7 +245,8 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         setFilteredData,
         setAllGuilds,
         setStats,
-        guildService
+        guildService,
+        setWishes
     }
 
     let context = {...values, ...reincFunctions, ...transientContex,}

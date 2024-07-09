@@ -1,16 +1,26 @@
 import {FileObject} from "../page"
 import {getFile} from "../fileService";
 import {ParserProcess} from "../parserFactory";
+import {keys} from "@mui/system";
 
 
-const stats = [
-    "name",
+export const baseStats: BaseStatName[] = [
     "str",
     "dex",
     "con",
     "int",
     "wis",
     "cha",
+]
+
+export type DamageTypeName = "asph" | "acid" | "cold" | "fire" | "elec" | "magi" | "pois" | "psio"
+
+export const damageTypes: DamageTypeName[] = [
+    "asph", "acid", "cold", "fire", "elec", "magi", "pois", "psio"
+]
+export const stats = [
+    "name",
+    ...baseStats,
     "size",
     "exp",
     "spr",
@@ -20,6 +30,8 @@ const stats = [
     "skill_cost",
     "spell_cost",
 ]
+
+export type BaseStatName = "str" | "dex" | "con" | "int" | "wis" | "cha"
 
 export type BaseStats = {
     str: number,
