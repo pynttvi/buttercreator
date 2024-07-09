@@ -128,7 +128,7 @@ export default function RaceList(props: { myData: CreatorDataType }) {
             <Suspense fallback="Loading...">
                 {creatorData?.races ? (
                     <DataGrid
-                        sx={{height: 400, width: '100%'}}
+                        sx={{height: 400}}
                         rows={props.myData.races}
                         columns={columns}
                         initialState={{}}
@@ -138,7 +138,6 @@ export default function RaceList(props: { myData: CreatorDataType }) {
                         rowSelectionModel={selectionModel}
                         onRowSelectionModelChange={changeSelectionMode}
                         hideFooter={true}
-                        disableVirtualization
                         columnHeaderHeight={80}
                     />
                 ) : <></>

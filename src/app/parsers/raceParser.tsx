@@ -21,15 +21,16 @@ const stats = [
     "spell_cost",
 ]
 
-export type Race = {
-    id: number
-    name: string
+export type BaseStats = {
     str: number,
     dex: number,
     con: number,
     int: number,
     wis: number,
     cha: number,
+}
+
+export type ExtraStats = {
     size: number,
     exp: number,
     spr: number,
@@ -39,6 +40,10 @@ export type Race = {
     skill_cost: number,
     spell_cost: number,
 }
+export type Race = {
+    id: number
+    name: string
+} & BaseStats & ExtraStats
 
 export default async function RacesFileParser(data: FileObject): Promise<ParserProcess> {
 

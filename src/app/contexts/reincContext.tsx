@@ -9,14 +9,21 @@ import React, {
     useState
 } from 'react';
 import {Ability} from '../parsers/abilityCostParser';
-import {Race} from '../parsers/raceParser';
+import {BaseStats, Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildType} from "@/app/components/guilds";
 import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildService";
 
 export const MAX_LEVEL = 120
+export const MAX_STAT = 50
 
+
+export type ReincStat = {
+    id: number
+    name: keyof BaseStats,
+    trained: number
+}
 export type ReincType = {
     allGuilds: FullGuild[]
     filteredData: FilteredData
@@ -27,6 +34,7 @@ export type ReincType = {
     skillMax: number;
     spellMax: number
     level: number
+    stats: ReincStat[]
 };
 
 export type TransientReincType = {};
@@ -44,7 +52,7 @@ export type ReincFunctionsType = {
     getReincGuildByName: (name: string) => FullGuild | undefined
     setAllGuilds: Dispatch<SetStateAction<FullGuild[]>>
     guildService: GuildServiceType
-
+    setStats: Dispatch<SetStateAction<ReincStat[]>>
 };
 
 export type FilteredData = {
@@ -68,7 +76,15 @@ export const defaultReincContext: ReincType = {
     race: null,
     skillMax: 100,
     spellMax: 100,
-    level: 0
+    level: 0,
+    stats: [
+        {id: 1, name: "str", trained: 0},
+        {id: 2, name: "dex", trained: 0},
+        {id: 3, name: "con", trained: 0},
+        {id: 4, name: "int", trained: 0},
+        {id: 5, name: "wis", trained: 0},
+        {id: 6, name: "cha", trained: 0},
+    ]
 };
 export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
@@ -83,6 +99,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [spells, setSpells] = useState<Ability[]>([...creatorData.spells.filter(onlyUnique)])
     const [allGuilds, setAllGuilds] = useState<FullGuild[]>([])
     const [guilds, setGuilds] = useState<FullGuild[]>([])
+    const [stats, setStats] = useState<ReincStat[]>(defaultReincContext.stats)
     const [filteredData, setFilteredData] = useState<FilteredData>({
         ...defaultFilteredData,
         skills: skills,
@@ -103,6 +120,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         spellMax,
         level,
         allGuilds,
+        stats
     }
 
     if (values.skills.length === 0) {
@@ -219,6 +237,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         setRace,
         setFilteredData,
         setAllGuilds,
+        setStats,
         guildService
     }
 

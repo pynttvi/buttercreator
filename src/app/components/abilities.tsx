@@ -191,7 +191,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         <SectionBox>
             <Suspense fallback="Loading...">
                 {abilities && (
-                    <Box sx={{height: 400, width: '100%', paddingLeft: '20px'}}>
+                    <Box sx={{height: 400}}>
                         <Typography variant='h4' textTransform={'capitalize'}
                                     marginBlock={'40px'}>{props.type}</Typography>
 
@@ -202,7 +202,6 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                             disableRowSelectionOnClick
                             hideFooter={true}
                             disableColumnSelector
-                            ro
                             processRowUpdate={processRowUpdate}
                             onProcessRowUpdateError={(error) => {
                                 console.error(error)
