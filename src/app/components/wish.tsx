@@ -6,7 +6,7 @@ import {useReinc} from "@/app/contexts/reincContext";
 import {Typography} from "@mui/material";
 import Box from "@mui/material/Box";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {getDefaultWishes, WishWithId} from "@/app/data/wishes";
+import WishHandler, {getDefaultWishes, WishWithId} from "@/app/data/wishHandler";
 
 
 export default function WishList(props: {}) {
@@ -38,16 +38,12 @@ export default function WishList(props: {}) {
 
     const checkBoxChanged = (params: GridCellParams) => {
         const {value, row, colDef} = params
-
+        const wishHandler = WishHandler(reinc)
         if (value === false) {
-            const newWishes = [...reinc.wishes.filter((w) => w.name !== params.row.name), {...params.row}]
-            reinc.setWishes(newWishes)
-
+            wishHandler.apply(row.name)
         } else {
-            const newWishes = [...reinc.wishes.filter((s) => s !== params.row)]
-            reinc.setWishes(newWishes)
+            wishHandler.cancel(row.name)
         }
-
     }
 
     return (

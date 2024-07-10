@@ -9,12 +9,12 @@ import React, {
     useState
 } from 'react';
 import {Ability} from '../parsers/abilityCostParser';
-import {BaseStats, Race} from '../parsers/raceParser';
+import {BaseStatName, baseStats, BaseStats, Race} from '../parsers/raceParser';
 import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildType} from "@/app/components/guilds";
 import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildService";
-import {Wish} from "@/app/data/wishes";
+import WishHandler, {Wish} from "@/app/data/wishHandler";
 
 export const MAX_LEVEL = 120
 export const MAX_STAT = 50
@@ -25,6 +25,8 @@ export type ReincStat = {
     name: keyof BaseStats,
     trained: number
 }
+
+export type BonusBaseStat = { name: BaseStatName, percent: number }
 export type ReincType = {
     allGuilds: FullGuild[]
     filteredData: FilteredData
@@ -36,6 +38,7 @@ export type ReincType = {
     spellMax: number
     level: number
     stats: ReincStat[]
+    bonusBaseStats: BonusBaseStat[]
     wishes: Wish[]
 };
 
@@ -55,7 +58,10 @@ export type ReincFunctionsType = {
     setAllGuilds: Dispatch<SetStateAction<FullGuild[]>>
     guildService: GuildServiceType
     setStats: Dispatch<SetStateAction<ReincStat[]>>
+    setBonusBaseStats: Dispatch<SetStateAction<BonusBaseStat[]>>
     setWishes: Dispatch<SetStateAction<Wish[]>>
+    setSkillMax: Dispatch<SetStateAction<number>>
+    setSpellMax: Dispatch<SetStateAction<number>>
 };
 
 export type FilteredData = {
@@ -81,14 +87,12 @@ export const defaultReincContext: ReincType = {
     spellMax: 100,
     level: 0,
     stats: [
-        {id: 1, name: "str", trained: 0},
-        {id: 2, name: "dex", trained: 0},
-        {id: 3, name: "con", trained: 0},
-        {id: 4, name: "int", trained: 0},
-        {id: 5, name: "wis", trained: 0},
-        {id: 6, name: "cha", trained: 0},
+        ...baseStats.map((bs, idx) => ({id: idx, name: bs, trained: 0}))
     ],
-    wishes: []
+    wishes: [],
+    bonusBaseStats: [
+        ...baseStats.map((bs) => ({name: bs, percent: 0}))
+    ]
 };
 export const ReincContext = React.createContext<ReincType>(defaultReincContext)
 
@@ -104,6 +108,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     const [allGuilds, setAllGuilds] = useState<FullGuild[]>([])
     const [guilds, setGuilds] = useState<FullGuild[]>([])
     const [stats, setStats] = useState<ReincStat[]>(defaultReincContext.stats)
+    const [bonusBaseStats, setBonusBaseStats] = useState<BonusBaseStat[]>(defaultReincContext.bonusBaseStats)
     const [wishes, setWishes] = useState<Wish[]>([])
 
     const [filteredData, setFilteredData] = useState<FilteredData>({
@@ -127,7 +132,8 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         level,
         allGuilds,
         stats,
-        wishes
+        wishes,
+        bonusBaseStats
     }
 
     if (values.skills.length === 0) {
@@ -217,7 +223,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
                     return sg.name === guild.name
                 })
                 if (sub) {
-                    console.log("UPDATING SUBGUILD", sub)
+                    console.debug("UPDATING SUBGUILD", sub)
                     sub.trained = trained
 
                     const otherSubs = main.subGuilds.filter((sg) => {
@@ -246,7 +252,10 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         setAllGuilds,
         setStats,
         guildService,
-        setWishes
+        setWishes,
+        setBonusBaseStats,
+        setSkillMax,
+        setSpellMax,
     }
 
     let context = {...values, ...reincFunctions, ...transientContex,}
@@ -328,11 +337,25 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
 
     useEffect(() => {
         if (race) {
-            console.log("SETTING MAXES", skillMax, spellMax)
+            const wishHandler = WishHandler(context)
+            const knowledgeWishes = wishes.filter((w: Wish) => w.applied && w.name === "superior knowledge" || w.name === "better knowledge") || []
+            knowledgeWishes.forEach((w) => wishHandler.cancel(w.name))
+
             setSkillMax(race?.skill_max || 100)
             setSpellMax(race?.spell_max || 100)
+
+            knowledgeWishes.forEach((w) => wishHandler.apply(w.name))
+
+            console.debug("SETTING MAXES", skillMax, spellMax)
         }
-    }, [race, skillMax, spellMax])
+    }, [race])
+
+
+    useEffect(() => {
+        const wishHandler = WishHandler(context)
+        wishes.filter((w) => !w.applied).forEach((w) => wishHandler.apply(w.name))
+        console.debug("UPDATED WISHES", wishes)
+    }, [race, wishes])
 
     return (
         <ReincContext.Provider value={{...context, ...transientContex}}>
