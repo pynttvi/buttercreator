@@ -37,6 +37,7 @@ export type ReincType = {
     skillMax: number;
     spellMax: number
     level: number
+    freeLevels: number
     stats: ReincStat[]
     bonusBaseStats: BonusBaseStat[]
     wishes: Wish[]
@@ -86,6 +87,7 @@ export const defaultReincContext: ReincType = {
     skillMax: 100,
     spellMax: 100,
     level: 0,
+    freeLevels: 0,
     stats: [
         ...baseStats.map((bs, idx) => ({id: idx, name: bs, trained: 0}))
     ],
@@ -130,6 +132,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         skillMax,
         spellMax,
         level,
+        freeLevels,
         allGuilds,
         stats,
         wishes,

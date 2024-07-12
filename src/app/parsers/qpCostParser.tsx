@@ -21,7 +21,7 @@ export default async function QpCostParser(data: FileObject): Promise<ParserProc
   }
 
   return {
-    key: 'qpCosts',
+    key: 'qpCost',
     run: async (): Promise<QpCost> => {
       const fileContent = await getFile(data.download_url)
       const lines = fileContent.split("\n")

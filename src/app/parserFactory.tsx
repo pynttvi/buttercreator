@@ -133,7 +133,7 @@ export type CreatorDataType = {
     helpSkills: SkillHelp[]
     helpSpells: SpellHelp[]
     levelCosts: LevelCost
-    qpCost: QpCost[]
+    qpCost: QpCost
     statCost: StatCost[]
     wishCost: WishCost
 } & GuildEntry
