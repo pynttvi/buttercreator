@@ -2,6 +2,7 @@ import {ReincContextType} from "@/app/contexts/reincContext";
 import {Lesser, minorWishCosts, RESIST_WISH_NAME_SUFFIX, STAT_WISH_NAME_PREFIX, WishType} from "@/app/data/wishHandler";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {Ability} from "@/app/parsers/abilityCostParser";
+import {baseStats} from "@/app/parsers/raceParser";
 
 export default function Counters(reinc: ReincContextType, creatorDataContext: CreatorDataContextType) {
 
@@ -71,10 +72,10 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         return (countLevelCost(reinc.level - reinc.freeLevels) / 4)
     }
 
-    const countAbilitiesCost = (type: 'skill' | 'spell'): number => {
+    const countAbilitiesCost = (type: 'skill' | 'spell', name?: string): number => {
         let abilityCost = 0
         const target = type === 'skill' ? reinc.skills : reinc.spells
-        target.filter((a) => a.trained > 0).forEach((a: Ability) => {
+        target.filter((a) => a.trained > 0 && (!name || name === a.name)).forEach((a: Ability) => {
             const trainCount = costFactors.at(Math.min(a.trained / 5, 20)) || 0
             let tempCost = 0
             costFactors.slice(0, trainCount).forEach((cf) => {
@@ -89,13 +90,32 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
 
         return abilityCost
     }
+
+    const countStats = (): number => {
+        let statCosts = 0
+        console.log("Stat costs", data.statCost)
+
+        baseStats.forEach((bs) => {
+            if (data.statCost && reinc.stats) {
+                const reincStat = reinc.stats.find((rs) => rs.name === bs)
+                if (reincStat && reincStat.trained > 0) {
+                    statCosts = statCosts + data.statCost.slice(0, reincStat.trained).reduce((l1, l2) => l1 + l2, 0)
+                }
+            }
+        })
+        console.log("Stat costs", statCosts)
+
+        return statCosts
+    }
+
     return {
         countTaskPoints,
         countQpCost,
         countLevelCost,
         countLevelCostWithQps,
         countGuildLevelCost,
-        countAbilitiesCost
+        countAbilitiesCost,
+        countStats,
     }
 
 }

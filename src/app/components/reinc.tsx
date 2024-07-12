@@ -33,16 +33,19 @@ export default function Reinc(props: PropsWithChildren<{}>) {
         countLevelCost,
         countLevelCostWithQps,
         countGuildLevelCost,
-        countAbilitiesCost
+        countAbilitiesCost,
+        countStats,
     } = counters
 
     const taskPoints = useMemo(() => countTaskPoints(), [reinc.wishes])
     const qpCost = useMemo(() => countQpCost(), [reinc.level])
-    const levelCost = useMemo(() => formatNumber(countLevelCost()), [reinc.level])
-    const levelCostWithQps = useMemo(() => formatNumber(countLevelCostWithQps()), [reinc.level])
-    const guildLevelCost = useMemo(() => formatNumber(countGuildLevelCost()), [reinc.level])
-    const skillsCost = useMemo(() => formatNumber(countAbilitiesCost('skill')), [reinc.skills, reinc.race])
-    const spellCosts = useMemo(() => formatNumber(countAbilitiesCost('spell')), [reinc.spells, reinc.race])
+    const levelCost = useMemo(() => (countLevelCost()), [reinc.level])
+    const levelCostWithQps = useMemo(() => (countLevelCostWithQps()), [reinc.level])
+    const guildLevelCost = useMemo(() => (countGuildLevelCost()), [reinc.level])
+    const skillsCost = useMemo(() => (countAbilitiesCost('skill')), [reinc.skills, reinc.race])
+    const spellCosts = useMemo(() => (countAbilitiesCost('spell')), [reinc.spells, reinc.race])
+    const statCost = useMemo(() => (countStats()), [reinc.stats])
+    const totalCost = useMemo(() => (levelCost + guildLevelCost + skillsCost + spellCosts + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
     return (
         <SectionBox>
             <Suspense fallback="Loading...">
@@ -51,12 +54,15 @@ export default function Reinc(props: PropsWithChildren<{}>) {
                 <Box sx={{height: 400}}>
                     {/*// @ts-ignore*/}
                     <Grid container direction={'column'} item xs={12} sm={12} md={12}>
-                        <CostItem title={'Taskpoints'} value={taskPoints}/>
-                        <CostItem title={'Questpoints'} value={qpCost}/>
-                        <CostItem title={'Level cost'} value={`${levelCostWithQps} (${levelCost} without qp)`}/>
-                        <CostItem title={'Guild level cost'} value={guildLevelCost}/>
-                        <CostItem title={'Skill costs'} value={skillsCost}/>
-                        <CostItem title={'Spell costs'} value={spellCosts}/>
+                        <CostItem title={'Taskpoints'} value={formatNumber(taskPoints)}/>
+                        <CostItem title={'Questpoints'} value={formatNumber(qpCost)}/>
+                        <CostItem title={'Level cost'}
+                                  value={`${formatNumber(levelCostWithQps)} (${formatNumber(levelCost)} without qp)`}/>
+                        <CostItem title={'Guild level cost'} value={formatNumber(guildLevelCost)}/>
+                        <CostItem title={'Skill costs'} value={formatNumber(skillsCost)}/>
+                        <CostItem title={'Spell costs'} value={formatNumber(spellCosts)}/>
+                        <CostItem title={'Stats costs'} value={formatNumber(statCost)}/>
+                        <CostItem title={'Total cost'} value={formatNumber(totalCost)}/>
                     </Grid>
 
                 </Box>
