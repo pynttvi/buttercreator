@@ -21,7 +21,7 @@ export default async function WishCostParser(data: FileObject): Promise<ParserPr
   }
 
   return {
-    key: 'wishCosts',
+    key: 'wishCost',
     run: async (): Promise<WishCost> => {
       const fileContent = await getFile(data.download_url)
       const lines = fileContent.split("\n")

@@ -8,6 +8,7 @@ export const Greater = [
     , "greater physical improvement"
     , "superior battle regeneration"
     , "greater casting haste"
+    , "greater critical blow"
     , "superior endurance"
 ]
 export const Lesser = [
@@ -17,15 +18,19 @@ export const Lesser = [
     , "lesser physical improvement"
     , "lesser battle regeneration"
     , "lesser casting haste"
+    , "lesser critical blow"
     , "improved battle regeneration"
     , "improved endurance"
 ]
-
+export const STAT_WISH_NAME_PREFIX = "improved"
 export const improvedStat = [
-    ...baseStats.map((bs) => "improved " + bs)
+    ...baseStats.map((bs) => STAT_WISH_NAME_PREFIX+ " " + bs)
 ]
+
+
+export const RESIST_WISH_NAME_SUFFIX = "resistance"
 export const improvedResistance = [
-    ...damageTypes.map((dt) => dt + " resistance")
+    ...damageTypes.map((dt) => dt + " "+ RESIST_WISH_NAME_SUFFIX)
 ]
 export const Minor = [
     "thick skin"
@@ -33,12 +38,12 @@ export const Minor = [
     , "true seeing"
     , "giant size"
     , "lucky"
-    , "resist"
     , ...improvedStat
     , ...improvedResistance
 ]
+export type MinorName = typeof Minor[number]
 
-export type WishName = typeof Greater[number] | typeof Lesser[number] | typeof Minor[number]
+export type WishName = typeof Greater[number] | typeof Lesser[number]
 
 export enum WishType {
     GREATER = "GREATER",
@@ -51,6 +56,16 @@ export type Wish = {
     applied: boolean
     type: WishType
 }
+
+export const minorWishCosts: { name: MinorName, cost: number }[] = [
+    {name: "thick skin", cost: 100},
+    {name: "ambidexterity", cost: 500},
+    {name: "giant size", cost: 500},
+    {name: "true seeing", cost: 100},
+    {name: "lucky", cost: 75},
+    {name: STAT_WISH_NAME_PREFIX, cost: 40},
+    {name: RESIST_WISH_NAME_SUFFIX, cost: 150},
+]
 
 export type WishWithId = {
     id: number
@@ -184,6 +199,9 @@ export default function WishHandler(reinc: ReincContextType) {
             applyWish(name, "greater casting haste", WishType.GREATER)
             applyWish(name, "lesser casting haste", WishType.LESSER)
 
+            applyWish(name, "greater critical blow", WishType.GREATER)
+            applyWish(name, "lesser critical blow", WishType.LESSER)
+
 
             applyWish(name, "thick skin", WishType.MINOR)
             applyWish(name, "lucky", WishType.MINOR)
@@ -248,6 +266,9 @@ export default function WishHandler(reinc: ReincContextType) {
 
             cancelWish(name, "greater casting haste", WishType.GREATER)
             cancelWish(name, "lesser casting haste", WishType.LESSER)
+
+            cancelWish(name, "greater critical blow", WishType.GREATER)
+            cancelWish(name, "lesser critical blow", WishType.LESSER)
 
             cancelWish(name, "superior endurance", WishType.GREATER)
             cancelWish(name, "improved endurance", WishType.LESSER)

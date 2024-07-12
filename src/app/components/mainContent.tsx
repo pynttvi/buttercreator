@@ -24,7 +24,7 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                                 <Suspense fallback={'Loading...'}>
                                     <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>
                                         {/*@ts-ignore*/}
-                                        <Grid item xs={12} sm={9} md={9} key={'races'}>
+                                        <Grid item xs={12} sm={12} md={12} key={'races'}>
                                             <RaceList myData={value.creatorData}/>
                                         </Grid>
 
@@ -48,8 +48,11 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                                         <Grid item xs={12} sm={12} md={6} lg={6} key={'wishes'}>
                                             <WishList/>
                                         </Grid>
+                                        {/*@ts-ignore*/}
+                                        <Grid item xs={12} sm={12} md={12} key={'races'}>
+                                            <Reinc />
+                                        </Grid>
                                     </Grid>
-                                    <Reinc/>
                                 </Suspense>
                             </ReincContextProvider>)
                 )}

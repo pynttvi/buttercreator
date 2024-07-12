@@ -135,7 +135,7 @@ export type CreatorDataType = {
     levelCosts: LevelCost[]
     qpCost: QpCost[]
     statCost: StatCost[]
-    wishCost: WishCost[]
+    wishCost: WishCost
 } & GuildEntry
 
 
