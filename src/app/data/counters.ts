@@ -32,6 +32,17 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
             }
 
             return tpCount
+        },
+        countLevelCost: (): number => {
+            let levelCost = 0
+
+            if (data.levelCosts && reinc.level && reinc.level > 0) {
+                console.debug("Level costs", data.levelCosts)
+                levelCost = data.levelCosts.slice(0, reinc.level).reduce((l1, l2) => l1 + l2, 0)
+            }
+            console.debug("Level cost", levelCost)
+
+            return levelCost
         }
     }
 

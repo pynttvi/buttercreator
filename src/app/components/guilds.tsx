@@ -80,7 +80,7 @@ function GuildItem(props: {
 
     function deleteGuild(guild: FullGuild): void {
         let value = 0
-        if (disabled || level === MAX_LEVEL) {
+        if (disabled || (level === MAX_LEVEL && guild.guildType === 'sub')) {
             value = 1
             addOrUpdateGuild(guild.guildType, guild, value)
             //  focusClass(className)

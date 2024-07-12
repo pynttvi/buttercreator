@@ -16,7 +16,7 @@ export const NON_GUILD_FILES = [
     'help_races.chr',
     'help_spell.chr',
     'help_skill.chr',
-    'levelcost.chr',
+    'levelcosts.chr',
     'questpoints.chr',
     'races.chr',
     'spells.chr',
@@ -132,7 +132,7 @@ export type CreatorDataType = {
     helpRace: RaceHelp[]
     helpSkills: SkillHelp[]
     helpSpells: SpellHelp[]
-    levelCosts: LevelCost[]
+    levelCosts: LevelCost
     qpCost: QpCost[]
     statCost: StatCost[]
     wishCost: WishCost
