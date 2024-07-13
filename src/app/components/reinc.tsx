@@ -13,12 +13,15 @@ import {formatNumber} from "@/app/filters/utils";
 function CostItem(props: { title: string, value: number | string }) {
     return (
         // @ts-ignore
-        <Stack direction={"row"} item xs={12} sm={12} md={12} spacing={3} alignItems={"center"}
-               key={`cost-${props.title}`}>
-            <Typography variant={"subtitle1"} aria-label={`${props.title}-tittle`}>{props.title}</Typography>
-            <Typography variant={"body1"}
-                        aria-labelledby={`${props.title}-tittle`}>{props.value}</Typography>
-        </Stack>
+        <Grid item direction={'row'} xs={6} sm={6} md={6}>
+            {/*// @ts-ignore*/}
+            <Stack direction={"row"} item xs={6} sm={6} md={6} spacing={1} alignItems={"center"}
+                   key={`cost-${props.title}`}>
+                <Typography variant={"subtitle1"} aria-label={`${props.title}-tittle`}>{props.title}</Typography>
+                <Typography variant={"body1"}
+                            aria-labelledby={`${props.title}-tittle`}>{props.value}</Typography>
+            </Stack>
+        </Grid>
     )
 }
 
@@ -45,7 +48,7 @@ export default function Reinc(props: PropsWithChildren<{}>) {
     const skillsCost = useMemo(() => (countAbilitiesCost('skill')), [reinc.skills, reinc.race])
     const spellCosts = useMemo(() => (countAbilitiesCost('spell')), [reinc.spells, reinc.race])
     const statCost = useMemo(() => (countStats()), [reinc.stats])
-    const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost + spellCosts + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
+    const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost.exp + spellCosts.exp + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
     return (
         <SectionBox>
             <Suspense fallback="Loading...">
@@ -53,14 +56,16 @@ export default function Reinc(props: PropsWithChildren<{}>) {
                             marginBlock={'40px'}>Costs</Typography>
                 <Box sx={{height: 400}}>
                     {/*// @ts-ignore*/}
-                    <Grid container direction={'column'} item xs={12} sm={12} md={12}>
+                    <Grid container direction={'row'} item xs={12} sm={12} md={12}>
                         <CostItem title={'Taskpoints'} value={formatNumber(taskPoints)}/>
                         <CostItem title={'Questpoints'} value={formatNumber(qpCost)}/>
                         <CostItem title={'Level cost'}
                                   value={`${formatNumber(levelCostWithQps)} (${formatNumber(levelCost)} without qp)`}/>
                         <CostItem title={'Guild level cost'} value={formatNumber(guildLevelCost)}/>
-                        <CostItem title={'Skill costs'} value={formatNumber(skillsCost)}/>
-                        <CostItem title={'Spell costs'} value={formatNumber(spellCosts)}/>
+                        <CostItem title={'Skill costs exp'} value={formatNumber(skillsCost.exp)}/>
+                        <CostItem title={'Skill costs gold'} value={formatNumber(skillsCost.gold)}/>
+                        <CostItem title={'Spell costs exp'} value={formatNumber(spellCosts.exp)}/>
+                        <CostItem title={'Spell costs gold'} value={formatNumber(spellCosts.gold)}/>
                         <CostItem title={'Stats costs'} value={formatNumber(statCost)}/>
                         <CostItem title={'Total cost'} value={formatNumber(totalCost)}/>
                     </Grid>

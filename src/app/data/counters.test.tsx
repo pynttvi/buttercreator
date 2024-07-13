@@ -79,5 +79,5 @@ test('Counter tests', async () => {
     const {creatorDataContext, reinc} = await mockCreatorData(override);
     const cost = Counters(reinc, creatorDataContext).countAbilitiesCost("skill")
     expect(formatNumber(cost.exp)).toEqual("52.74M")
-    expect(formatNumber(cost.gold)).toEqual("2.34M")
+    expect(formatNumber(cost.gold)).toEqual("23.44K")
 })

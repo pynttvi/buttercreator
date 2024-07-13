@@ -41,7 +41,7 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
 
     const countQpCost = (): number => {
         let qpCost = 0
-        console.log("QP costs", data.qpCost)
+        console.debug("QP costs", data.qpCost)
 
         if (data.qpCost && reinc.level && reinc.level > 0) {
             qpCost = data.qpCost.slice(0, reinc.level).reduce((qpl1, qpl2) => qpl1 + qpl2, 0)
@@ -88,7 +88,7 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         })
         console.debug("Ability total cost", abilityCost)
 
-        return {exp: abilityCost, gold: (abilityCost * 0.044444)}
+        return {exp: abilityCost, gold: (abilityCost * 0.044444) / 100}
 
     }
 
