@@ -45,7 +45,7 @@ export default function Reinc(props: PropsWithChildren<{}>) {
     const skillsCost = useMemo(() => (countAbilitiesCost('skill')), [reinc.skills, reinc.race])
     const spellCosts = useMemo(() => (countAbilitiesCost('spell')), [reinc.spells, reinc.race])
     const statCost = useMemo(() => (countStats()), [reinc.stats])
-    const totalCost = useMemo(() => (levelCost + guildLevelCost + skillsCost + spellCosts + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
+    const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost + spellCosts + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
     return (
         <SectionBox>
             <Suspense fallback="Loading...">

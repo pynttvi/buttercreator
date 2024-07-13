@@ -8,8 +8,8 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
 
     const data = creatorDataContext.creatorData
 
-    const costFactors = [1, 2, 4, 8, 13, 22, 38, 64, 109, 184, 310, 523, 882, 1487, 2506,
-        4222, 7115, 11989, 20202, 34040, 999999]
+    const costFactors = [0, 1, 2, 4, 8, 13, 22, 38, 64, 109, 184, 310, 523, 882, 1487, 2506,
+        4222, 7115, 11989, 20202, 34040, 999999, 999999, 999999]
 
     const countTaskPoints = (): number => {
         let tpCount = 0
@@ -69,41 +69,42 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
 
 
     const countGuildLevelCost = (): number => {
-        return (countLevelCost(reinc.level - reinc.freeLevels) / 4)
+        return (countLevelCost(reinc.level - reinc.freeLevels) * 0.4)
     }
 
-    const countAbilitiesCost = (type: 'skill' | 'spell', name?: string): number => {
+    const countAbilitiesCost = (type: 'skill' | 'spell', name?: string): { exp: number, gold: number } => {
         let abilityCost = 0
         const target = type === 'skill' ? reinc.skills : reinc.spells
         target.filter((a) => a.trained > 0 && (!name || name === a.name)).forEach((a: Ability) => {
-            const trainCount = costFactors.at(Math.min(a.trained / 5, 20)) || 0
+            const trainCount = Math.min(a.trained / 5) || 0
             let tempCost = 0
-            costFactors.slice(0, trainCount).forEach((cf) => {
-                tempCost = tempCost + Math.min(cf * a.cost, 10000000)
-            })
-            tempCost = (tempCost * (type === 'skill' ? reinc?.race?.skill_cost || 100 : reinc?.race?.spell_cost || 100)) / 100
-            tempCost = (tempCost * 6666) / 10000
+            for (let i = 0; i < trainCount + 1; i++) {
+                tempCost = tempCost + Math.min(costFactors[Math.min(i, costFactors.length - 1)] * a.cost, 10000000)
+            }
+            tempCost = ((tempCost * (type === 'skill' ? reinc?.race?.skill_cost || 100 : reinc?.race?.spell_cost || 100)) / 100)
+
             console.debug("Ability cost", tempCost, a)
             abilityCost = abilityCost + tempCost
         })
         console.debug("Ability total cost", abilityCost)
 
-        return abilityCost
+        return {exp: abilityCost, gold: (abilityCost * 0.044444)}
+
     }
 
     const countStats = (): number => {
         let statCosts = 0
-        console.log("Stat costs", data.statCost)
+        console.debug("Stat costs", data.statCost)
 
         baseStats.forEach((bs) => {
             if (data.statCost && reinc.stats) {
                 const reincStat = reinc.stats.find((rs) => rs.name === bs)
                 if (reincStat && reincStat.trained > 0) {
-                    statCosts = statCosts + data.statCost.slice(0, reincStat.trained).reduce((l1, l2) => l1 + l2, 0)
+                    statCosts = statCosts + data.statCost.slice(0, reincStat.trained + 1).reduce((l1, l2) => l1 + l2, 0)
                 }
             }
         })
-        console.log("Stat costs", statCosts)
+        console.debug("Stat costs", statCosts)
 
         return statCosts
     }
