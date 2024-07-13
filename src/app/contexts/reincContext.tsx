@@ -370,7 +370,7 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
 export const useReinc = (): ReincContextType => {
     const ctx: ReincContextType = useContext(ReincContext) as ReincContextType
     if (!ctx) {
-        throw new Error("Reinc context configuration error")
+        throw new Error("Costs context configuration error")
     }
     return ctx
 }

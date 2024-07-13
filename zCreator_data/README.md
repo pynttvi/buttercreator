@@ -30,7 +30,7 @@ If you have updates, please fork the repository, make your changes, and send a p
 8. Look at the exp cost for `weapon skill 1h bludgeon`, the racial skill cost is: (value * 100 / 300)
 9. `list spells all`
 10. The racial spell max % is the same as max % on `dispel curse` and the exp cost is again calculated according to `step 8` above.
-11. `Reinc out` and select the `same race` again
+11. `Costs out` and select the `same race` again
 12. Select `bard` as the guild.
 13. Take mortal levels only up to `30`
 14. Take note of output from the `stats` command

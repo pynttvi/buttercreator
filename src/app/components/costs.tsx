@@ -25,7 +25,7 @@ function CostItem(props: { title: string, value: number | string }) {
     )
 }
 
-export default function Reinc(props: PropsWithChildren<{}>) {
+export default function Costs(props: PropsWithChildren<{}>) {
 
     const creatorDataContext = useCreatorData()
     const reinc = useReinc()

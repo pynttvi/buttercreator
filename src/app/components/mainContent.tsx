@@ -3,7 +3,7 @@ import {Typography} from "@mui/material";
 import RaceList from "@/app/components/races";
 import Guilds from "@/app/components/guilds";
 import AbilityList from "@/app/components/abilities";
-import Reinc from "@/app/components/reinc";
+import Costs from "@/app/components/costs";
 import {Suspense} from "react";
 import {ReincContextProvider} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
@@ -50,7 +50,7 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                                         </Grid>
                                         {/*@ts-ignore*/}
                                         <Grid item xs={12} sm={12} md={12} key={'races'}>
-                                            <Reinc />
+                                            <Costs />
                                         </Grid>
                                     </Grid>
                                 </Suspense>
