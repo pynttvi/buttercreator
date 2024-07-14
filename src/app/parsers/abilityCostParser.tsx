@@ -4,7 +4,7 @@ import {ParserProcess} from "../parserFactory";
 import {FullGuild} from "@/app/service/guildService";
 
 export type Ability = {
-    id: number
+    id?: number
     name: string
     cost: number
     trained: number

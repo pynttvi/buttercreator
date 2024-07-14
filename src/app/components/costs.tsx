@@ -54,7 +54,7 @@ export default function Costs(props: PropsWithChildren<{}>) {
             <Suspense fallback="Loading...">
                 <Typography variant='h4' textTransform={'capitalize'}
                             marginBlock={'40px'}>Costs</Typography>
-                <Box sx={{height: 400}}>
+                <Box>
                     {/*// @ts-ignore*/}
                     <Grid container direction={'row'} item xs={12} sm={12} md={12}>
                         <CostItem title={'Taskpoints'} value={formatNumber(taskPoints)}/>

@@ -8,6 +8,7 @@ export type GuildAbility = {
     id?: number,
     name: string,
     max: number,
+    cost: number,
     type: 'skill' | 'spell'
     guild?: FullGuild
 }

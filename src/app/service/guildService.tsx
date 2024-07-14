@@ -4,8 +4,7 @@ import {MAX_LEVEL, ReincContextType} from "@/app/contexts/reincContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
-import {onlyUnique} from "@/app/filters/creatorDataFilters";
-import {sortByName} from "@/app/filters/utils";
+import {onlyUnique, sortByName} from "@/app/filters/utils";
 import {Ability} from "@/app/parsers/abilityCostParser";
 
 export const MAX_GUILD_LEVELS = 60
@@ -194,7 +193,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                 })
                 subGuilds = flatSubguilds
 
-                console.debug("GUILD LEVELS", guild)
+              //  console.debug("GUILD LEVELS", guild)
 
 
                 const mainGuildPartial: Partial<MainGuild> = {

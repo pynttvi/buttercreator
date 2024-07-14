@@ -1,6 +1,35 @@
+import {Ability} from "@/app/parsers/abilityCostParser";
+
 export function sortByName<T>(array: { name: string }[]): T[] {
     return array.sort((a, b) => (a.name < b.name) ? -1 : 1) as T[]
 }
+
+export function sortByMaxAndName<T>(
+    array: { name: string; max: number }[]
+): T[] {
+    return array.sort((a, b) => {
+        if (a.name === b.name) {
+            return b.max - a.max; // Sort by max in descending order if names are the same
+        }
+        return a.name.localeCompare(b.name); // Otherwise, s
+    }) as T[];
+}
+
+
+export function onlyUniqueNameWithHighestMax(items: { name: string, max: number }[]) {
+
+    const abilityMap = new Map<string, any>();
+
+    items.forEach(ability => {
+        if (!abilityMap.has(ability.name) || ability.max > (abilityMap.get(ability.name)?.max || 0)) {
+            abilityMap.set(ability.name, ability);
+        }
+    });
+
+    return Array.from(abilityMap.values());
+}
+
+
 
 export function sortById<T>(array: { id: number }[]): T[] {
     return array.sort((a, b) => (a.id < b.id) ? -1 : 1) as T[]
@@ -14,4 +43,10 @@ export const formatNumber = (n: number, fn?: (n: number, fn?: () => number) => n
     while (n >= TRESHOLD && ++idx <= ALPHABET.length) n /= TRESHOLD
     if (fn) n = fn(n)
     return String(idx === 0 ? n : n.toFixed(2) + ALPHABET[idx - 1])
+}
+
+export function onlyUnique(value: { name: string }, index: any, array: any[]) {
+    return array.findIndex((v: { name: string }) => {
+        return value.name === v.name
+    }) === index;
 }

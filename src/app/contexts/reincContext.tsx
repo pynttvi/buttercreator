@@ -10,11 +10,12 @@ import React, {
 } from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {BaseStatName, baseStats, BaseStats, Race} from '../parsers/raceParser';
-import {doFilter, onlyUnique} from "@/app/filters/creatorDataFilters";
-import {useCreatorData} from "@/app/contexts/creatorDataContext";
+import {doFilter} from "@/app/filters/creatorDataFilters";
+import {CreatorDataContextType, useCreatorData} from "@/app/contexts/creatorDataContext";
 import {GuildType} from "@/app/components/guilds";
 import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildService";
 import WishHandler, {Wish} from "@/app/data/wishHandler";
+import {onlyUnique} from "@/app/filters/utils";
 
 export const MAX_LEVEL = 120
 export const MAX_STAT = 50
@@ -96,11 +97,10 @@ export const defaultReincContext: ReincType = {
         ...baseStats.map((bs) => ({name: bs, percent: 0}))
     ]
 };
-export const ReincContext = React.createContext<ReincType>(defaultReincContext)
+export const ReincContext = React.createContext<ReincContextType | null>(null)
 
-export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
+export const FullReincContext = (creatorDataContext: CreatorDataContextType) => {
     const ctx = useContext(ReincContext)
-    const creatorDataContext = useCreatorData()
     const {creatorData} = creatorDataContext
     const [level, setLevel] = useState<number>(0)
     const [freeLevels, setFreeLevels] = useState<number>(0)
@@ -186,11 +186,11 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
     }
     const getAbility = (ability: Partial<Ability>) => {
         if (ability.type) {
-            return ability.type === "skill" ? ctx.skills.find((a) => a.name === ability.name) : ctx.spells.find((a) => a.name === ability.name)
+            return ability.type === "skill" ? skills.find((a) => a.name === ability.name) : spells.find((a) => a.name === ability.name)
         } else {
-            let a: Ability | undefined = ctx.skills.find((a) => a.name === ability.name)
+            let a: Ability | undefined = skills.find((a) => a.name === ability.name)
             if (!a) {
-                a = ctx.skills.find((a) => a.name === ability?.name)
+                a = skills.find((a) => a.name === ability?.name)
             }
             return a
         }
@@ -279,16 +279,9 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         const untrainedGuilds = guilds.filter((g) => {
             return g.trained === 0
         })
-
-        console.debug("GUILDS", guilds)
-        if (untrainedGuilds.length > 0) {
-            setGuilds(guilds.filter((g) => {
-                return g.trained > 0
-            }))
-        }
         filterData()
 
-    }, [skills, spells, guilds]);
+    }, [skills, spells]);
 
     useEffect(() => {
         const guildService = GuildService(creatorDataContext, context as ReincContextType)
@@ -360,8 +353,17 @@ export const ReincContextProvider = (props: PropsWithChildren<{}>) => {
         console.debug("UPDATED WISHES", wishes)
     }, [race, wishes])
 
+
+    return {...context, ...transientContex, guildService: GuildService(creatorDataContext, context)}
+
+}
+export const ReincContextProvider = (props: PropsWithChildren<{
+    creatorDataContext: CreatorDataContextType
+}>) => {
+
+    const context = FullReincContext(props.creatorDataContext)
     return (
-        <ReincContext.Provider value={{...context, ...transientContex}}>
+        <ReincContext.Provider value={context}>
             {props.children}
         </ReincContext.Provider>
     )
