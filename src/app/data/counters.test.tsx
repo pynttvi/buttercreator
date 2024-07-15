@@ -24,7 +24,7 @@ const mockedGuildService = vi.mocked(GuildService, true);
 test('Counter tests', async () => {
     const override: Partial<ReincContextType> = {
         skills: [
-            {name: "attack", cost: 1300, type: 'skill', trained: 100, id: 1, max: 100}
+            {name: "attack", cost: 1300, type: 'skill', trained: 100, id: 1, max: 100, maxed:true, enabled: true}
         ]
     }
     const {creatorDataContext, reinc} = await mockCreatorData(override);

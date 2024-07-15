@@ -15,7 +15,6 @@ import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {onlyUniqueNameWithHighestMax, sortByName} from "@/app/filters/utils";
 
 
 const roundUp5 = (n: number) => {

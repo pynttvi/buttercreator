@@ -306,7 +306,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
                 return ra
             })
             setAllSpells(allSpells)
-            setSpells(allSkills)
+            setSpells(allSpells)
 
         }
     }
