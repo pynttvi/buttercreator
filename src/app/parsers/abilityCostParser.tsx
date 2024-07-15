@@ -4,15 +4,14 @@ import {ParserProcess} from "../parserFactory";
 import {FullGuild} from "@/app/service/guildService";
 
 export type Ability = {
-    id?: number
+    id: number
     name: string
     cost: number
     trained: number
-    max: number
-    maxed?: boolean
+    maxed: boolean
     type: "skill" | "spell"
     guild?: FullGuild
-    maxForGuild?: () => number
+    enabled: boolean
 }
 
 export default async function
@@ -42,7 +41,8 @@ export default async function
                         id: i,
                         trained: 0,
                         type: abilityType === "skills" ? "skill" : "spell",
-                        max: 0,
+                        maxed: false,
+                        enabled: false,
                         ...l
                     })
                 }

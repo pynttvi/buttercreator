@@ -16,10 +16,13 @@ import {GuildType} from "@/app/components/guilds";
 import {FullGuild, GuildService, GuildServiceType} from "@/app/service/guildService";
 import WishHandler, {Wish} from "@/app/data/wishHandler";
 import {onlyUnique} from "@/app/filters/utils";
+import {GuildAbility} from "@/app/parsers/guildParser";
 
 export const MAX_LEVEL = 120
 export const MAX_STAT = 50
 
+
+export type ReincAbility = Ability & GuildAbility
 
 export type ReincStat = {
     id: number
@@ -30,7 +33,6 @@ export type ReincStat = {
 export type BonusBaseStat = { name: BaseStatName, percent: number }
 export type ReincType = {
     allGuilds: FullGuild[]
-    filteredData: FilteredData
     race: Race | null | undefined;
     guilds: FullGuild[];
     skills: ReincAbility[];
@@ -44,18 +46,17 @@ export type ReincType = {
     wishes: Wish[]
 };
 
-export type TransientReincType = {};
-
-export type ReincAbility = Ability
+export type TransientReincType = {
+    filterData?: () => void
+};
 
 export type ReincFunctionsType = {
-    updateAbility: (type: 'skills' | 'spells', ability: Ability) => Ability
+    updateAbility: (type: 'skills' | 'spells', ability: ReincAbility) => ReincAbility
     addOrUpdateGuild: (guildType: GuildType, guild: FullGuild, levels: number) => void
-    getAbility: (ability: Partial<Ability>) => Ability | undefined
-    setSkills: Dispatch<SetStateAction<Ability[]>>
-    setSpells: Dispatch<SetStateAction<Ability[]>>
+    getAbility: (ability: Partial<ReincAbility>) => Ability | undefined
+    setSkills: Dispatch<SetStateAction<ReincAbility[]>>
+    setSpells: Dispatch<SetStateAction<ReincAbility[]>>
     setRace: Dispatch<SetStateAction<Race | null>>
-    setFilteredData: Dispatch<SetStateAction<FilteredData>>
     getReincGuildByName: (name: string) => FullGuild | undefined
     setAllGuilds: Dispatch<SetStateAction<FullGuild[]>>
     guildService: GuildServiceType
@@ -66,20 +67,9 @@ export type ReincFunctionsType = {
     setSpellMax: Dispatch<SetStateAction<number>>
 };
 
-export type FilteredData = {
-    guilds?: FullGuild [] | undefined
-    skills?: Ability[] | undefined
-    spells?: Ability[] | undefined
-    filteredAbilities?: () => Ability[] | undefined
-    filterCount: number
-}
-const defaultFilteredData: FilteredData = {
-    filterCount: 0
-}
 
 export type ReincContextType = ReincType & ReincFunctionsType & TransientReincType
 export const defaultReincContext: ReincType = {
-    filteredData: defaultFilteredData,
     guilds: [],
     allGuilds: [],
     skills: [],
@@ -105,19 +95,13 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     const [level, setLevel] = useState<number>(0)
     const [freeLevels, setFreeLevels] = useState<number>(0)
     const [race, setRace] = useState<Race | null>(null)
-    const [skills, setSkills] = useState<Ability[]>([...creatorData.skills.filter(onlyUnique)])
-    const [spells, setSpells] = useState<Ability[]>([...creatorData.spells.filter(onlyUnique)])
+    const [skills, setSkills] = useState<ReincAbility[]>([])
+    const [spells, setSpells] = useState<ReincAbility[]>([])
     const [allGuilds, setAllGuilds] = useState<FullGuild[]>([])
     const [guilds, setGuilds] = useState<FullGuild[]>([])
     const [stats, setStats] = useState<ReincStat[]>(defaultReincContext.stats)
     const [bonusBaseStats, setBonusBaseStats] = useState<BonusBaseStat[]>(defaultReincContext.bonusBaseStats)
     const [wishes, setWishes] = useState<Wish[]>([])
-
-    const [filteredData, setFilteredData] = useState<FilteredData>({
-        ...defaultFilteredData,
-        skills: skills,
-        spells: spells,
-    })
 
     const [skillMax, setSkillMax] = useState(race?.skill_max || 100)
     const [spellMax, setSpellMax] = useState(race?.skill_max || 100)
@@ -125,7 +109,6 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         ...defaultReincContext,
         ...ctx,
         guilds,
-        filteredData,
         skills,
         spells,
         race,
@@ -139,31 +122,13 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         bonusBaseStats
     }
 
-    if (values.skills.length === 0) {
-        values.skills.push(...creatorData.skills.filter(onlyUnique))
-    }
-    if (values.spells.length === 0) {
-        values.spells.push(...creatorData.spells)
-    }
-
-
-    const getDefaultFilters = () => {
-        return {
-            guilds: creatorData.guilds,
-            skills: creatorData.skills,
-            spells: creatorData.spells,
-            filteredAbilities: (): Ability[] | undefined => {
-                return filteredData.skills?.concat(filteredData?.spells || [])
-            }
-        }
-    }
 
     const getTrainedAbilities = (): Ability[] | undefined => {
         return skills.filter((s) => s.trained > 0)?.concat(spells.filter((s) => s.trained > 0))
     }
 
 
-    const addOrUpdateAbility = (type: 'skills' | 'spells', ability: Ability) => {
+    const addOrUpdateAbility = (type: 'skills' | 'spells', ability: ReincAbility) => {
         const updatedRow: ReincAbility = {...ability};
         if (type === "skills") {
             if (updatedRow.trained === skillMax) {
@@ -240,7 +205,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     }
 
 
-    let transientContex = {}
+    let transientContex: TransientReincType = {}
     const guildService = GuildService(creatorDataContext, values as ReincContextType)
 
     const reincFunctions: ReincFunctionsType = {
@@ -251,7 +216,6 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         setSkills,
         setSpells,
         setRace,
-        setFilteredData,
         setAllGuilds,
         setStats,
         guildService,
@@ -270,8 +234,20 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     transientContex = {...transientContex}
 
     const filterData = () => {
-        doFilter(creatorDataContext, context as ReincContextType)
+        // doFilter(creatorDataContext, context as ReincContextType)
     }
+
+    transientContex = {...transientContex, filterData: filterData} as TransientReincType
+
+    useEffect(() => {
+        const allGuilds = GuildService(creatorDataContext, context as ReincContextType).getMainGuilds()
+            .map((g) => {
+                return {...g, enabled: true} as FullGuild
+            }) as FullGuild[]
+
+        setAllGuilds(allGuilds)
+        setGuilds(GuildService(creatorDataContext, context as ReincContextType).getMainGuilds() as FullGuild[])
+    }, []);
 
     useEffect(() => {
         const guildService = GuildService(creatorDataContext, context as ReincContextType)
@@ -282,6 +258,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         filterData()
 
     }, [skills, spells]);
+
 
     useEffect(() => {
         const guildService = GuildService(creatorDataContext, context as ReincContextType)
@@ -302,26 +279,23 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     }, [guilds]);
 
     useEffect(() => {
-        const guildService = GuildService(creatorDataContext, context as ReincContextType)
-
-        const overTrainedSkills = skills.filter((s) => {
-            return s.trained > 0
-        }).map((s) => {
-            const newMax = guildService.maxForGuilds(s, guilds)
-            return {...s, trained: Math.min(newMax || 0, s.trained), max: newMax}
-        })
-        console.debug("OVERTRAINED SKILLS", overTrainedSkills)
-        setSkills([...skills.filter((s) => overTrainedSkills.find((s1) => s1.name !== s.name)), ...overTrainedSkills])
-
-        const overTrainedSpells = spells.filter((s) => {
-            return s.trained > 0
-        }).map((s) => {
-            const newMax = guildService.maxForGuilds(s, guilds)
-            return {...s, trained: Math.min(newMax || 0, s.trained), max: newMax}
-        })
-        setSpells([...spells.filter((s) => overTrainedSpells.find((s1) => s1.name !== s.name)), ...overTrainedSpells])
-
-        filterData()
+        //
+        // const overTrainedSkills = skills.filter((s) => {
+        //     return s.trained > 0
+        // }).map((s) => {
+        //     return {...s}
+        // })
+        // console.debug("OVERTRAINED SKILLS", overTrainedSkills)
+        // setSkills([...skills.filter((s) => overTrainedSkills.find((s1) => s1.name !== s.name)), ...overTrainedSkills])
+        //
+        // const overTrainedSpells = spells.filter((s) => {
+        //     return s.trained > 0
+        // }).map((s) => {
+        //     return {...s,}
+        // })
+        // setSpells([...spells.filter((s) => overTrainedSpells.find((s1) => s1.name !== s.name)), ...overTrainedSpells])
+        //
+        // filterData()
     }, [level]);
 
     useMemo(() => {

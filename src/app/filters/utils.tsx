@@ -1,4 +1,6 @@
 import {Ability} from "@/app/parsers/abilityCostParser";
+import {GuildAbility} from "@/app/parsers/guildParser";
+import {ReincAbility} from "@/app/contexts/reincContext";
 
 export function sortByName<T>(array: { name: string }[]): T[] {
     return array.sort((a, b) => (a.name < b.name) ? -1 : 1) as T[]
@@ -16,11 +18,11 @@ export function sortByMaxAndName<T>(
 }
 
 
-export function onlyUniqueNameWithHighestMax(items: { name: string, max: number }[]) {
+export function onlyUniqueNameWithHighestMax(abilities: ReincAbility[]) {
 
-    const abilityMap = new Map<string, any>();
+    const abilityMap = new Map<string, ReincAbility>();
 
-    items.forEach(ability => {
+    abilities.forEach((ability: ReincAbility )=> {
         if (!abilityMap.has(ability.name) || ability.max > (abilityMap.get(ability.name)?.max || 0)) {
             abilityMap.set(ability.name, ability);
         }

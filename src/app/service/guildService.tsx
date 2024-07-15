@@ -24,6 +24,7 @@ export interface SubGuild extends MainGuild {
     levels: number
     levelMap: Map<string, GuildLevel>
     subGuilds: SubGuild[]
+    enabled: boolean
 }
 
 export interface MainGuild {
@@ -33,6 +34,7 @@ export interface MainGuild {
     levels: number
     trained: number
     levelMap: Map<string, GuildLevel>
+    enabled: boolean
 }
 
 export type FullGuild = SubGuild & MainGuild
@@ -208,6 +210,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                     name: string;
                     subGuilds: SubGuild[];
                     trained: number;
+                    enabled: boolean;
 
                     constructor(mainGuildPartial: Partial<MainGuild>, subGuildsPartial: Partial<SubGuild>[]) {
                         this.guildType = 'main'
@@ -215,10 +218,12 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                         this.levelMap = mainGuildPartial.levelMap || new Map<string, GuildLevel>
                         this.name = mainGuildPartial.name?.toLowerCase().replaceAll("_", " ") || ""
                         this.trained = 0
+                        this.enabled = true
                         this.subGuilds = sortByName<SubGuild>(subGuildsPartial as SubGuild[]).map((sgp: SubGuild) => {
                             const subGuild: SubGuild = {
                                 name: sgp.name?.toLowerCase().replaceAll("_", " ") || "",
                                 guildType: 'sub',
+                                enabled: true,
                                 mainGuild: this,
                                 levels: sgp.levels || -1,
                                 //levels: Object.keys((sgp as SubGuild).levelMap?.keys())?.length || -1,
@@ -235,6 +240,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                                     levelMap: sgp.levelMap || new Map<string, GuildLevel>,
                                     subGuilds: [],
                                     trained: 0,
+                                    enabled: true
                                 }
                                 return subGuild
                             }) || []

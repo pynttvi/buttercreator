@@ -2,15 +2,11 @@ import {FileObject} from "../page"
 import {ParserProcess} from "../parserFactory"
 import {getFile} from "../fileService"
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
-import {FullGuild} from "@/app/service/guildService";
 
 export type GuildAbility = {
-    id?: number,
     name: string,
     max: number,
-    cost: number,
     type: 'skill' | 'spell'
-    guild?: FullGuild
 }
 
 export type GuildStat = {
@@ -80,7 +76,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
         if (abilityMatch) {
             const type = abilityMatch?.at(2)?.trim() === 'skill' ? 'skill' : 'spell'
             const name = abilityMatch?.at(3)?.trim()?.toLowerCase()
-            const max = abilityMatch?.at(4)?.trim()
+            const max = abilityMatch?.at(4)?.trim() || "0"
             if (name && type && max) {
                 guildLevels.get(level)?.abilities.push({name, type, max: parseInt(max)})
                 return
