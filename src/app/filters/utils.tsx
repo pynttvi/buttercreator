@@ -20,17 +20,23 @@ export function sortByMaxAndName<T>(
 
 export function onlyUniqueNameWithHighestMax(abilities: ReincAbility[]) {
 
-    const abilityMap = new Map<string, ReincAbility>();
+    const newAbilities: ReincAbility[] = []
 
-    abilities.forEach((ability: ReincAbility )=> {
-        if (!abilityMap.has(ability.name) || ability.max > (abilityMap.get(ability.name)?.max || 0)) {
-            abilityMap.set(ability.name, ability);
+    abilities.forEach((ability: ReincAbility) => {
+        const idx = newAbilities.findIndex(na => na.name == ability.name)
+        if (idx !== -1) {
+            const a = newAbilities.at(idx)
+            if (a && a.max < ability.max) {
+                newAbilities.splice(idx, 1)
+                newAbilities.push(ability)
+            }
+        } else {
+            newAbilities.push(ability)
         }
-    });
+    })
 
-    return Array.from(abilityMap.values());
+    return newAbilities
 }
-
 
 
 export function sortById<T>(array: { id: number }[]): T[] {

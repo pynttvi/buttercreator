@@ -1,11 +1,10 @@
 'use client'
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
-import {MAX_LEVEL, ReincContextType} from "@/app/contexts/reincContext";
+import {MAX_LEVEL, ReincAbility, ReincContextType} from "@/app/contexts/reincContext";
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
 import {onlyUnique, sortByName} from "@/app/filters/utils";
-import {Ability} from "@/app/parsers/abilityCostParser";
 
 export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
@@ -15,7 +14,9 @@ export type GuildServiceType = {
     maxSubguildsTrained: (guild: FullGuild) => boolean
     trainedLevelForGuild: (guild: FullGuild) => number
     totalTrainedLevels: () => number
-    maxForGuilds: (ability: Ability, guilds: FullGuild[], max?: number) => number
+    maxForGuilds: (ability: ReincAbility, guilds: FullGuild[], max?: number) => number
+    getAllGuildsFlat: () => FullGuild[]
+    getReincGuildsFlat: () => FullGuild[]
 }
 
 export interface SubGuild extends MainGuild {
@@ -151,6 +152,31 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         return Math.min(trained + trainedSubs, MAX_LEVEL)
     }
 
+    const getAllGuildsFlat = () => {
+        const flatGuilds: FullGuild[] = []
+
+        function addGuilds(guild: FullGuild) {
+            flatGuilds.push(guild)
+            guild.subGuilds.forEach(sg => addGuilds(sg))
+        }
+
+        reincContext.allGuilds.forEach(g => addGuilds(g))
+        return flatGuilds
+    }
+
+    const getReincGuildsFlat = () => {
+        const flatGuilds: FullGuild[] = []
+
+        function addGuilds(guild: FullGuild) {
+            if (guild.trained > 0) {
+                flatGuilds.push(guild)
+                guild.subGuilds.forEach(sg => addGuilds(sg))
+            }
+        }
+
+        reincContext.guilds.forEach(g => addGuilds(g))
+        return flatGuilds
+    }
 
     const getMainGuilds = (): MainGuild[] => {
         if (reincContext?.allGuilds?.length > 0) {
@@ -195,7 +221,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
                 })
                 subGuilds = flatSubguilds
 
-              //  console.debug("GUILD LEVELS", guild)
+                //  console.debug("GUILD LEVELS", guild)
 
 
                 const mainGuildPartial: Partial<MainGuild> = {
@@ -271,7 +297,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         }
         return guild
     }
-    const maxForGuilds = (ability: Ability, guilds: FullGuild[], max: number = 0): number => {
+    const maxForGuilds = (ability: ReincAbility, guilds: FullGuild[], max: number = 0): number => {
         guilds?.forEach((guild) => {
             for (let i = guild.trained; i > 0; i--) {
                 const level = guild.levelMap.get(i.toString())
@@ -295,6 +321,8 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         trainedLevelForGuild,
         totalTrainedLevels,
         getReincGuildByName,
-        maxForGuilds
+        maxForGuilds,
+        getAllGuildsFlat,
+        getReincGuildsFlat
     }
 }

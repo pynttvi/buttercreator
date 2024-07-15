@@ -11,11 +11,11 @@ import {
     GridRowSelectionModel
 } from '@mui/x-data-grid';
 import React, {Suspense, useEffect, useState} from 'react';
-import {useReinc} from '../contexts/reincContext';
-import {Ability} from '../parsers/abilityCostParser';
+import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
+import {onlyUniqueNameWithHighestMax, sortByName} from "@/app/filters/utils";
 
 
 const roundUp5 = (n: number) => {
@@ -30,30 +30,28 @@ const roundDown5 = (n: number) => {
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc = useReinc()
     const abilityType = props.type
-    let abi: Ability[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
+    let abi: ReincAbility[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
 
-    const [abilities, setAbilities] = useState<Ability[]>(abi)
+    const [abilities, setAbilities] = useState<ReincAbility[]>(abi)
 
-    function getAbilityMax(ability: Ability){
-        return reinc.guildService.maxForGuilds(ability, reinc.guilds)
-    }
     useEffect(() => {
         if (abi.length === 0 && reinc.level === 0) {
             abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }
         if (props.type === 'skills') {
             abi.forEach((a) => {
-                a.max = (a.max === 0 ? 100 : getAbilityMax(a) || 100) - (100 - reinc.skillMax)
+                a.max = (a.max === 0 ? 100 : a.max || 100) - (100 - reinc.skillMax)
             })
         }
         if (props.type === 'spells') {
             abi.forEach((a) => {
-                a.max = (a.max === 0 ? 100 : getAbilityMax(a) || 100) - (100 - reinc.spellMax)
+                a.max = (a.max === 0 ? 100 : a.max || 100) - (100 - reinc.spellMax)
             })
         }
-        console.debug("Abilities", abilities)
-        setAbilities([...abi])
-    }, [reinc.race, reinc.filteredData, reinc.skillMax, reinc.spellMax]);
+        setAbilities([...abi.filter(a => a.enabled)])
+        console.debug("Abilities", abilities, abi, reinc.filteredData)
+
+    }, [reinc.filteredData, reinc.race, reinc.wishes]);
 
 
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -79,30 +77,31 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     const checkBoxChanged = (params: GridCellParams) => {
         const {value, row, colDef} = params
         if (value === false) {
-            //      reinc.addOrUpdateAbility({...row, trained: 100})
+            reinc.updateAbility(props.type, {...row, trained: row.max})
             if (apiRef && apiRef.current) {
                 apiRef.current.startCellEditMode({id: row.id, field: 'trained'})
             }
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
-            reinc.updateAbility(props.type, {...row, trained: 0})
+            //      reinc.updateAbility(props.type, {...row, trained: 0})
         }
     }
 
-    const afterEdit = (row: Ability, details: GridCallbackDetails) => {
+    const afterEdit = (row: ReincAbility, details: GridCallbackDetails) => {
         // reinc.addOrUpdateAbility({...row})
         // if (apiRef && apiRef.current) {
         // }
     }
 
 
-    const TrainedInput = (props: { params: GridRenderEditCellParams<Ability> }) => {
-        const max = abilityType === "skills" ? reinc.skillMax : reinc.spellMax
+    const TrainedInput = (props: { params: GridRenderEditCellParams<ReincAbility> }) => {
+        const abi = props.params.row
+        const max = abilityType === "skills" ? Math.min(reinc.skillMax, abi.max) : Math.min(reinc.spellMax, abi.max)
         const params = props.params
-        const [value, setValue] = useState(reinc.level === 0 ? max : reinc.guildService.maxForGuilds(params.row, reinc.guilds))
+        const [value, setValue] = useState(max)
         const parse = (newValue: number) => {
-            console.log("ABILITY", params.row)
+            console.debug("ABILITY", params.row)
             newValue = Math.min(newValue, max)
             newValue = Math.max(newValue, 0)
 
@@ -120,6 +119,8 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                 field: params.field,
                 value: value,
             });
+            //      reinc.updateAbility(params.row.type === "skill" ? "skills" : "spells", {...params.row, trained: value})
+
         }, [value]);
 
 
@@ -137,7 +138,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
     }
 
-    const dataColumns: GridColDef<(Ability)>[] = [
+    const dataColumns: GridColDef<(ReincAbility)>[] = [
         {field: 'name', headerName: 'Name', filterable: true, width: 200},
         {
             field: 'trained',
@@ -180,7 +181,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     );
 
 
-    const processRowUpdate = (newRow: Ability) => {
+    const processRowUpdate = (newRow: ReincAbility) => {
         if (newRow.trained > 0 && newRow.trained < 10) {
             newRow.trained = 5
         }

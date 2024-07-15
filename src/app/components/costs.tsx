@@ -12,10 +12,9 @@ import {formatNumber} from "@/app/filters/utils";
 
 function CostItem(props: { title: string, value: number | string }) {
     return (
-        // @ts-ignore
-        <Grid item direction={'row'} xs={6} sm={6} md={6}>
+        <Grid direction={'row'} xs={6} sm={6} md={6}>
             {/*// @ts-ignore*/}
-            <Stack direction={"row"} item xs={6} sm={6} md={6} spacing={1} alignItems={"center"}
+            <Stack direction={"row"} xs={6} sm={6} md={6} spacing={1} alignItems={"center"}
                    key={`cost-${props.title}`}>
                 <Typography variant={"subtitle1"} aria-label={`${props.title}-tittle`}>{props.title}</Typography>
                 <Typography variant={"body1"}
@@ -56,7 +55,7 @@ export default function Costs(props: PropsWithChildren<{}>) {
                             marginBlock={'40px'}>Costs</Typography>
                 <Box>
                     {/*// @ts-ignore*/}
-                    <Grid container direction={'row'} item xs={12} sm={12} md={12}>
+                    <Grid container direction={'row'} xs={12} sm={12} md={12}>
                         <CostItem title={'Taskpoints'} value={formatNumber(taskPoints)}/>
                         <CostItem title={'Questpoints'} value={formatNumber(qpCost)}/>
                         <CostItem title={'Level cost'}

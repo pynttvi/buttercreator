@@ -20,37 +20,28 @@ import Training from "@/app/components/training";
 export function Buttercreator(props: { creatorDataContext: CreatorDataContextType }) {
     return <Suspense fallback={"Loading..."}>
         <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={12}>
+            <Grid xs={12} sm={12} md={12}>
                 <RaceList myData={props.creatorDataContext.creatorData}/>
             </Grid>
-
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={12}>
+            <Grid xs={12} sm={12} md={12}>
                 <Guilds myData={props.creatorDataContext.creatorData}/>
             </Grid>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={12} lg={6}>
+            <Grid xs={12} sm={12} md={12} lg={6}>
                 <AbilityList type={"skills"} creatorData={props.creatorDataContext.creatorData}/>
             </Grid>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={12} lg={6}>
+            <Grid xs={12} sm={12} md={12} lg={6}>
                 <AbilityList type={"spells"} creatorData={props.creatorDataContext.creatorData}/>
             </Grid>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid xs={12} sm={12} md={6} lg={6}>
                 <StatsList/>
             </Grid>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={6} lg={6}>
+            <Grid xs={12} sm={12} md={6} lg={6}>
                 <WishList/>
             </Grid>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={12}>
+            <Grid xs={12} sm={12} md={12}>
                 <Costs/>
             </Grid>
-            {/*@ts-ignore*/}
-            <Grid item xs={12} sm={12} md={12}>
+            <Grid xs={12} sm={12} md={12}>
                 <Training/>
             </Grid>
         </Grid>

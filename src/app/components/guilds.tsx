@@ -1,6 +1,6 @@
 'use client'
 import {styled} from '@mui/material/styles';
-import {Stack, Typography} from '@mui/material';
+import {Divider, Stack, Typography} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import SectionBox from './sectionBox';
@@ -14,7 +14,7 @@ import {GridDeleteIcon} from "@mui/x-data-grid";
 import {trainedAbilities} from "@/app/filters/creatorDataFilters";
 import {sortByName} from "@/app/filters/utils";
 
-const Item = styled(Typography)(({theme}) => ({
+const Item = styled(Stack)(({theme}) => ({
     padding: theme.spacing(1),
     textAlign: 'left',
 }));
@@ -113,13 +113,12 @@ function GuildItem(props: {
 
     return (
         <>
-            {/*// @ts-ignore*/}
-            <Grid item direction={"row"} xs={12} sm={6} md={4} key={'index-' + props.guild.name}>
+            <Grid direction={"row"} xs={12} sm={6} md={4} key={'index-' + props.guild.name}>
                 <Box sx={{minWidth: "400px"}}>
 
                     <Item>
                         {/*// @ts-ignore*/}
-                        <Stack item direction={"row"} xs={12} sm={6} md={4} key={'index-stack' + props.guild.name}>
+                        <Stack direction={"row"} xs={12} sm={6} md={4} key={'index-stack' + props.guild.name}>
 
                             <Typography variant={"subtitle1"}
                                         sx={{
@@ -127,9 +126,10 @@ function GuildItem(props: {
                                             textTransform: 'capitalize',
                                             ...(props.isSubguild ? {paddingLeft: '20px'} : {})
                                         }}>{props.guild.name.replaceAll("_", " ")}
-                                {props.guild.trained > 0 && (
-                                    < GridDeleteIcon key={'delete-button-' + props.guild.name} sx={{marginLeft: '10px'}}
-                                                     onClick={onDelete}/>)}</Typography>
+                            </Typography>
+                            {props.guild.trained > 0 && (
+                                < GridDeleteIcon key={'delete-button-' + props.guild.name} sx={{marginLeft: '10px'}}
+                                                 onClick={onDelete}/>)}
                             <Box sx={{
                                 width: "50px",
                                 height: "30px",
@@ -154,9 +154,7 @@ function GuildItem(props: {
             {/*!(trainedAbilities(reinc).totalCount > 0 && level === 0) &&*/}
             {sortByName<FullGuild>(props.guild.subGuilds)?.map((sg) => {
                 return (
-                    <>
-                        <GuildItem guild={sg} isSubguild={true}/>
-                    </>
+                    <GuildItem guild={sg} key={'guild-item-' + sg.name} isSubguild={true}/>
                 )
             })}
         </>
@@ -166,15 +164,12 @@ function GuildItem(props: {
 export default function Guilds(props: { myData: CreatorDataType }) {
     const reinc = useReinc()
     const {
-        filteredData,
+        guilds,
         level
     } = reinc
 
-    let data = filteredData?.guilds  //creatorData
+    let data = sortByName<FullGuild>(guilds)  //creatorData
 
-    useEffect(() => {
-
-    }, [filteredData]);
     return (
         <SectionBox title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
@@ -183,8 +178,7 @@ export default function Guilds(props: { myData: CreatorDataType }) {
                             {data?.sort((a, b) => b.levels - a.levels).map((g: FullGuild, index: number) => {
                                 const className = `guild-${g.name}`
                                 return (
-                                    // @ts-ignore
-                                    <Box sx={{minWidth: "400px"}}>
+                                    <Box key={'guild-item-' + g.name} sx={{minWidth: "400px"}}>
                                         <GuildItem guild={g as FullGuild} isSubguild={false}/>
                                     </Box>
                                 )

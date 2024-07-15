@@ -6,8 +6,11 @@ import {GuildAbility} from "@/app/parsers/guildParser";
 import {onlyUniqueNameWithHighestMax, sortByName} from "@/app/filters/utils";
 import {ReincAbility, ReincContextType} from "@/app/contexts/reincContext";
 
+export type FilterDataType = {
+    skills: ReincAbility[], spells: ReincAbility[], guilds: FullGuild[]
+}
 export type CreatorDataFilterType = {
-    doFilter: () => { skills: Ability[], spells: Ability[] } | FullGuild[]
+    doFilter: () => Partial<FilterDataType>
 }
 
 
@@ -17,16 +20,31 @@ export const trainedAbilities = (reinc: ReincContextType) => {
     return {skills, spells, totalCount: skills.length + spells.length}
 }
 
-export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincContextType, lastCount?: number) => {
+export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincContextType, lastCount?: number): FilterDataType | undefined => {
     if (reinc) {
         const abilities = AbilitiesByGuildsFilter(creatorDataContext, reinc).doFilter() as {
             skills: ReincAbility[],
             spells: ReincAbility[]
         }
+        let guilds = {guilds: reinc.guilds}
+
+        if (reinc.level === 0) {
+            guilds = GuildsByAbilitiesFilter(creatorDataContext, reinc).doFilter() as {
+                guilds: FullGuild[]
+            }
+        }
         return {
-            skills: abilities.skills,
-            spells: abilities.spells,
-            guilds: GuildsByAbilitiesFilter(creatorDataContext, reinc).doFilter()
+            skills: abilities.skills || [],
+            spells: abilities.spells || [],
+            guilds: guilds.guilds || []
+        }
+
+
+    } else {
+        return {
+            skills: [],
+            spells: [],
+            guilds: [],
         }
     }
 }
@@ -36,107 +54,56 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
     const {creatorData} = creatorDataContext
 
     return {
-        doFilter: (): { skills: Ability[], spells: Ability[] } => {
-            let guildAbilities: ReincAbility[] = []
+        doFilter: () => {
             let guilds: FullGuild[] = []
             const allGuilds = reinc.allGuilds
 
-            if (reinc.guilds.length !== 0) {
+            if (reinc.level !== 0) {
                 guilds = reinc.guilds
             } else {
                 guilds = allGuilds
             }
 
-            let reincSkills: ReincAbility[] = reinc.skills
-            let reincSpells: ReincAbility[] = reinc.spells
-            let gaIdx = 0
 
-
-            function addAbilities(guild: FullGuild) {
-
-                if (guild.trained === 0) {
-                    return
-                }
-                console.debug("ADDING ABILITIS!", guild.name, guild)
-                for (let i = guild.levels; i > 0; i--) {
-
-                    const level = guild.levelMap.get(i.toString())
-
-                    level?.abilities.forEach((guildAbility: GuildAbility, idx) => {
-                        const ra: ReincAbility = {
-                            cost: 0,
-                            enabled: true,
-                            id: gaIdx,
-                            maxed: false,
-                            guild: guild,
-                            trained: 0, ...guildAbility
-                        }
-                        guildAbilities.push(ra)
-                    })
-                }
-            }
-
-            guilds?.forEach((guild) => {
-                guild.subGuilds.forEach((sg => {
-                    addAbilities(sg)
-                }))
-                addAbilities(guild)
-
-            })
-
-            guildAbilities = onlyUniqueNameWithHighestMax(guildAbilities)
-            console.debug("REINC GUILDS", reinc.guilds)
-            const guildSkills = guildAbilities.filter(ga => ga.type === 'skill')
-            const guildSpells = guildAbilities.filter(ga => ga.type === 'spell')
-
-            console.debug("GUILD ABILITIS", guildSkills, guildSpells)
-            console.debug("REINC ABILITIS", reincSkills, reincSpells)
+            let allSkills: ReincAbility[] = reinc.skills.length === 0 ? reinc.allSkills : reinc.skills
+            let allSpells: ReincAbility[] = reinc.spells.length === 0 ? reinc.allSpells : reinc.spells
 
             let newSkills: ReincAbility[] = []
             let newSpells: ReincAbility[] = []
-
-            if (reincSkills.length === 0 && reincSpells.length === 0) {
-                reincSkills = guildSkills.map((gs) => {
-                    const ra: ReincAbility = {
-                        ...gs,
-                        cost: 0,
-                        enabled: true,
-                        id: gaIdx++,
-                        maxed: false,
-                        trained: 0,
-                    }
-                    return ra
+            const flatGuilds = reinc.guildService.getReincGuildsFlat()
+            console.debug("FLAT GUILDS", flatGuilds)
+            console.debug("REINC SKILLS", allSkills)
+            allSkills.forEach(rs => {
+                let enabled = true
+                if (reinc.level > 0 && !flatGuilds.find(fg => fg.name === rs.guild?.name)) {
+                    enabled = false
+                }
+                newSkills.push({
+                    ...rs,
+                    enabled: enabled
                 })
-
-                reincSpells = guildSpells.map((gs) => {
-                    const ra: ReincAbility = {
-                        ...gs,
-                        cost: 0,
-                        enabled: true,
-                        id: gaIdx++,
-                        maxed: false,
-                        trained: 0,
-                    }
-                    return ra
-                })
-            }
-            console.debug("FILTERING ABILITIES", reincSkills)
-
-            reincSkills.forEach(rs => {
-                const gs = guildSkills.find(gs => gs.name === rs.name)
-                const enabled = !!gs
-                newSkills.push({...rs, enabled, max: gs?.max || rs.max, guild: gs?.guild || rs.guild})
             })
 
-            reincSpells.forEach(rs => {
-                const gs = guildSpells.find(gs => gs.name === rs.name)
-                const enabled = !!gs
-                newSpells.push({...rs, enabled, max: gs?.max || rs.max, guild: gs?.guild || rs.guild})
+            allSpells.forEach(rs => {
+                let enabled = true
+                if (reinc.level > 0 && !flatGuilds.find(fg => fg.name === rs.guild?.name)) {
+                    enabled = false
+                }
+                newSpells.push({
+                    ...rs,
+                    enabled: enabled,
+                })
             })
 
-            console.debug("NEW SKILLS", newSkills)
+
+            console.debug("NEW SKILLS", newSkills.filter(ns => ns.enabled))
+            console.debug("NEW SPELLS", newSpells.filter(ns => ns.enabled))
             console.debug("Attack", newSkills.find(ns => ns.name === "attack"))
-            return {skills: onlyUniqueNameWithHighestMax(newSkills), spells: onlyUniqueNameWithHighestMax(newSpells)}
+
+            return {
+                skills: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(newSkills)),
+                spells: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(newSpells))
+            }
         }
     }
 }
@@ -144,7 +111,7 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
 export const GuildsByAbilitiesFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincContextType): CreatorDataFilterType => {
 
     return {
-        doFilter: () => {
+        doFilter: (): { guilds: FullGuild[] } => {
             let guilds: FullGuild[] = []
 
             const allGuilds = reinc.allGuilds as FullGuild[]
@@ -213,7 +180,7 @@ export const GuildsByAbilitiesFilter = (creatorDataContext: CreatorDataContextTy
             newGuilds = (newGuilds?.length === 0 ? guilds : newGuilds) as FullGuild[]
 
             console.debug("Filtering guilds", newGuilds)
-            return newGuilds
+            return {guilds: [...newGuilds]}
         }
     }
 }
