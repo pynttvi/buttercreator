@@ -17,7 +17,7 @@ const getTrainingText = (a: ReincAbility) => {
         text += `${count} ${a.type === "skill" ? "train" : " study"} ${a.name};`;
     } else {
         text += `${20} ${a.type === "skill" ? "train" : " study"} ${a.name};`;
-        text += `${count- 20} ${a.type === "skill" ? "train" : " study"} ${a.name};`;
+        text += `${count - 20} ${a.type === "skill" ? "train" : " study"} ${a.name};`;
     }
     return text
 }
@@ -44,7 +44,19 @@ function TrainingItem(props: { guild: FullGuild }) {
                     </Grid>
                 )
             })
-            }
+            }{
+            guild.trained > 0 && (
+                <Grid key={'training-item-' + guild.name + nanoid(4)} direction={'row'} xs={6} sm={6} md={6}>
+                    <Typography key={'training-name-item-' + guild.name + nanoid(4)} variant={'body1'}
+                                style={{textTransform: 'capitalize'}}>{guild.name}</Typography>
+                    {trainedAbilities.filter((a) => a.guild?.name === guild.name).map((a) => {
+                        return (
+                            <Typography key={'training-ability-item-' + a.name + nanoid(4)}
+                                        variant={'caption'}>{getTrainingText(a)}</Typography>
+                        )
+                    })}
+                </Grid>
+            )}
         </>
     )
 }

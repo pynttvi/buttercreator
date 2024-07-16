@@ -19,6 +19,10 @@ const Item = styled(Stack)(({theme}) => ({
     textAlign: 'left',
 }));
 
+const DeleteGuildIcon = styled(Divider)(({theme}) => ({
+    alignItems: 'center'
+}));
+
 export type GuildType = 'main' | 'sub'
 
 
@@ -118,7 +122,7 @@ function GuildItem(props: {
 
                     <Item>
                         {/*// @ts-ignore*/}
-                        <Stack direction={"row"} xs={12} sm={6} md={4} key={'index-stack' + props.guild.name}>
+                        <Stack direction={"row"} xs={12} sm={6} md={4} sx={{alignItems: 'center'}} key={'index-stack' + props.guild.name}>
 
                             <Typography variant={"subtitle1"}
                                         sx={{
@@ -127,9 +131,6 @@ function GuildItem(props: {
                                             ...(props.isSubguild ? {paddingLeft: '20px'} : {})
                                         }}>{props.guild.name.replaceAll("_", " ")}
                             </Typography>
-                            {props.guild.trained > 0 && (
-                                < GridDeleteIcon key={'delete-button-' + props.guild.name} sx={{marginLeft: '10px'}}
-                                                 onClick={onDelete}/>)}
                             <Box sx={{
                                 width: "50px",
                                 height: "30px",
@@ -146,7 +147,14 @@ function GuildItem(props: {
                                     key={"guild-input" + props.guild.name}
                                     disabled={disabled}
                                 />
+
                             </Box>
+                            <DeleteGuildIcon>
+                                {props.guild.trained > 0 && (
+                                    < GridDeleteIcon key={'delete-button-' + props.guild.name}
+                                                     sx={{marginLeft: '10px'}}
+                                                     onClick={onDelete}/>)}
+                            </DeleteGuildIcon>
                         </Stack>
                     </Item>
                 </Box>

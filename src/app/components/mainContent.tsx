@@ -16,6 +16,7 @@ import Grid from "@mui/material/Unstable_Grid2";
 import StatsList from "@/app/components/stats";
 import WishList from "@/app/components/wish";
 import Training from "@/app/components/training";
+import PersistentDrawerRight from "@/app/components/drawer";
 
 export function Buttercreator(props: { creatorDataContext: CreatorDataContextType }) {
     return <Suspense fallback={"Loading..."}>
@@ -57,7 +58,9 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                     !value?.creatorData ? (<Typography variant={'h2'}> Loading...</Typography>)
                         : (
                             <ReincContextProvider creatorDataContext={value}>
-                                <Buttercreator key={'buttercrator'} creatorDataContext={value}/>
+                                <PersistentDrawerRight open={false}>
+                                    <Buttercreator key={'buttercrator'} creatorDataContext={value}/>
+                                </PersistentDrawerRight>
                             </ReincContextProvider>
                         )
                 )}

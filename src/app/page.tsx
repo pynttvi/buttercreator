@@ -15,7 +15,7 @@ export default async function Home() {
     let myData: Promise<Partial<CreatorDataType>> = getData(true)
     return (
         <RootLayout>
-            <main className="flex min-h-screen flex-col items-left justify-between p-24">
+            <main className="flex min-h-screen flex-col items-left justify-between p-10">
                 <ClientRoot>
                     <MainContent myData={myData}/>
                 </ClientRoot>
