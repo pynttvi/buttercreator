@@ -49,7 +49,7 @@ export default function Costs(props: PropsWithChildren<{}>) {
     const statCost = useMemo(() => (countStats()), [reinc.stats])
     const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost.exp + spellCosts.exp + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
     return (
-        <SectionBox>
+        <SectionBox id={'costs'}>
             <Suspense fallback="Loading...">
                 <Typography variant='h4' textTransform={'capitalize'}
                             marginBlock={'40px'}>Costs</Typography>

@@ -128,7 +128,7 @@ export default function StatsList(props: {}) {
     }
 
     return (
-        <SectionBox>
+        <SectionBox id={'stats'}>
             <Suspense fallback="Loading...">
                 <Box sx={{height: 400}}>
                     <Typography variant='h4' textTransform={'capitalize'}

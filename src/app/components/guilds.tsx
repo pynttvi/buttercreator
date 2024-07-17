@@ -179,7 +179,7 @@ export default function Guilds(props: { myData: CreatorDataType }) {
     let data = sortByName<FullGuild>(guilds)  //creatorData
 
     return (
-        <SectionBox title='Guilds'>
+        <SectionBox id={'guilds'} title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
                 {data ? (
                         <>

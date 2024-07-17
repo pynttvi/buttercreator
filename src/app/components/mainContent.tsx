@@ -22,28 +22,28 @@ export function Buttercreator(props: { creatorDataContext: CreatorDataContextTyp
     return <Suspense fallback={"Loading..."}>
         <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>
             <Grid xs={12} sm={12} md={12}>
-                <RaceList myData={props.creatorDataContext.creatorData}/>
+                <RaceList key={'race-section'} myData={props.creatorDataContext.creatorData}/>
             </Grid>
             <Grid xs={12} sm={12} md={12}>
-                <Guilds myData={props.creatorDataContext.creatorData}/>
+                <Guilds key={'guild-section'} myData={props.creatorDataContext.creatorData}/>
             </Grid>
             <Grid xs={12} sm={12} md={12} lg={6}>
-                <AbilityList type={"skills"} creatorData={props.creatorDataContext.creatorData}/>
+                <AbilityList key={'skill-section'} type={"skills"} creatorData={props.creatorDataContext.creatorData}/>
             </Grid>
             <Grid xs={12} sm={12} md={12} lg={6}>
-                <AbilityList type={"spells"} creatorData={props.creatorDataContext.creatorData}/>
+                <AbilityList key={'spell-section'} type={"spells"} creatorData={props.creatorDataContext.creatorData}/>
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
                 <StatsList/>
             </Grid>
             <Grid xs={12} sm={12} md={6} lg={6}>
-                <WishList/>
+                <WishList key={'race-section'}/>
             </Grid>
             <Grid xs={12} sm={12} md={12}>
-                <Costs/>
+                <Costs key={'cost-section'}/>
             </Grid>
             <Grid xs={12} sm={12} md={12}>
-                <Training/>
+                <Training key={'training-section'}/>
             </Grid>
         </Grid>
     </Suspense>;

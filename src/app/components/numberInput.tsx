@@ -8,7 +8,7 @@ import {
 import {styled} from '@mui/system';
 
 export const NumberInput = React.forwardRef(function CustomNumberInput(
-    props: NumberInputProps,
+    props: Partial<NumberInputProps>,
     ref: React.ForwardedRef<HTMLDivElement>,
 ) {
     return (

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {PropsWithChildren} from 'react';
+import {ChangeEvent, ChangeEventHandler, PropsWithChildren, useState} from 'react';
 import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -17,8 +17,10 @@ import ListItem from '@mui/material/ListItem';
 import Grid from "@mui/material/Unstable_Grid2";
 import {Accordion, AccordionDetails, AccordionSummary, Stack, TextField} from "@mui/material";
 import {BackhgroundColor} from "@/app/theme";
-import NumberInputBasic from "@/app/components/numberInput";
+import NumberInputBasic, {NumberInput} from "@/app/components/numberInput";
 import {ExpandMore} from "@mui/icons-material";
+import {useReinc} from "@/app/contexts/reincContext";
+import {roundAbilityTrained} from "@/app/filters/utils";
 
 const drawerWidth = 400;
 
@@ -87,34 +89,65 @@ const Content = styled(Grid)(({theme}) => ({
 
 }));
 
-const DrawerNumberInput = styled(NumberInputBasic)(({theme}) => ({
-    width: '40px', height: '40px'
-}));
+
+const DrawerNumberInput = (props: PropsWithChildren<{
+    value: number,
+    onChange: (value: number | null) => void
+}>) => {
+    const StyledDrawerNumberInput = styled(NumberInput)(({theme}) => ({
+        width: '40px', height: '40px'
+    }));
+
+    // @ts-ignore
+    return <StyledDrawerNumberInput value={props.value} onChange={(_event, value: number) => props.onChange(value)}/>
+}
 
 const DrawerInputLabel = styled(Typography)(({theme}) => ({
     width: 300,
     variant: 'body1'
 }));
-const DrawerInputTextInput = styled(TextField)(({theme}) => ({
-    width: '40px', height: '40px'
-}));
 
+const DrawerTextInput = (props: PropsWithChildren<{
+    value: string,
+    onChange: (event: InputEvent) => void
+}>) => {
+    const StyledDrawerTextInput = styled(TextField)(({theme}) => ({
+        width: '40px', height: '40px'
+    }));
+
+    //@ts-ignore
+    return <StyledDrawerTextInput value={props.value} onChange={(event: any) => {
+        console.log("EVENT",event.target.value)
+        props.onChange(event);
+    }}/>
+}
 const DrawerItem = styled(Stack)(({theme}) => ({
     alignItems: 'center',
     width: '100%'
 }));
 
+const NavigationItem = (props: PropsWithChildren<{ text: string, target: string }>) => {
+    return (
+        <Typography variant={'subtitle1'} onClick={() => {
+            const element = document.getElementById(props.target);
+            element && element.scrollIntoView({behavior: "smooth", block: "start"});
+        }}>
+            {props.text}
+        </Typography>
+    )
+}
 
-export default function PersistentDrawerRight(props: PropsWithChildren<{ open: boolean }>) {
+export default function PersistentDrawerRight(props: PropsWithChildren<{ }>) {
     const theme = useTheme();
-    const [open, setOpen] = React.useState(props.open);
+    const reinc = useReinc()
+    const {drawerOpen: open} = reinc
 
     const handleDrawerOpen = () => {
-        setOpen(true);
+        reinc.setDrawerOpen(true);
     };
 
     const handleDrawerClose = () => {
-        setOpen(false);
+        reinc.setDrawerOpen(false);
     };
 
     return (
@@ -123,7 +156,16 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{ open: b
             <AppBar position="fixed" open={open} sx={{backgroundColor: BackhgroundColor}}>
                 <Toolbar sx={{backgroundColor: BackhgroundColor}}>
                     <Typography variant="h6" noWrap sx={{flexGrow: 1}} component="div">
-                        Persistent drawer
+                        <Stack direction={'row'} spacing={3}>
+                            <NavigationItem target={'races-section'} text={"Races"}/>
+                            <NavigationItem target={'guilds-section'} text={"Guilds"}/>
+                            <NavigationItem target={'skills-section'} text={"Skills"}/>
+                            <NavigationItem target={'spells-section'} text={"Spells"}/>
+                            <NavigationItem target={'stats-section'} text={"Stats"}/>
+                            <NavigationItem target={'wishes-section'} text={"Wishes"}/>
+                            <NavigationItem target={'costs-section'} text={"Costs"}/>
+                            <NavigationItem target={'training-section'} text={"Training"}/>
+                        </Stack>
                     </Typography>
                     <IconButton
                         color="inherit"
@@ -176,25 +218,36 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{ open: b
                                 <ListItem>
                                     <DrawerItem direction={'row'}>
                                         <DrawerInputLabel>Custom skillmax bonus</DrawerInputLabel>
-                                        <DrawerNumberInput onChange={() => {
-                                        }}/>
+                                        <DrawerNumberInput value={reinc.customSkillMaxBonus}
+                                                           onChange={(value) => {
+                                                               reinc.setCustomSkillMaxBonus(roundAbilityTrained(reinc.customSkillMaxBonus, value || 0))
+                                                           }}
+                                        />
                                     </DrawerItem>
                                 </ListItem>
                                 <ListItem>
                                     <DrawerItem direction={'row'}>
                                         <DrawerInputLabel>Custom spellmax bonus</DrawerInputLabel>
-                                        <DrawerNumberInput onChange={() => {
-                                        }}/>
+                                        <DrawerNumberInput value={reinc.customSpellMaxBonus}
+                                                           onChange={(value) => {
+                                                               reinc.setCustomSpellMaxBonus(roundAbilityTrained(reinc.customSpellMaxBonus, value || 0))
+                                                           }}/>
                                     </DrawerItem>
                                 </ListItem>
                                 <ListItem>
                                     <DrawerItem direction={'row'}>
                                         <DrawerInputLabel>Copy-paste separator</DrawerInputLabel>
-                                        <DrawerNumberInput onChange={() => {
-                                        }}/>
+                                        <DrawerTextInput value={reinc.copyPasteSeparator}
+                                                         onChange={(event: any) => {
+                                                            reinc.setCopyPasteSeparator(event.target.value || "")
+                                                         }}
+                                        />
                                     </DrawerItem>
                                 </ListItem>
                             </List>
+                            <pre>
+                                {reinc.helpText}
+                            </pre>
                         </AccordionDetails>
                     </Accordion>
 

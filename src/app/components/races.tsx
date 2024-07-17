@@ -124,7 +124,7 @@ export default function RaceList(props: { myData: CreatorDataType }) {
         setSelectionModel(rowSelectionModel)
     }
     return (
-        <SectionBox title='Races'>
+        <SectionBox id={'races'} title='Races'>
             <Suspense fallback="Loading...">
                 {creatorData?.races ? (
                     <DataGrid

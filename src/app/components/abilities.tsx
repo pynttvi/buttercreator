@@ -15,15 +15,7 @@ import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-
-
-const roundUp5 = (n: number) => {
-    return Math.ceil(n / 5) * 5;
-}
-
-const roundDown5 = (n: number) => {
-    return Math.floor(n / 5) * 5;
-}
+import {roundDown5, roundUp5} from "@/app/filters/utils";
 
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
@@ -188,7 +180,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     };
 
     return (
-        <SectionBox>
+        <SectionBox id={props.type}>
             <Suspense fallback="Loading...">
                 {abilities && (
                     <Box sx={{height: 400}}>

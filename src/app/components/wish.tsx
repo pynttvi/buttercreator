@@ -47,7 +47,7 @@ export default function WishList(props: {}) {
     }
 
     return (
-        <SectionBox>
+        <SectionBox id={'wishes'}>
             <Suspense fallback="Loading...">
                 <Box sx={{height: 400}}>
                     <Typography variant='h4' textTransform={'capitalize'}

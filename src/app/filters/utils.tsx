@@ -58,3 +58,19 @@ export function onlyUnique(value: { name: string }, index: any, array: any[]) {
         return value.name === v.name
     }) === index;
 }
+
+export const roundUp5 = (n: number) => {
+    return Math.ceil(n / 5) * 5;
+}
+
+export const roundDown5 = (n: number) => {
+    return Math.floor(n / 5) * 5;
+}
+
+export function roundAbilityTrained(oldValue: number, newValue: number) {
+    if (newValue > oldValue) {
+        return roundUp5(newValue)
+    } else {
+        return roundDown5(newValue)
+    }
+}
