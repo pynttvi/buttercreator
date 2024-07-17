@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ChangeEvent, ChangeEventHandler, PropsWithChildren, useState} from 'react';
+import {ChangeEvent, ChangeEventHandler, PropsWithChildren, useEffect, useState} from 'react';
 import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -20,13 +20,14 @@ import {BackhgroundColor} from "@/app/theme";
 import NumberInputBasic, {NumberInput} from "@/app/components/numberInput";
 import {ExpandMore} from "@mui/icons-material";
 import {useReinc} from "@/app/contexts/reincContext";
-import {roundAbilityTrained} from "@/app/filters/utils";
+import useCheckMobileScreen, {roundAbilityTrained} from "@/app/filters/utils";
+import {width} from "@mui/system";
 
-const drawerWidth = 400;
 
 const Main = styled('div', {shouldForwardProp: (prop) => prop !== 'open'})<{
     open?: boolean;
-}>(({theme, open}) => ({
+    drawerWidth: number;
+}>(({theme, open, drawerWidth}) => ({
     flexGrow: 1,
     padding: 0,
     transition: theme.transitions.create('margin', {
@@ -52,11 +53,12 @@ const Main = styled('div', {shouldForwardProp: (prop) => prop !== 'open'})<{
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
+    drawerWidth: number;
 }
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({theme, open}) => ({
+})<AppBarProps>(({theme, open, drawerWidth}) => ({
     transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -81,12 +83,11 @@ const DrawerHeader = styled('div')(({theme}) => ({
     backgroundColor: BackhgroundColor
 }));
 
-const Content = styled(Grid)(({theme}) => ({
+const Content = styled(Grid)<{ drawerWidth: number }>(({theme, drawerWidth}) => ({
     padding: 0,
     textAlign: 'left',
     width: `calc(100% - ${drawerWidth}px)`,
     justifyContent: 'flex-start',
-
 }));
 
 
@@ -117,7 +118,7 @@ const DrawerTextInput = (props: PropsWithChildren<{
 
     //@ts-ignore
     return <StyledDrawerTextInput value={props.value} onChange={(event: any) => {
-        console.log("EVENT",event.target.value)
+        console.log("EVENT", event.target.value)
         props.onChange(event);
     }}/>
 }
@@ -137,7 +138,10 @@ const NavigationItem = (props: PropsWithChildren<{ text: string, target: string 
     )
 }
 
-export default function PersistentDrawerRight(props: PropsWithChildren<{ }>) {
+export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
+    const {isMobileScreen, width: screenWidth} = useCheckMobileScreen()
+    const drawerWidth = isMobileScreen ? screenWidth : 768
+
     const theme = useTheme();
     const reinc = useReinc()
     const {drawerOpen: open} = reinc
@@ -149,11 +153,16 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{ }>) {
     const handleDrawerClose = () => {
         reinc.setDrawerOpen(false);
     };
+    const [helpText, setHelpText] = useState(reinc.helpText)
+
+    useEffect(() => {
+        setHelpText(reinc.helpText)
+    }, [reinc.helpText]);
 
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar position="fixed" open={open} sx={{backgroundColor: BackhgroundColor}}>
+            <AppBar drawerWidth={drawerWidth} position="fixed" open={open} sx={{backgroundColor: BackhgroundColor}}>
                 <Toolbar sx={{backgroundColor: BackhgroundColor}}>
                     <Typography variant="h6" noWrap sx={{flexGrow: 1}} component="div">
                         <Stack direction={'row'} spacing={3}>
@@ -179,12 +188,15 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{ }>) {
                 </Toolbar>
             </AppBar>
             <Grid direction={'row'} sx={{width: '100%'}}>
-                <Main open={open}>
+                <Main drawerWidth={drawerWidth} open={open}>
 
                     <DrawerHeader/>
-                    <Content>
-                        {props.children}
-                    </Content>
+                    {(!isMobileScreen || (!open && isMobileScreen)) && (
+                        <Content drawerWidth={drawerWidth}>
+                            {props.children}
+                        </Content>
+                    )}
+
                 </Main>
                 <Drawer
                     sx={{
@@ -239,19 +251,19 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{ }>) {
                                         <DrawerInputLabel>Copy-paste separator</DrawerInputLabel>
                                         <DrawerTextInput value={reinc.copyPasteSeparator}
                                                          onChange={(event: any) => {
-                                                            reinc.setCopyPasteSeparator(event.target.value || "")
+                                                             reinc.setCopyPasteSeparator(event.target.value || "")
                                                          }}
                                         />
                                     </DrawerItem>
                                 </ListItem>
                             </List>
-                            <pre>
-                                {reinc.helpText}
-                            </pre>
                         </AccordionDetails>
                     </Accordion>
 
                     <Divider/>
+                    <pre>
+                    {helpText}
+                    </pre>
 
                 </Drawer>
             </Grid>

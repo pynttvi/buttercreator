@@ -1,6 +1,13 @@
 'use client'
 import Box from '@mui/material/Box';
-import {DataGrid, GridCallbackDetails, GridColDef, GridRowSelectionModel} from '@mui/x-data-grid';
+import {
+    DataGrid,
+    GridCallbackDetails,
+    GridColDef,
+    GridRowParams,
+    GridRowSelectionModel,
+    MuiEvent
+} from '@mui/x-data-grid';
 import {Race} from '../parsers/raceParser';
 import React, {Suspense, useDeferredValue, useEffect, useState} from 'react';
 import SectionBox from './sectionBox';
@@ -13,7 +20,8 @@ const defaultCellProps: Partial<GridColDef<(Race)>> = {
 const columns: GridColDef<(Race)>[] = [
     {
         field: 'name',
-        headerName: 'Name'
+        headerName: 'Name',
+
     },
     {
         ...defaultCellProps,
@@ -123,6 +131,16 @@ export default function RaceList(props: { myData: CreatorDataType }) {
         console.log("SETTING RACE", race)
         setSelectionModel(rowSelectionModel)
     }
+
+    function showRaceHelp(params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) {
+        const raceName = params.row.name
+        const raceHelp = creatorData.helpRace.find(hr => hr.name === raceName)
+        reinc.setHelpText(raceHelp?.text || "")
+        reinc.setDrawerOpen(true)
+        console.log("RACEHELPS", creatorData.helpRace)
+        console.log("HELP RACE", raceName, raceHelp)
+    }
+
     return (
         <SectionBox id={'races'} title='Races'>
             <Suspense fallback="Loading...">
@@ -137,6 +155,7 @@ export default function RaceList(props: { myData: CreatorDataType }) {
                         disableMultipleRowSelection
                         rowSelectionModel={selectionModel}
                         onRowSelectionModelChange={changeSelectionMode}
+                        onRowClick={showRaceHelp}
                         hideFooter={true}
                         columnHeaderHeight={80}
                     />

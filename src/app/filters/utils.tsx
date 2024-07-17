@@ -1,6 +1,5 @@
-import {Ability} from "@/app/parsers/abilityCostParser";
-import {GuildAbility} from "@/app/parsers/guildParser";
 import {ReincAbility} from "@/app/contexts/reincContext";
+import {useEffect, useState} from "react";
 
 export function sortByName<T>(array: { name: string }[]): T[] {
     return array.sort((a, b) => (a.name < b.name) ? -1 : 1) as T[]
@@ -74,3 +73,25 @@ export function roundAbilityTrained(oldValue: number, newValue: number) {
         return roundDown5(newValue)
     }
 }
+
+
+const useCheckMobileScreen = (): {isMobileScreen: boolean, width: number} => {
+    const [width, setWidth] = useState<number>(window.innerWidth);
+    const handleWindowSizeChange = () => {
+        setWidth(window.innerWidth);
+    }
+
+    useEffect(() => {
+        window.addEventListener('resize', handleWindowSizeChange);
+        return () => {
+            window.removeEventListener('resize', handleWindowSizeChange);
+        }
+    }, []);
+
+    return {
+        isMobileScreen: (width <= 1280),
+        width: width
+    };
+}
+
+export default useCheckMobileScreen
