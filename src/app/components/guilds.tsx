@@ -10,9 +10,11 @@ import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import React, {useEffect, useMemo, useState} from "react";
 import {FullGuild, GuildService, MAX_GUILD_LEVELS} from "@/app/service/guildService";
 import NumberInputBasic from "@/app/components/numberInput";
-import {GridDeleteIcon} from "@mui/x-data-grid";
+import {GridCallbackDetails, GridDeleteIcon, GridRowParams, MuiEvent} from "@mui/x-data-grid";
 import {trainedAbilities} from "@/app/filters/creatorDataFilters";
 import {sortByName} from "@/app/filters/utils";
+import {GuildLevel} from "@/app/parsers/guildParser";
+import HelpGuild, {Stats} from "@/app/components/helpGuild";
 
 const Item = styled(Stack)(({theme}) => ({
     padding: theme.spacing(1),
@@ -42,6 +44,12 @@ function GuildItem(props: {
 
     //console.log(props.guild)
     const creatorDataContext = useCreatorData()
+
+    function showGuildHelp() {
+        reinc.setHelpText(<HelpGuild guild={props.guild}/>)
+        reinc.setDrawerOpen(true)
+    }
+
 
     const onClick = () => {
         console.debug("Trained for guild", props.guild, trainedForGuild, level)
@@ -122,9 +130,11 @@ function GuildItem(props: {
 
                     <Item>
                         {/*// @ts-ignore*/}
-                        <Stack direction={"row"} xs={12} sm={6} md={4} sx={{alignItems: 'center'}} key={'index-stack' + props.guild.name}>
+                        <Stack direction={"row"} xs={12} sm={6} md={4} sx={{alignItems: 'center'}}
+                               key={'index-stack' + props.guild.name}>
 
                             <Typography variant={"subtitle1"}
+                                        onClick={showGuildHelp}
                                         sx={{
                                             width: "70%",
                                             textTransform: 'capitalize',

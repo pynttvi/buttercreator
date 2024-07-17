@@ -74,6 +74,9 @@ export function roundAbilityTrained(oldValue: number, newValue: number) {
     }
 }
 
+export function capitalize(string: string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}
 
 const useCheckMobileScreen = (): {isMobileScreen: boolean, width: number} => {
     const [width, setWidth] = useState<number>(window.innerWidth);
@@ -92,6 +95,8 @@ const useCheckMobileScreen = (): {isMobileScreen: boolean, width: number} => {
         isMobileScreen: (width <= 1280),
         width: width
     };
+
 }
 
 export default useCheckMobileScreen
+

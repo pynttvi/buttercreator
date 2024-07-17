@@ -137,8 +137,6 @@ export default function RaceList(props: { myData: CreatorDataType }) {
         const raceHelp = creatorData.helpRace.find(hr => hr.name === raceName)
         reinc.setHelpText(raceHelp?.text || "")
         reinc.setDrawerOpen(true)
-        console.log("RACEHELPS", creatorData.helpRace)
-        console.log("HELP RACE", raceName, raceHelp)
     }
 
     return (

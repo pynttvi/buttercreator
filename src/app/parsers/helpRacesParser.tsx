@@ -26,7 +26,7 @@ export default async function HelpRacesParser(data: FileObject): Promise<ParserP
       return
     }
 
-    if (race !== "") {
+    if (race !== "" && !line.startsWith("Help race")) {
       text += "\n" + line
     }
 

@@ -1,4 +1,13 @@
-import React, {Dispatch, PropsWithChildren, SetStateAction, useContext, useEffect, useMemo, useState} from 'react';
+import React, {
+    Dispatch,
+    PropsWithChildren,
+    ReactNode,
+    SetStateAction,
+    useContext,
+    useEffect,
+    useMemo,
+    useState
+} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {BaseStatName, baseStats, BaseStats, Race} from '../parsers/raceParser';
 import {doFilter, FilterDataType} from "@/app/filters/creatorDataFilters";
@@ -40,7 +49,7 @@ export type ReincType = {
     wishes: Wish[]
     filteredData: FilterDataType
     copyPasteSeparator: string
-    helpText: string
+    helpText: string | ReactNode
     drawerOpen: boolean
 };
 
@@ -68,7 +77,7 @@ export type ReincFunctionsType = {
     setCustomSkillMaxBonus: Dispatch<SetStateAction<number>>
     setCustomSpellMaxBonus: Dispatch<SetStateAction<number>>
     setCopyPasteSeparator: Dispatch<SetStateAction<string>>
-    setHelpText: Dispatch<SetStateAction<string>>
+    setHelpText: Dispatch<SetStateAction<string | ReactNode>>
     setDrawerOpen: Dispatch<SetStateAction<boolean>>
 };
 
@@ -127,7 +136,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     const [customSkillMaxBonus, setCustomSkillMaxBonus] = useState(0)
     const [customSpellMaxBonus, setCustomSpellMaxBonus] = useState(0)
     const [copyPasteSeparator, setCopyPasteSeparator] = useState(";")
-    const [helpText, setHelpText] = useState("")
+    const [helpText, setHelpText] = useState<string | ReactNode>("")
     const [drawerOpen, setDrawerOpen] = useState(false)
 
     const [filteredData, setFilteredData] = useState<FilterDataType>(defaultReincContext.filteredData)

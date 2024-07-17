@@ -59,7 +59,7 @@ export default async function GuildParser(data: FileObject): Promise<ParserProce
                 const statName = stat.split("(")?.at(0)
                 const statValue = stat.split("(")?.at(1)?.replaceAll(")", "")
                 if (statName && statValue) {
-                    guildLevels.get(level)?.stats?.push({name: statName, value: parseInt(statValue)})
+                    guildLevels.get(level)?.stats?.push({name: statName.trim(), value: parseInt(statValue)})
                 }
             })
             return

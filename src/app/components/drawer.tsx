@@ -118,7 +118,6 @@ const DrawerTextInput = (props: PropsWithChildren<{
 
     //@ts-ignore
     return <StyledDrawerTextInput value={props.value} onChange={(event: any) => {
-        console.log("EVENT", event.target.value)
         props.onChange(event);
     }}/>
 }
@@ -140,7 +139,7 @@ const NavigationItem = (props: PropsWithChildren<{ text: string, target: string 
 
 export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
     const {isMobileScreen, width: screenWidth} = useCheckMobileScreen()
-    const drawerWidth = isMobileScreen ? screenWidth : 768
+    const drawerWidth = isMobileScreen ? screenWidth : 800
 
     const theme = useTheme();
     const reinc = useReinc()

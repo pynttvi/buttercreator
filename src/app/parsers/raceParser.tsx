@@ -14,9 +14,22 @@ export const baseStats: BaseStatName[] = [
 ]
 
 export type DamageTypeName = "asph" | "acid" | "cold" | "fire" | "elec" | "magi" | "pois" | "psio"
+export type ResistanceTypeName =
+    "asph res"
+    | "acid res"
+    | "cold res"
+    | "fire res"
+    | "elec res"
+    | "magi res"
+    | "pois res"
+    | "psio res"
 
 export const damageTypes: DamageTypeName[] = [
     "asph", "acid", "cold", "fire", "elec", "magi", "pois", "psio"
+]
+
+export const resistanceNames: ResistanceTypeName[] = [
+    "asph res", "acid res", "cold res", "fire res", "elec res", "magi res", "pois res", "psio res"
 ]
 export const stats = [
     "name",
@@ -41,6 +54,10 @@ export type BaseStats = {
     wis: number,
     cha: number,
 }
+
+export type Resistances = {
+    [key in keyof ResistanceTypeName]: number;
+};
 
 export type ExtraStats = {
     size: number,
