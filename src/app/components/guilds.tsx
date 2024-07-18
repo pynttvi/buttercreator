@@ -10,11 +10,10 @@ import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import React, {useEffect, useMemo, useState} from "react";
 import {FullGuild, GuildService, MAX_GUILD_LEVELS} from "@/app/service/guildService";
 import NumberInputBasic from "@/app/components/numberInput";
-import {GridCallbackDetails, GridDeleteIcon, GridRowParams, MuiEvent} from "@mui/x-data-grid";
-import {trainedAbilities} from "@/app/filters/creatorDataFilters";
+import {GridDeleteIcon} from "@mui/x-data-grid";
 import {sortByName} from "@/app/filters/utils";
-import {GuildLevel} from "@/app/parsers/guildParser";
-import HelpGuild, {Stats} from "@/app/components/helpGuild";
+import HelpGuild from "@/app/components/helpGuild";
+import {guildMeetsRequirements} from "@/app/data/guildRequirements";
 
 const Item = styled(Stack)(({theme}) => ({
     padding: theme.spacing(1),
@@ -73,7 +72,12 @@ function GuildItem(props: {
     function checkGuilds() {
         const trained = GuildService(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
         setTrainedFroGuild(trained)
-        setDisabled(trainedForGuild >= MAX_GUILD_LEVELS || level >= MAX_LEVEL || (props.guild.guildType === "sub" && trainedForGuild < 45))
+        setDisabled(
+            trainedForGuild >= MAX_GUILD_LEVELS ||
+            level >= MAX_LEVEL ||
+            (props.guild.guildType === "sub" && trainedForGuild < 45) ||
+            !guildMeetsRequirements(props.guild, reinc.guildService.getReincGuildsFlat(), reinc.level - reinc.freeLevels, reinc?.race)
+        )
     }
 
     useMemo(() => {
