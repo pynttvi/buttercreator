@@ -190,7 +190,7 @@ export default function Guilds(props: { myData: CreatorDataType }) {
         level
     } = reinc
 
-    let data = sortByName<FullGuild>(guilds)  //creatorData
+    let data = sortByName<FullGuild>(reinc.filteredData.guilds)  //creatorData
 
     return (
         <SectionBox id={'guilds'} title='Guilds'>

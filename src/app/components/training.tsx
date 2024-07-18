@@ -38,7 +38,7 @@ function TrainingItem(props: { guild: FullGuild }) {
                         {trainedAbilities.filter((a) => a.guild?.name === g.name).map((a) => {
                             return (
                                 <Typography key={'training-ability-item-' + a.name + nanoid(4)}
-                                            variant={'caption'}>{getTrainingText(a,reinc.copyPasteSeparator)}</Typography>
+                                            variant={'caption'}>{getTrainingText(a, reinc.copyPasteSeparator)}</Typography>
                             )
                         })}
                     </Grid>
@@ -52,9 +52,15 @@ function TrainingItem(props: { guild: FullGuild }) {
                     {trainedAbilities.filter((a) => a.guild?.name === guild.name).map((a) => {
                         return (
                             <Typography key={'training-ability-item-' + a.name + nanoid(4)}
-                                        variant={'caption'}>{getTrainingText(a,reinc.copyPasteSeparator)}</Typography>
+                                        variant={'caption'}>{getTrainingText(a, reinc.copyPasteSeparator)}</Typography>
                         )
                     })}
+                    {
+                        trainedAbilities.filter((a) => a.guild?.name === guild.name).length === 0 && (
+                            <Typography variant={'caption'}>No skills or spells trained</Typography>
+                        )
+                    }
+
                 </Grid>
             )}
         </>
@@ -76,10 +82,7 @@ export default function Training(props: PropsWithChildren<{}>) {
                             <TrainingItem key={'tr-it-' + g.name} guild={g}/>
                         )
                     })}
-                    {(!reinc.skills || reinc.skills.filter(s => s.trained > 0 && s.enabled).length === 0) && (!reinc.spells ||
-                        reinc.spells.filter(s => s.trained > 0 && s.enabled).length === 0) && (
-                        <Typography variant={'subtitle1'}>No skills or spells trained</Typography>
-                    )}
+        
                 </Box>
             </Suspense>
         </SectionBox>

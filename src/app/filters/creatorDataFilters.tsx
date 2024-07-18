@@ -58,12 +58,12 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
             let guilds: FullGuild[] = []
             const allGuilds = reinc.allGuilds
 
-            if (reinc.level !== 0) {
-                guilds = reinc.guilds
-            } else {
-                guilds = allGuilds
+            if (reinc.level === 0) {
+                return {
+                    skills: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(reinc.allSkills)),
+                    spells: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(reinc.allSpells))
+                }
             }
-
 
             console.debug("REINC SPELLS", reinc.spells)
             let allSkills: ReincAbility[] = reinc.skills.length === 0 ? reinc.allSkills : reinc.skills
@@ -114,74 +114,49 @@ export const GuildsByAbilitiesFilter = (creatorDataContext: CreatorDataContextTy
 
     return {
         doFilter: (): { guilds: FullGuild[] } => {
-            let guilds: FullGuild[] = []
-
-            const allGuilds = reinc.allGuilds as FullGuild[]
-
-            const {totalCount} = trainedAbilities(reinc)
-
-
-            function addGuild(guild: FullGuild) {
-                if (!guilds.find((g: FullGuild) => g.name === guild.name)) {
-                    const existingGuild = reinc.guildService.getReincGuildByName(guild.name)
-                    guilds.push(existingGuild || guild as FullGuild)
-                }
-            }
-
-            function addNewGuild(guild: FullGuild) {
-                if (!newGuilds.find((g: FullGuild) => g.name === guild.name)) {
-                    const existingGuild = reinc.guildService.getReincGuildByName(guild.name)
-                    newGuilds.push(existingGuild || guild as FullGuild)
-                }
-            }
-
-
-            if (reinc.level === 0) {
-                allGuilds.forEach((g) => {
-                    addGuild(g)
-                })
-            } else {
-                reinc.guilds.forEach(rg => addGuild(rg))
-            }
-
-
             let newGuilds: FullGuild[] = []
 
-            function filterByAbility(g: FullGuild, ability: Ability) {
-                g.subGuilds.forEach((sg => {
-                    filterByAbility(sg, ability)
-                }))
-                for (let i = g.levelMap.size; i > 0; i--) {
-                    const level = g.levelMap.get(i.toString())
-                    level?.abilities.forEach((guildAbility: GuildAbility) => {
-                        if (ability.name.trim() === guildAbility.name.trim() && ability.trained <= guildAbility.max) {
-                            if (g.guildType === "sub") {
-                                addNewGuild(g.mainGuild as FullGuild)
+            if (reinc.level > 0) {
+                return {guilds: reinc.guilds}
+            }
+
+            const allGuilds = reinc.allGuilds as FullGuild[]
+            const flatGuilds = reinc.guildService.getAllGuildsFlat() as FullGuild[]
+
+            const trainedAbilities = [...reinc.filteredData.skills, ...reinc.filteredData.spells].filter(a => a.trained > 0)
+
+            console.log("TRAINED ABILITIES", trainedAbilities)
+            const tempGuilds: FullGuild[] = []
+            flatGuilds.forEach((g) => {
+                Array.from(g.levelMap.entries()).forEach((entry) => {
+                    entry[1].abilities.forEach(a1 => {
+                        if (trainedAbilities.find(ta => ta.name == a1.name)) {
+                            if (!tempGuilds.find(tg => tg.name === g.name)) {
+                                tempGuilds.push(g)
                             }
-                            addNewGuild(g)
                         }
                     })
+                })
+            })
+            newGuilds = allGuilds.filter((ag => {
+                let enabled = false
+                if (tempGuilds.find(tg => tg.name === ag.name)) {
+                    enabled = true
                 }
-            }
-
-            if (reinc.guilds.length === 0) {
-                const trainedSkills = reinc.skills.filter((s) => s.trained > 0)
-                trainedSkills.forEach((ability) => {
-                    guilds.forEach((g) => {
-                        filterByAbility(g, ability);
+                ag.subGuilds.forEach((sg) => {
+                    if (tempGuilds.find(tg => tg.name === sg.name)) enabled = true
+                    sg.subGuilds.forEach((sg1) => {
+                        if (tempGuilds.find(tg => tg.name === sg1.name)) enabled = true
                     })
                 })
 
-                const trainedSpells = reinc.spells.filter((s) => s.trained > 0)
-                trainedSpells.forEach((ability) => {
-                    guilds.forEach((g) => {
-                        filterByAbility(g, ability);
-                    })
-                })
-            }
-            newGuilds = (newGuilds?.length === 0 ? guilds : newGuilds) as FullGuild[]
+                return enabled
+            }))
 
-            console.debug("Filtering guilds", newGuilds)
+            if (newGuilds.length === 0) {
+                newGuilds = allGuilds
+            }
+            console.log("Filtering guilds", newGuilds)
             return {guilds: [...newGuilds]}
         }
     }
