@@ -58,7 +58,7 @@ export type TransientReincType = {
 };
 
 export type ReincFunctionsType = {
-    updateAbility: (type: 'skills' | 'spells', ability: ReincAbility) => ReincAbility
+    updateAbility: (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => ReincAbility | ReincAbility[]
     addOrUpdateGuild: (guildType: GuildType, guild: FullGuild, levels: number) => void
     getAbility: (ability: Partial<ReincAbility>) => Ability | undefined
     setAllSkills: Dispatch<SetStateAction<ReincAbility[]>>
@@ -171,36 +171,55 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     }
 
 
-    const addOrUpdateAbility = (type: 'skills' | 'spells', ability: ReincAbility) => {
+    const addOrUpdateAbility = (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
+        let targetArray: ReincAbility[] = []
         if (type === "skills") {
-            setSkills(skills.map((skill) => {
-                    if (skill.name === ability.name) {
-                        skill.trained = ability.trained
-                    }
+            targetArray = skills
+        } else {
+            targetArray = spells
+        }
+        let newAbilities: ReincAbility[] = []
 
-                    if (ability.trained === skill.max) {
-                        skill.maxed = true
-                    }
+        function getNewAbility(oldAbility: ReincAbility, newAbility: ReincAbility) {
+            if (oldAbility.name === newAbility.name) {
+                oldAbility.trained = newAbility.trained
 
-                    return skill
-                })
-            )
+                if (newAbility.trained === newAbility.max) {
+                    oldAbility.maxed = true
+                }
+            }
+            return oldAbility
+        }
+
+        let newA = ability
+
+        if (ability instanceof Array) {
+            newAbilities = targetArray.map((oldAbility) => {
+                const newAbility = ability.find(a => a.name === oldAbility.name) as ReincAbility
+                return getNewAbility(oldAbility, newAbility)
+            })
+        } else {
+            newAbilities = targetArray.map((oldAbility) => {
+                const newAbility = getNewAbility(oldAbility, ability)
+                if (oldAbility.name === ability.name) {
+                    newA = newAbility
+                }
+                return newAbility
+            })
+        }
+
+        if (type === "skills") {
+            setSkills([...newAbilities])
+        } else {
+            setSpells([...newAbilities])
+        }
+        console.debug("UPDATING ABILITY", ability, newA, newAbilities)
+        if (ability instanceof Array) {
+            return newAbilities;
 
         } else {
-            setSpells(spells.map((spells) => {
-                    if (spells.name === ability.name) {
-                        spells.trained = ability.trained
-                    }
-
-                    if (ability.trained === spells.max) {
-                        spells.maxed = true
-                    }
-
-                    return spells
-                })
-            )
+            return newA
         }
-        return ability;
     }
 
     const getReincGuildByName = (name: string): FullGuild | undefined => {
@@ -384,6 +403,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
 
     const filterData = () => {
         const fd = doFilter(creatorDataContext, context as ReincContextType)
+        console.debug("FILTERING DATA", fd)
         if (fd) setFilteredData({...fd})
     }
 
@@ -392,15 +412,15 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     useEffect(() => {
         filterData()
 
-    }, [skills, spells, guilds]);
+    }, [skills, spells, level]);
 
 
-    // useEffect(() => {
-    //
-    //     setSkills(filteredData.skills)
-    //     setSpells(filteredData.spells)
-    //
-    // }, [filteredData]);
+// useEffect(() => {
+//
+//     setSkills(filteredData.skills)
+//     setSpells(filteredData.spells)
+//
+// }, [filteredData]);
 
     useEffect(() => {
         const allGuilds = GuildService(creatorDataContext, context as ReincContextType).getMainGuilds()

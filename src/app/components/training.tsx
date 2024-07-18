@@ -27,7 +27,7 @@ function TrainingItem(props: { guild: FullGuild }) {
     const reinc = useReinc()
     const trainedAbilities = useMemo(() => {
         return reinc.filteredData.skills.concat(reinc.filteredData.spells).filter((s) => s.trained > 0 && s.enabled)
-    }, [reinc.skills, reinc.skills, reinc.level])
+    }, [reinc.filteredData, reinc.level])
     return (
         <>
             {guild.subGuilds.filter((sg) => sg.trained > 0).map((g) => {

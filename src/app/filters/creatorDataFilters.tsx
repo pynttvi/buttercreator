@@ -65,6 +65,7 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
             }
 
 
+            console.debug("REINC SPELLS", reinc.spells)
             let allSkills: ReincAbility[] = reinc.skills.length === 0 ? reinc.allSkills : reinc.skills
             let allSpells: ReincAbility[] = reinc.spells.length === 0 ? reinc.allSpells : reinc.spells
 
@@ -73,6 +74,7 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
             const flatGuilds = reinc.guildService.getReincGuildsFlat()
             console.debug("FLAT GUILDS", flatGuilds)
             console.debug("REINC SKILLS", allSkills)
+            console.debug("LEVEL", reinc.level)
             allSkills.forEach(rs => {
                 let enabled = true
                 if (reinc.level > 0 && !flatGuilds.find(fg => fg.name === rs.guild?.name)) {

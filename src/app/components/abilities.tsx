@@ -10,7 +10,7 @@ import {
     GridRenderEditCellParams, GridRowParams,
     GridRowSelectionModel, MuiEvent
 } from '@mui/x-data-grid';
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {Suspense, useEffect, useMemo, useState} from 'react';
 import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
@@ -24,9 +24,12 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     const abilityType = props.type
     let abi: ReincAbility[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
     const creatorDataContext = useCreatorData()
-    const [abilities, setAbilities] = useState<ReincAbility[]>(abi)
+    //  const [abilities, setAbilities] = useState<ReincAbility[]>(abi)
 
-    useEffect(() => {
+    const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
+
+
+    const abilities = useMemo(() => {
         if (abi.length === 0 && reinc.level === 0) {
             abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }
@@ -40,10 +43,12 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                 a.max = (a.max === 0 ? 100 : a.max || 100) - (100 - reinc.spellMax)
             })
         }
-        setAbilities([...abi.filter(a => a.enabled)])
-        console.debug("Abilities", abilities, abi, reinc.filteredData)
+        console.debug("Abilities", abi, reinc.filteredData)
+        const filtered = [...abi.filter(a => a.enabled)]
+        setSelectionModel(filtered.filter(a => a.trained > 0).map(a => a.id))
+        return (filtered)
 
-    }, [reinc.filteredData, reinc.race, reinc.wishes]);
+    }, [reinc.filteredData, reinc.skills, reinc.spells, reinc.guilds, reinc.race, reinc.wishes]);
 
 
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -61,10 +66,30 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
     }, [lastEdit]);
 
-    const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
 
     const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
+
+        if (apiRef.current?.getRowsCount() === rowSelectionModel.length) {
+
+            const model = [...rowSelectionModel]
+            const rows: ReincAbility[] = []
+            model.map((id) => {
+                const r = apiRef.current?.getRow(id)
+                rows.push(r)
+            })
+
+            rows.forEach((r) => {
+                reinc.updateAbility(props.type, {...r, trained: r.max})
+            })
+        }
+        if (rowSelectionModel.length === 0) {
+            const targetArray = props.type === "skills" ? reinc.skills : reinc.spells
+            const newAbilities = targetArray.map((a) => ({...a, trained: 0}))
+            reinc.updateAbility(props.type, newAbilities)
+
+        }
         setSelectionModel(rowSelectionModel)
+
     }
     const checkBoxChanged = (params: GridCellParams) => {
         const {value, row, colDef} = params
@@ -76,7 +101,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
-            //      reinc.updateAbility(props.type, {...row, trained: 0})
+            // reinc.updateAbility(props.type, {...row, trained: 0})
         }
     }
 
@@ -106,11 +131,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         }
 
         useEffect(() => {
-            params.api.setEditCellValue({
-                id: params.id,
-                field: params.field,
-                value: value,
-            });
+
             //      reinc.updateAbility(params.row.type === "skill" ? "skills" : "spells", {...params.row, trained: value})
 
         }, [value]);
@@ -177,11 +198,11 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         if (newRow.trained > 0 && newRow.trained < 10) {
             newRow.trained = 5
         }
-        return reinc.updateAbility(props.type, newRow);
+        return reinc.updateAbility(props.type, newRow) as ReincAbility;
     };
 
-    function showAbilityHelp(params: GridRowParams<ReincAbility>, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) {
-        const abilityName = params.row.name.toLowerCase()
+    function showAbilityHelp(ability: ReincAbility) {
+        const abilityName = ability.name.toLowerCase()
         const abilityHelpList = abilityType === "skills" ? creatorDataContext.creatorData.helpSkills : creatorDataContext.creatorData.helpSpells;
         const abilityHelp = abilityHelpList.find(ah => ah.name === abilityName)
         let text = abilityHelp?.text || ""
@@ -216,8 +237,10 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                                 if (params.field === '__check__') {
                                     checkBoxChanged(params)
                                 }
+                                if (params.field === "name") {
+                                    showAbilityHelp(params.row)
+                                }
                             }}
-                            onRowClick={showAbilityHelp}
                             rowSelectionModel={selectionModel}
                             onRowSelectionModelChange={changeSelectionMode}
                             onCellEditStop={(params, event, details) => {
