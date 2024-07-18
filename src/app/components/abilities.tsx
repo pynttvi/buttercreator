@@ -7,22 +7,23 @@ import {
     GridCallbackDetails,
     GridCellParams,
     GridColDef,
-    GridRenderEditCellParams,
-    GridRowSelectionModel
+    GridRenderEditCellParams, GridRowParams,
+    GridRowSelectionModel, MuiEvent
 } from '@mui/x-data-grid';
 import React, {Suspense, useEffect, useState} from 'react';
 import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {roundDown5, roundUp5} from "@/app/filters/utils";
+import {capitalize, roundDown5, roundUp5} from "@/app/filters/utils";
+import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
     const reinc = useReinc()
     const abilityType = props.type
     let abi: ReincAbility[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
-
+    const creatorDataContext = useCreatorData()
     const [abilities, setAbilities] = useState<ReincAbility[]>(abi)
 
     useEffect(() => {
@@ -179,6 +180,19 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         return reinc.updateAbility(props.type, newRow);
     };
 
+    function showAbilityHelp(params: GridRowParams<ReincAbility>, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) {
+        const abilityName = params.row.name.toLowerCase()
+        const abilityHelpList = abilityType === "skills" ? creatorDataContext.creatorData.helpSkills : creatorDataContext.creatorData.helpSpells;
+        const abilityHelp = abilityHelpList.find(ah => ah.name === abilityName)
+        let text = abilityHelp?.text || ""
+        if (text === "") {
+            text = "No help found"
+        }
+        console.log("No help found", abilityName)
+        reinc.setHelpText(text)
+        reinc.setDrawerOpen(true)
+    }
+
     return (
         <SectionBox id={props.type}>
             <Suspense fallback="Loading...">
@@ -203,6 +217,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
                                     checkBoxChanged(params)
                                 }
                             }}
+                            onRowClick={showAbilityHelp}
                             rowSelectionModel={selectionModel}
                             onRowSelectionModelChange={changeSelectionMode}
                             onCellEditStop={(params, event, details) => {
