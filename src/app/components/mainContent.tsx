@@ -4,7 +4,7 @@ import RaceList from "@/app/components/races";
 import Guilds from "@/app/components/guilds";
 import AbilityList from "@/app/components/abilities";
 import Costs from "@/app/components/costs";
-import {PropsWithChildren, Suspense} from "react";
+import {PropsWithChildren, Suspense, useEffect, useState} from "react";
 import {ReincContextProvider} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
 import {
@@ -18,10 +18,34 @@ import WishList from "@/app/components/wish";
 import Training from "@/app/components/training";
 import PersistentDrawerRight from "@/app/components/drawer";
 import CharInfo from "@/app/components/info";
+import Box from "@mui/material/Box";
+function loadWord() {
+    const things = ['Spellcaster', 'Hitter', 'Bard', "Thief", "Mage", "Fighter", "Troll", "Goblin", "Vampire", "Cherub", "Bad", "Good", "Very Bad", "Very Good"];
+    return things[Math.floor(Math.random() * things.length)];
+}
 
+export type Loading = {}
+
+
+const LoadingFallback = () => {
+    return (
+        <>
+            <Typography variant={'h4'}
+                        sx={{textTransform: 'capitalize'}}>Butterscotc, 120lvl, {loadWord()} The {loadWord()}-{loadWord()}....... {loadWord()}</Typography>
+            <Typography variant={'body1'}>Loading...</Typography>
+            <Box>
+                <img src="/favicon.svg" alt="Logo" width={'70%'} height={'70%'}/>
+            </Box>
+        </>
+    )
+}
 
 export function Buttercreator(props: { creatorDataContext: CreatorDataContextType }) {
-    return <Suspense fallback={'Loading...'}>
+    const [fallBack, setFallback] = useState(<LoadingFallback/>)
+    useEffect(() => {
+        setFallback(<LoadingFallback />)
+    }, []);
+    return <Suspense fallback={fallBack}>
         <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>
             <Grid xs={12} sm={12} md={12}>
                 <RaceList key={'race-section'} myData={props.creatorDataContext.creatorData}/>
@@ -54,13 +78,13 @@ export function Buttercreator(props: { creatorDataContext: CreatorDataContextTyp
     </Suspense>;
 }
 
-export default function MainContent(props: { myData: Promise<Partial<CreatorDataType>> }) {
+export default function MainContent(props: { myData: Promise<Partial<CreatorDataType>>, title?: Promise<string> }) {
 
     return (
-        <CreatorDataContextProvider creatorData={props.myData as Promise<CreatorDataType>}>
+        <CreatorDataContextProvider creatorData={props.myData as Promise<CreatorDataType>} title={props.title}>
             <CreatorDataContext.Consumer>
                 {value => (
-                    !value?.creatorData ? (<Typography variant={'h2'}> Loading...</Typography>)
+                    !value?.creatorData ? (<LoadingFallback/>)
                         : (
                             <ReincContextProvider creatorDataContext={value}>
                                 <PersistentDrawerRight>
