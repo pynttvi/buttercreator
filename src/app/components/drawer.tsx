@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {ChangeEvent, ChangeEventHandler, PropsWithChildren, useEffect, useState} from 'react';
+import {PropsWithChildren, useEffect, useState} from 'react';
 import {styled, useTheme} from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -17,11 +17,11 @@ import ListItem from '@mui/material/ListItem';
 import Grid from "@mui/material/Unstable_Grid2";
 import {Accordion, AccordionDetails, AccordionSummary, Stack, TextField} from "@mui/material";
 import {BackhgroundColor} from "@/app/theme";
-import NumberInputBasic, {NumberInput} from "@/app/components/numberInput";
+import {NumberInput} from "@/app/components/numberInput";
 import {ExpandMore} from "@mui/icons-material";
 import {useReinc} from "@/app/contexts/reincContext";
-import useCheckMobileScreen, {roundAbilityTrained} from "@/app/filters/utils";
-import {width} from "@mui/system";
+import {roundAbilityTrained} from "@/app/filters/utils";
+import useCheckMobileScreen from "@/app/components/useMobileScreen";
 
 
 const Main = styled('div', {shouldForwardProp: (prop) => prop !== 'open'})<{

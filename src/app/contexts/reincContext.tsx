@@ -174,9 +174,9 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     const addOrUpdateAbility = (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
         let targetArray: ReincAbility[] = []
         if (type === "skills") {
-            targetArray = skills
+            targetArray = filteredData.skills
         } else {
-            targetArray = spells
+            targetArray = filteredData.spells
         }
         let newAbilities: ReincAbility[] = []
 
@@ -199,12 +199,9 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
                 return getNewAbility(oldAbility, newAbility)
             })
         } else {
+            const a = ability as ReincAbility
             newAbilities = targetArray.map((oldAbility) => {
-                const newAbility = getNewAbility(oldAbility, ability)
-                if (oldAbility.name === ability.name) {
-                    newA = newAbility
-                }
-                return newAbility
+                return getNewAbility(oldAbility, a)
             })
         }
 

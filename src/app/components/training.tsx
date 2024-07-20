@@ -4,10 +4,11 @@ import React, {PropsWithChildren, Suspense, useMemo} from "react"
 import SectionBox from "@/app/components/sectionBox";
 import Box from "@mui/material/Box";
 import {ReincAbility, useReinc} from "@/app/contexts/reincContext";
-import {Divider, Stack, Typography} from "@mui/material";
+import {Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {FullGuild} from "@/app/service/guildService";
 import {nanoid} from 'nanoid'
+import CopyToClipboardButton from "@/app/components/copyToClipboard";
 
 const getTrainingText = (a: ReincAbility, separator: string) => {
     const count = a.trained / 5
@@ -25,43 +26,59 @@ const getTrainingText = (a: ReincAbility, separator: string) => {
 function TrainingItem(props: { guild: FullGuild }) {
     const guild: FullGuild = props.guild
     const reinc = useReinc()
+    let mainTrainingText = ""
     const trainedAbilities = useMemo(() => {
         return reinc.filteredData.skills.concat(reinc.filteredData.spells).filter((s) => s.trained > 0 && s.enabled)
     }, [reinc.filteredData, reinc.level])
     return (
         <>
             {guild.subGuilds.filter((sg) => sg.trained > 0).map((g) => {
-                return (
-                    <Grid key={'training-item-' + g.name + nanoid(4)} direction={'row'} xs={6} sm={6} md={6}>
-                        <Typography key={'training-name-item-' + g.name + nanoid(4)} variant={'body1'}
-                                    style={{textTransform: 'capitalize'}}>{g.name}</Typography>
-                        {trainedAbilities.filter((a) => a.guild?.name === g.name).map((a) => {
-                            return (
-                                <Typography key={'training-ability-item-' + a.name + nanoid(4)}
-                                            variant={'caption'}>{getTrainingText(a, reinc.copyPasteSeparator)}</Typography>
-                            )
-                        })}
-                    </Grid>
+                let trainingTextFull = ""
+                return (<Stack direction={"row"} key={'training-item-' + g.name + nanoid(4)}>
+                        <Grid direction={'row'} xs={6} sm={6} md={6}>
+                            <Typography key={'training-name-item-' + g.name + nanoid(4)} variant={'body1'}
+                                        style={{textTransform: 'capitalize'}}>{g.name}</Typography>
+                            {trainedAbilities.filter((a) => a.guild?.name === g.name).map((a) => {
+                                const trainingText = getTrainingText(a, reinc.copyPasteSeparator)
+                                trainingTextFull += trainingText
+                                return (
+                                    <Typography variant={'caption'} key={'training-ability-item-' + a.name + nanoid(4)}>
+                                        {trainingText}
+                                    </Typography>
+                                )
+                            })}
+                        </Grid>
+                        <CopyToClipboardButton copyText={trainingTextFull}></CopyToClipboardButton>
+                    </Stack>
                 )
             })
             }{
             guild.trained > 0 && (
-                <Grid key={'training-item-' + guild.name + nanoid(4)} direction={'row'} xs={6} sm={6} md={6}>
-                    <Typography key={'training-name-item-' + guild.name + nanoid(4)} variant={'body1'}
-                                style={{textTransform: 'capitalize'}}>{guild.name}</Typography>
-                    {trainedAbilities.filter((a) => a.guild?.name === guild.name).map((a) => {
-                        return (
-                            <Typography key={'training-ability-item-' + a.name + nanoid(4)}
-                                        variant={'caption'}>{getTrainingText(a, reinc.copyPasteSeparator)}</Typography>
-                        )
-                    })}
-                    {
-                        trainedAbilities.filter((a) => a.guild?.name === guild.name).length === 0 && (
-                            <Typography variant={'caption'}>No skills or spells trained</Typography>
-                        )
-                    }
+                <Stack direction={'row'} key={'training-item-' + guild.name + nanoid(4)}>
+                    <Grid direction={'row'} xs={6} sm={6} md={6}>
+                        <Typography key={'training-name-item-' + guild.name + nanoid(4)} variant={'body1'}
+                                    style={{textTransform: 'capitalize'}}>{guild.name}</Typography>
 
-                </Grid>
+                        {trainedAbilities.filter((a) => a.guild?.name === guild.name).map((a) => {
+                            const trainingText = getTrainingText(a, reinc.copyPasteSeparator)
+                            mainTrainingText += trainingText
+                            return (
+                                <Typography variant={'caption'} key={'training-ability-item-' + a.name + nanoid(4)}>
+                                    {trainingText}
+                                </Typography>
+
+                            )
+                        })}
+                        {
+                            trainedAbilities.filter((a) => a.guild?.name === guild.name).length === 0 && (
+                                <Typography variant={'caption'}>No skills or spells trained</Typography>
+                            )
+                        }
+
+                    </Grid>
+                    <CopyToClipboardButton copyText={mainTrainingText}></CopyToClipboardButton>
+                </Stack>
+
             )}
         </>
     )
@@ -82,7 +99,7 @@ export default function Training(props: PropsWithChildren<{}>) {
                             <TrainingItem key={'tr-it-' + g.name} guild={g}/>
                         )
                     })}
-        
+
                 </Box>
             </Suspense>
         </SectionBox>

@@ -79,25 +79,5 @@ export function capitalize(string?: string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const useCheckMobileScreen = (): {isMobileScreen: boolean, width: number} => {
-    const [width, setWidth] = useState<number>(window.innerWidth);
-    const handleWindowSizeChange = () => {
-        setWidth(window.innerWidth);
-    }
 
-    useEffect(() => {
-        window.addEventListener('resize', handleWindowSizeChange);
-        return () => {
-            window.removeEventListener('resize', handleWindowSizeChange);
-        }
-    }, []);
-
-    return {
-        isMobileScreen: (width <= 1280),
-        width: width
-    };
-
-}
-
-export default useCheckMobileScreen
 

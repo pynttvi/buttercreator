@@ -156,7 +156,7 @@ export const GuildsByAbilitiesFilter = (creatorDataContext: CreatorDataContextTy
             if (newGuilds.length === 0) {
                 newGuilds = allGuilds
             }
-            console.log("Filtering guilds", newGuilds)
+            console.debug("Filtering guilds", newGuilds)
             return {guilds: [...newGuilds]}
         }
     }
