@@ -13,7 +13,7 @@ export const baseStats: BaseStatName[] = [
     "cha",
 ]
 
-export type DamageTypeName = "asph" | "acid" | "cold" | "fire" | "elec" | "magi" | "pois" | "psio"
+export type DamageTypeName = "asph" | "acid" | "cold" | "fire" | "elec" | "magi" | "pois" | "psio" | "phys"
 export type ResistanceTypeName =
     "asph res"
     | "acid res"
@@ -23,13 +23,14 @@ export type ResistanceTypeName =
     | "magi res"
     | "pois res"
     | "psio res"
+    | "phys res"
 
 export const damageTypes: DamageTypeName[] = [
-    "asph", "acid", "cold", "fire", "elec", "magi", "pois", "psio"
+    "asph", "acid", "cold", "fire", "elec", "magi", "pois", "psio", "phys"
 ]
 
 export const resistanceNames: ResistanceTypeName[] = [
-    "asph res", "acid res", "cold res", "fire res", "elec res", "magi res", "pois res", "psio res"
+    "asph res", "acid res", "cold res", "fire res", "elec res", "magi res", "pois res", "psio res", "phys res"
 ]
 export const stats = [
     "name",

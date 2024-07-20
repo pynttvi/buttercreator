@@ -1,5 +1,6 @@
 import {ReincAbility} from "@/app/contexts/reincContext";
 import {useEffect, useState} from "react";
+import {stats} from "@/app/parsers/raceParser";
 
 export function sortByName<T>(array: { name: string }[]): T[] {
     return array.sort((a, b) => (a.name < b.name) ? -1 : 1) as T[]
@@ -75,9 +76,50 @@ export function roundAbilityTrained(oldValue: number, newValue: number) {
 }
 
 export function capitalize(string?: string) {
-    if(!string) return ""
+    if (!string) return ""
     return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 
+export function simplifyStat(statName: string) {
+    const stat = statName.trim().toLowerCase().replaceAll("_", " ")
+    if (stat === "strength") {
+        return "str"
+    }
+    if (stat === "constitution") {
+        return "con"
+    }
+    if (stat === "dexterity") {
+        return "dex"
+    }
+    if (stat === "intelligence") {
+        return "int"
+    }
+    if (stat === "wisdom") {
+        return "wis"
+    }
+    if (stat === "charisma") {
+        return "cha"
+    }
 
+    if (stat === "sp regen") {
+        return "spr"
+    }
+    if (stat == "spell point regeneration") {
+        return "spr"
+    }
+    if (stat == "hit point regeneration") {
+        return "spr"
+    }
+    if (stat == "hp regen") {
+        return "hpr"
+    }
+
+    if(stat.includes("res")){
+        const split = stat.split(" ")
+        if(split.length > 0){
+            return `${split[0].substring(0,4)} res`.trim().toLowerCase()
+        }
+    }
+    return stat
+}

@@ -1,10 +1,10 @@
 'use client'
-import {Typography} from "@mui/material";
+import {SvgIcon, Typography} from "@mui/material";
 import RaceList from "@/app/components/races";
 import Guilds from "@/app/components/guilds";
 import AbilityList from "@/app/components/abilities";
 import Costs from "@/app/components/costs";
-import {Suspense} from "react";
+import {PropsWithChildren, Suspense} from "react";
 import {ReincContextProvider} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
 import {
@@ -17,9 +17,11 @@ import StatsList from "@/app/components/stats";
 import WishList from "@/app/components/wish";
 import Training from "@/app/components/training";
 import PersistentDrawerRight from "@/app/components/drawer";
+import CharInfo from "@/app/components/info";
+
 
 export function Buttercreator(props: { creatorDataContext: CreatorDataContextType }) {
-    return <Suspense fallback={"Loading..."}>
+    return <Suspense fallback={'Loading...'}>
         <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>
             <Grid xs={12} sm={12} md={12}>
                 <RaceList key={'race-section'} myData={props.creatorDataContext.creatorData}/>
@@ -43,6 +45,9 @@ export function Buttercreator(props: { creatorDataContext: CreatorDataContextTyp
                 <Costs key={'cost-section'}/>
             </Grid>
             <Grid xs={12} sm={12} md={12}>
+                <CharInfo key={'charinfo-section'}/>
+            </Grid>
+            <Grid xs={12} sm={12} md={12}>
                 <Training key={'training-section'}/>
             </Grid>
         </Grid>
@@ -58,7 +63,7 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                     !value?.creatorData ? (<Typography variant={'h2'}> Loading...</Typography>)
                         : (
                             <ReincContextProvider creatorDataContext={value}>
-                                <PersistentDrawerRight open={false}>
+                                <PersistentDrawerRight>
                                     <Buttercreator key={'buttercrator'} creatorDataContext={value}/>
                                 </PersistentDrawerRight>
                             </ReincContextProvider>

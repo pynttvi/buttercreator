@@ -2,7 +2,11 @@ import {ReincContextType} from "@/app/contexts/reincContext";
 import {Lesser, minorWishCosts, RESIST_WISH_NAME_SUFFIX, STAT_WISH_NAME_PREFIX, WishType} from "@/app/data/wishHandler";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {Ability} from "@/app/parsers/abilityCostParser";
-import {baseStats} from "@/app/parsers/raceParser";
+import {baseStats, resistanceNames, ResistanceTypeName} from "@/app/parsers/raceParser";
+import {simplifyStat, sortByName} from "@/app/filters/utils";
+import {GuildLevel} from "@/app/parsers/guildParser";
+
+export type ReincResist = { name: ResistanceTypeName, value: number }
 
 export default function Counters(reinc: ReincContextType, creatorDataContext: CreatorDataContextType) {
 
@@ -109,6 +113,89 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         return statCosts
     }
 
+    const getHpmax = () => {
+        let hpmax = -1
+        if (!reinc.race) {
+            return -1
+        }
+        // TODO : Move to wishes
+        if (reinc.wishes.find(w => w.name === "lesser physical improvement" && w.applied)) {
+            hpmax += (0.75 * (reinc.race?.con) + 0.5 * reinc.race?.size + 25)
+        }
+        // TODO : Move to wishes
+        if (reinc.wishes.find(w => w.name === "greater physical improvement" && w.applied)) {
+            hpmax += (1.5 * (reinc.race?.con) + reinc.race?.size + 50)
+        }
+
+        const con = (reinc.guildService.getStatTotalFromGuilds("constitution")) || 0
+        const hitPoints = (reinc.guildService.getStatTotalFromGuilds("hit points")) || 0
+        hpmax += hitPoints
+        hpmax += Math.round(2 * (reinc.race.size) + (con * 3))
+        return Math.round(hpmax)
+    }
+
+    const getSpmax = () => {
+        let spmax = -1
+        if (!reinc.race) {
+            return -1
+        }
+        // TODO : Move to wishes
+        if (reinc.wishes.find(w => w.name === "lesser magical improvement" && w.applied)) {
+            spmax += (0.75 * (reinc.race?.int) + 0.5 * reinc.race?.wis + 50)
+        }
+        // TODO : Move to wishes
+        if (reinc.wishes.find(w => w.name === "greater magical improvement" && w.applied)) {
+            spmax += (1.5 * (reinc.race?.int) + reinc.race?.wis + 100)
+        }
+
+        const int = (reinc.guildService.getStatTotalFromGuilds("intelligence")) || 0
+        const wis = (reinc.guildService.getStatTotalFromGuilds("wisdom")) || 0
+        const spellPoints = (reinc.guildService.getStatTotalFromGuilds("spell points")) || 0
+        spmax += spellPoints
+        spmax += (3 * wis + 4 * int)
+        return Math.round(spmax)
+    }
+
+    const getReincStat = (stat: string) => {
+        if (!reinc.race) {
+            return -1
+        }
+        const raceFactor = Object.entries(reinc.race)
+            .find((entry) => {
+                return entry[0] === simplifyStat(stat)
+            })?.at(1) as number || 100
+
+        const reincStat = 100 + ((reinc.guildService.getStatTotalFromGuilds(stat)) || 0)
+
+        return Math.round((raceFactor * reincStat) / 100)
+    }
+
+    const getGuildResists = (): ReincResist[] => {
+        const resistances: ReincResist[] = []
+        const flatGuilds = reinc.guildService.getReincGuildsFlat()
+        console.debug("FALTL", flatGuilds)
+        const guildLevels = flatGuilds.map((g) => Array.from(g.levelMap.values()).slice(0, g.trained))
+        console.debug("Trained GUILD LEVELS", guildLevels)
+        const allGuildLevelsList = guildLevels.map((e1) => e1)
+        console.debug("ALL GUILD LEVELS LIST", allGuildLevelsList)
+        const allGuildLevels = allGuildLevelsList.reduce((gs1, gs2) => gs1.concat(gs2), [])
+        const stats = allGuildLevels.map(gl => gl.stats)
+        const allStats = stats.reduce((s1, s2) => s1.concat(s2), [])
+
+        resistanceNames.forEach((rn) => {
+            const res = reinc.guildService.getStatTotalFromGuilds(rn)
+            const totalAmount = allStats.filter(s => simplifyStat(s.name) === simplifyStat(rn))
+                .map(s => s.value)
+                .reduce((s1, s2) => s1 + s2, 0)
+            console.debug("resistance", rn, res)
+
+            if (totalAmount > 0) {
+                resistances.push({name: rn as ResistanceTypeName, value: totalAmount})
+            }
+        })
+        return sortByName<ReincResist>(resistances)
+    }
+
     return {
         countTaskPoints,
         countQpCost,
@@ -117,6 +204,10 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         countGuildLevelCost,
         countAbilitiesCost,
         countStats,
+        getHpmax,
+        getSpmax,
+        getReincStat,
+        getGuildResists
     }
 
 }

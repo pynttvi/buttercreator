@@ -4,7 +4,7 @@ import {MAX_LEVEL, ReincAbility, ReincContextType} from "@/app/contexts/reincCon
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
-import {onlyUnique, sortByName} from "@/app/filters/utils";
+import {onlyUnique, simplifyStat, sortByName} from "@/app/filters/utils";
 
 export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
@@ -17,6 +17,7 @@ export type GuildServiceType = {
     maxForGuilds: (ability: ReincAbility, guilds: FullGuild[], max?: number) => number
     getAllGuildsFlat: () => FullGuild[]
     getReincGuildsFlat: () => FullGuild[]
+    getStatTotalFromGuilds: (stat: string) => number
 }
 
 export interface SubGuild extends MainGuild {
@@ -162,6 +163,35 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
 
         reincContext.allGuilds.forEach(g => addGuilds(g))
         return flatGuilds
+    }
+
+    const getStatTotalFromGuilds = (stat: string): number => {
+        let statTotal = 0
+        const flatGuilds: FullGuild[] = getReincGuildsFlat()
+        flatGuilds
+            .filter(g => g.trained > 0)
+            .forEach((g) => {
+                const levelArray = Array.from(g.levelMap)
+                for (let i = 0; i < g.trained; i++) {
+                    const guildLevel = levelArray[0][1]
+                    guildLevel.stats.forEach((s) => {
+                        let match = false
+
+                        if (simplifyStat(s.name) === simplifyStat(stat)) {
+                            statTotal += s.value
+                            match = true
+
+                            if (!match) {
+                                if (s.name.trim().toLowerCase() === stat.trim().toLowerCase()) {
+                                    statTotal += s.value
+                                    match = true
+                                }
+                            }
+                        }
+                    })
+                }
+            })
+        return statTotal
     }
 
     const getReincGuildsFlat = () => {
@@ -323,6 +353,7 @@ export function GuildService(creatorDataContext: CreatorDataContextType, reincCo
         getReincGuildByName,
         maxForGuilds,
         getAllGuildsFlat,
-        getReincGuildsFlat
+        getReincGuildsFlat,
+        getStatTotalFromGuilds
     }
 }
