@@ -500,7 +500,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         console.debug("UPDATED WISHES", wishes)
     }, [race, wishes])
 
-
+ //   console.log(guildService.getAllGuildsFlat().map(g => ({name: g.name, to: "", back: ""})))
     return {...context, ...transientContex, guildService: GuildService(creatorDataContext, context)}
 
 }
