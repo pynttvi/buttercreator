@@ -60,18 +60,18 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
 
             if (reinc.level === 0) {
                 return {
-                    skills: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(reinc.allSkills)),
-                    spells: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(reinc.allSpells))
+                    skills: reinc.allSkills,
+                    spells: reinc.allSpells,
                 }
             }
 
             console.debug("REINC SPELLS", reinc.spells)
-            let allSkills: ReincAbility[] = reinc.skills.length === 0 ? reinc.allSkills : reinc.skills
-            let allSpells: ReincAbility[] = reinc.spells.length === 0 ? reinc.allSpells : reinc.spells
+            let allSkills: ReincAbility[] = reinc.level === 0 ? reinc.allSkills : reinc.skills
+            let allSpells: ReincAbility[] = reinc.level === 0 ? reinc.allSpells : reinc.spells
 
             let newSkills: ReincAbility[] = []
             let newSpells: ReincAbility[] = []
-            const flatGuilds = reinc.guildService.getReincGuildsFlat()
+            const flatGuilds = reinc.level === 0 ? reinc.guildService.getAllGuildsFlat() : reinc.guildService.getReincGuildsFlat()
             console.debug("FLAT GUILDS", flatGuilds)
             console.debug("REINC SKILLS", allSkills)
             console.debug("LEVEL", reinc.level)
@@ -101,12 +101,12 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
 
 
             console.debug("NEW SKILLS", newSkills.filter(ns => ns.enabled))
-            console.debug("NEW SPELLS", newSpells.filter(ns => ns.enabled))
+            console.debug("NEW SPELLS", sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(newSpells.filter(ns => ns.enabled))))
             console.debug("Attack", newSkills.find(ns => ns.name === "attack"))
 
             return {
-                skills: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(newSkills)),
-                spells: sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(newSpells))
+                skills: newSkills,
+                spells: newSpells
             }
         }
     }

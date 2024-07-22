@@ -21,6 +21,7 @@ type GuildDirection = {
 }
 import guildDirections from "@/app/data/guildDirections.json"
 import {BackhgroundColor} from "@/app/theme";
+import {onlyUniqueNameWithHighestMax} from "@/app/filters/utils";
 
 const getTrainingText = (a: ReincAbility, separator: string) => {
     const count = a.trained / 5
@@ -108,7 +109,7 @@ function TrainingItem(props: { guild: FullGuild }) {
     const guild: FullGuild = props.guild
     const reinc = useReinc()
     const trainedAbilities = useMemo(() => {
-        return reinc.filteredData.skills.concat(reinc.filteredData.spells).filter((s) => s.trained > 0 && s.enabled)
+        return onlyUniqueNameWithHighestMax(reinc.filteredData.skills.concat(reinc.filteredData.spells).filter((s) => s.trained > 0 && s.enabled))
     }, [reinc.filteredData, reinc.level])
 
     if (reinc.level === 0) {

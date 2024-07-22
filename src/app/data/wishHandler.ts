@@ -24,13 +24,13 @@ export const Lesser = [
 ]
 export const STAT_WISH_NAME_PREFIX = "improved"
 export const improvedStat = [
-    ...baseStats.map((bs) => STAT_WISH_NAME_PREFIX+ " " + bs)
+    ...baseStats.map((bs) => STAT_WISH_NAME_PREFIX + " " + bs)
 ]
 
 
 export const RESIST_WISH_NAME_SUFFIX = "resistance"
 export const improvedResistance = [
-    ...damageTypes.map((dt) => dt + " "+ RESIST_WISH_NAME_SUFFIX)
+    ...damageTypes.map((dt) => dt + " " + RESIST_WISH_NAME_SUFFIX)
 ]
 export const Minor = [
     "thick skin"
@@ -102,13 +102,13 @@ export default function WishHandler(reinc: ReincContextType) {
         return reinc.wishes.find((w) => w.name === name && w.applied)
     }
 
-    function applyWish(name: WishName, wishName: WishName, type: WishType, doApply?: () => boolean) {
+    function applyWish(name: WishName, wishName: WishName, type: WishType, doApply?: () => boolean, force?: boolean) {
         newData = {...reinc}
         if (name !== wishName) {
             return
         }
         let applySuccess = false
-        if (!wishApplied(name)) {
+        if (!wishApplied(name) || force) {
             if (doApply) {
                 applySuccess = doApply()
             } else {
@@ -145,7 +145,7 @@ export default function WishHandler(reinc: ReincContextType) {
     }
 
     return {
-        apply: (name: WishName): ReincContextType => {
+        apply: (name: WishName, force?: boolean): ReincContextType => {
 
             applyWish(name, "superior stats", WishType.GREATER, () => {
                 reinc.setBonusBaseStats(
@@ -165,23 +165,23 @@ export default function WishHandler(reinc: ReincContextType) {
             })
 
             applyWish(name, "superior knowledge", WishType.GREATER, () => {
-                    newData.skillMax = newData.skillMax + 10
-                    newData.spellMax = newData.spellMax + 10
+                    newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus + 10
+                    newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus + 10
                     reinc.setSkillMax(newData.skillMax)
                     reinc.setSpellMax(newData.spellMax)
                     return true
                 }
-            )
+                , force)
 
             applyWish(name, "better knowledge", WishType.LESSER, () => {
-                    newData.skillMax = newData.skillMax + 5
-                    newData.spellMax = newData.spellMax + 5
+                    newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus + 5
+                    newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus + 5
                     reinc.setSkillMax(newData.skillMax)
                     reinc.setSpellMax(newData.spellMax)
                     return true
 
                 }
-            )
+                , force)
 
             applyWish(name, "greater magical improvement", WishType.GREATER)
             applyWish(name, "lesser magical improvement", WishType.LESSER)
@@ -239,23 +239,22 @@ export default function WishHandler(reinc: ReincContextType) {
             })
 
             cancelWish(name, "superior knowledge", WishType.GREATER, () => {
-                console.log("CANCELLING KNOWLEDGE")
-                newData.skillMax = newData.skillMax - 10
-                newData.spellMax = newData.spellMax - 10
-                reinc.setSkillMax(Math.min(newData.skillMax,0))
-                reinc.setSpellMax(Math.min(newData.spellMax,0))
+
+                newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
+                newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus
+                newData.skillMax = newData.skillMax
+                newData.spellMax = newData.spellMax
+                reinc.setSkillMax(newData.skillMax)
+                reinc.setSpellMax(newData.spellMax)
                 return true
             })
 
             cancelWish(name, "better knowledge", WishType.LESSER, () => {
-                newData.skillMax = newData.skillMax - 5
-                newData.spellMax = newData.spellMax - 5
-                console.log("CANCELLING KNOWLEDGE")
-
-                reinc.setSkillMax(Math.min(newData.skillMax,0))
-                reinc.setSpellMax(Math.min(newData.spellMax,0))
+                newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
+                newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus
+                reinc.setSkillMax(newData.skillMax)
+                reinc.setSpellMax(newData.spellMax)
                 return true
-
             })
 
             cancelWish(name, "greater magical improvement", WishType.GREATER)

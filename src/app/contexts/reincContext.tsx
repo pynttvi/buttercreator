@@ -179,6 +179,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
             targetArray = filteredData.spells
         }
         let newAbilities: ReincAbility[] = []
+
         function getNewAbility(oldAbility: ReincAbility, newAbility: ReincAbility) {
             if (oldAbility.name === newAbility.name) {
                 oldAbility.trained = newAbility.trained
@@ -204,7 +205,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
             })
         }
 
-        console.log("UPDATING ABILITY",  ability, newA )
+        console.debug("UPDATING ABILITY", ability, newA)
 
         if (type === "skills") {
             setSkills([...newAbilities])
@@ -400,7 +401,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
 
     const filterData = () => {
         const fd = doFilter(creatorDataContext, context as ReincContextType)
-        console.debug("FILTERING DATA", fd)
+        console.debug("FILTERING DATA", fd?.spells)
         if (fd) setFilteredData({...fd})
     }
 
@@ -409,7 +410,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     useEffect(() => {
         filterData()
 
-    }, [race, skills, spells, level]);
+    }, [race, skills, spells, level, wishes, skillMax, spellMax]);
 
 
 // useEffect(() => {
@@ -450,25 +451,26 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     }, [guilds]);
 
     useEffect(() => {
-        /*
 
-                const overTrainedSkills = skills.filter((s) => {
-                    return s.trained > 0
-                }).map((s) => {
-                    return {...s}
-                })
-                console.debug("OVERTRAINED SKILLS", overTrainedSkills)
-                setSkills([...skills.filter((s) => overTrainedSkills.find((s1) => s1.name !== s.name)), ...overTrainedSkills])
+        if (level > 0) {
+            const newSkills = skills.map((s) => {
+                if (s.trained > s.max) {
+                    s.trained = s.max
+                }
+                return {...s}
+            })
+            setSkills([...newSkills])
 
-                const overTrainedSpells = spells.filter((s) => {
-                    return s.trained > 0
-                }).map((s) => {
-                    return {...s,}
-                })
-                setSpells([...spells.filter((s) => overTrainedSpells.find((s1) => s1.name !== s.name)), ...overTrainedSpells])
-        */
+            const newSpells = spells.map((s) => {
+                if (s.trained > s.max) {
+                    s.trained = s.max
+                }
+                return {...s}
+            })
+            setSpells([...newSpells])
+        }
 
-    }, [level]);
+    }, [level, race, wishes]);
 
 
     useEffect(() => {
@@ -479,30 +481,28 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
 
 
     useEffect(() => {
-        if (race) {
-            const wishHandler = WishHandler(context)
-            const knowledgeWishes = wishes.filter((w: Wish) => w.applied && w.name === "superior knowledge" || w.name === "better knowledge") || []
-            knowledgeWishes.forEach((w) => wishHandler.cancel(w.name))
+        const wishHandler = WishHandler(context)
 
-            const skillMax = race.skill_max ? race.skill_max : 100
-            const spellMax = race.spell_max ? race.spell_max : 100
-            setSkillMax(skillMax)
-            setSpellMax(spellMax)
+        const knowledgeWishes = [...wishes.filter((w: Wish) => w.applied && w.name === "superior knowledge" || w.name === "better knowledge")] || []
 
-            knowledgeWishes.forEach((w) => wishHandler.apply(w.name))
+        const skillMax = race?.skill_max ? race.skill_max : 100
+        const spellMax = race?.spell_max ? race.spell_max : 100
+        setSkillMax(skillMax + customSkillMaxBonus)
+        setSpellMax(spellMax + customSpellMaxBonus)
 
-            console.log("SETTING MAXES", skillMax, spellMax)
-        }
+
+        console.log("SETTING MAXES", skillMax, spellMax)
+        knowledgeWishes.forEach((w) => wishHandler.apply(w.name, true))
+
+
     }, [race])
 
 
+    const wishHandler = WishHandler(context)
     useEffect(() => {
-        const wishHandler = WishHandler(context)
         wishes.filter((w) => !w.applied).forEach((w) => wishHandler.apply(w.name))
-        console.debug("UPDATED WISHES", wishes)
-    }, [race, wishes])
-
- //   console.log(guildService.getAllGuildsFlat().map(g => ({name: g.name, to: "", back: ""})))
+    }, [wishes]);
+    //   console.log(guildService.getAllGuildsFlat().map(g => ({name: g.name, to: "", back: ""})))
     return {...context, ...transientContex, guildService: GuildService(creatorDataContext, context)}
 
 }
