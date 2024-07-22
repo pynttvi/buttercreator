@@ -82,7 +82,8 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
                 }
                 newSkills.push({
                     ...rs,
-                    enabled: enabled
+                    enabled: enabled,
+                    max: reinc.guildService.maxForGuilds(rs, flatGuilds)
                 })
             })
 
@@ -94,6 +95,7 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
                 newSpells.push({
                     ...rs,
                     enabled: enabled,
+                    max: reinc.guildService.maxForGuilds(rs, flatGuilds)
                 })
             })
 
@@ -131,7 +133,8 @@ export const GuildsByAbilitiesFilter = (creatorDataContext: CreatorDataContextTy
                 Array.from(g.levelMap.entries()).forEach((entry) => {
                     entry[1].abilities.forEach(a1 => {
                         if (trainedAbilities.find(ta => ta.name == a1.name)) {
-                            if (!tempGuilds.find(tg => tg.name === g.name)) {
+                            if (!tempGuilds.find(tg => tg.name === g.name)
+                            ) {
                                 tempGuilds.push(g)
                             }
                         }

@@ -239,18 +239,21 @@ export default function WishHandler(reinc: ReincContextType) {
             })
 
             cancelWish(name, "superior knowledge", WishType.GREATER, () => {
+                console.log("CANCELLING KNOWLEDGE")
                 newData.skillMax = newData.skillMax - 10
                 newData.spellMax = newData.spellMax - 10
-                reinc.setSkillMax(newData.skillMax)
-                reinc.setSpellMax(newData.spellMax)
+                reinc.setSkillMax(Math.min(newData.skillMax,0))
+                reinc.setSpellMax(Math.min(newData.spellMax,0))
                 return true
             })
 
             cancelWish(name, "better knowledge", WishType.LESSER, () => {
                 newData.skillMax = newData.skillMax - 5
                 newData.spellMax = newData.spellMax - 5
-                reinc.setSkillMax(newData.skillMax)
-                reinc.setSpellMax(newData.spellMax)
+                console.log("CANCELLING KNOWLEDGE")
+
+                reinc.setSkillMax(Math.min(newData.skillMax,0))
+                reinc.setSpellMax(Math.min(newData.spellMax,0))
                 return true
 
             })

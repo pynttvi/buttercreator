@@ -128,7 +128,7 @@ export default function RaceList(props: { myData: CreatorDataType }) {
     const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
         const race: Race | null = details.api.getRow(rowSelectionModel[0]) || null
         reinc.setRace(race)
-        console.log("SETTING RACE", race)
+        console.debug("SETTING RACE", race)
         setSelectionModel(rowSelectionModel)
     }
 

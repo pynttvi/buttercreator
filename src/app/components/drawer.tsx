@@ -1,3 +1,4 @@
+'use client'
 import * as React from 'react';
 import {PropsWithChildren, useEffect, useState} from 'react';
 import {styled, useTheme} from '@mui/material/styles';
@@ -172,7 +173,12 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
                             <NavigationItem target={'stats-section'} text={"Stats"}/>
                             <NavigationItem target={'wishes-section'} text={"Wishes"}/>
                             <NavigationItem target={'costs-section'} text={"Costs"}/>
-                            <NavigationItem target={'training-section'} text={"Training"}/>
+                            {reinc.level > 0 && reinc.race && (
+                                <NavigationItem target={'charinfo-section'} text={"Char"}/>
+                            )}
+                            {reinc.level > 0 && (
+                                <NavigationItem target={'training-section'} text={"Training"}/>
+                            )}
                         </Stack>
                     </Typography>
                     <IconButton

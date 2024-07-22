@@ -83,6 +83,9 @@ export function capitalize(string?: string) {
 
 export function simplifyStat(statName: string) {
     const stat = statName.trim().toLowerCase().replaceAll("_", " ")
+    if(stat.startsWith("spm")){
+        return statName
+    }
     if (stat === "strength") {
         return "str"
     }

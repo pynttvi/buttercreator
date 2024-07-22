@@ -179,7 +179,6 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
             targetArray = filteredData.spells
         }
         let newAbilities: ReincAbility[] = []
-
         function getNewAbility(oldAbility: ReincAbility, newAbility: ReincAbility) {
             if (oldAbility.name === newAbility.name) {
                 oldAbility.trained = newAbility.trained
@@ -205,6 +204,8 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
             })
         }
 
+        console.log("UPDATING ABILITY",  ability, newA )
+
         if (type === "skills") {
             setSkills([...newAbilities])
         } else {
@@ -213,7 +214,6 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         console.debug("UPDATING ABILITY", ability, newA, newAbilities)
         if (ability instanceof Array) {
             return newAbilities;
-
         } else {
             return newA
         }
@@ -409,7 +409,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     useEffect(() => {
         filterData()
 
-    }, [skills, spells, level]);
+    }, [race, skills, spells, level]);
 
 
 // useEffect(() => {
@@ -484,12 +484,14 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
             const knowledgeWishes = wishes.filter((w: Wish) => w.applied && w.name === "superior knowledge" || w.name === "better knowledge") || []
             knowledgeWishes.forEach((w) => wishHandler.cancel(w.name))
 
-            setSkillMax(race?.skill_max || 100)
-            setSpellMax(race?.spell_max || 100)
+            const skillMax = race.skill_max ? race.skill_max : 100
+            const spellMax = race.spell_max ? race.spell_max : 100
+            setSkillMax(skillMax)
+            setSpellMax(spellMax)
 
             knowledgeWishes.forEach((w) => wishHandler.apply(w.name))
 
-            console.debug("SETTING MAXES", skillMax, spellMax)
+            console.log("SETTING MAXES", skillMax, spellMax)
         }
     }, [race])
 

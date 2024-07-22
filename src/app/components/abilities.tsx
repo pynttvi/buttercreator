@@ -7,15 +7,16 @@ import {
     GridCallbackDetails,
     GridCellParams,
     GridColDef,
-    GridRenderEditCellParams, GridRowParams,
-    GridRowSelectionModel, MuiEvent
+    GridRenderEditCellParams,
+    GridRowSelectionModel,
+    GridValueGetter
 } from '@mui/x-data-grid';
 import React, {Suspense, useEffect, useMemo, useState} from 'react';
 import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {capitalize, roundDown5, roundUp5} from "@/app/filters/utils";
+import {roundDown5, roundUp5} from "@/app/filters/utils";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 
@@ -28,27 +29,17 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
 
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
 
-
     const abilities = useMemo(() => {
         if (abi.length === 0 && reinc.level === 0) {
             abi = (props.type === 'skills' ? reinc.skills : reinc.spells) || []
         }
-        if (props.type === 'skills') {
-            abi.forEach((a) => {
-                a.max = (a.max === 0 ? 100 : a.max || 100) - (100 - reinc.skillMax)
-            })
-        }
-        if (props.type === 'spells') {
-            abi.forEach((a) => {
-                a.max = (a.max === 0 ? 100 : a.max || 100) - (100 - reinc.spellMax)
-            })
-        }
+
         console.debug("Abilities", abi, reinc.filteredData)
         const filtered = [...abi.filter(a => a.enabled)]
         setSelectionModel(filtered.filter(a => a.trained > 0).map(a => a.id))
         return (filtered)
 
-    }, [reinc.filteredData, reinc.skills, reinc.spells, reinc.guilds, reinc.race, reinc.wishes]);
+    }, [reinc.filteredData, reinc.skills, reinc.spells, reinc.guilds, reinc.race, reinc.wishes, reinc.skillMax, reinc.spellMax]);
 
 
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -178,6 +169,16 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             filterable: true,
             editable: false,
             width: 100,
+            valueGetter: (params: GridValueGetter<ReincAbility>) => {
+                let max: number = params as unknown as number
+                if (props.type === 'skills') {
+                    max = max - Math.max(100 - reinc.skillMax, 0)
+                }
+                if (props.type === 'spells') {
+                    max = max - Math.max(100 - reinc.spellMax, 0)
+                }
+                return max
+            }
         },
 
     ];

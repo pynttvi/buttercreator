@@ -6,16 +6,14 @@ export type CreatorDataContextType = {
     creatorData: CreatorDataType,
     setCreatorData: Dispatch<CreatorDataType>
     originalCreatorData: CreatorDataType,
-    title: string
 };
 
 export const CreatorDataContext = React.createContext<CreatorDataContextType | null>(null)
 
-export const CreatorDataContextProvider = (props: PropsWithChildren<{ creatorData: Promise<CreatorDataType> , title: any}>) =>{
+export const CreatorDataContextProvider = (props: PropsWithChildren<{ creatorData: Promise<CreatorDataType> }>) => {
     const ctx = useContext(CreatorDataContext)
     const [ready, setReady] = useState(false)
 
-    const [title, setTitle ] = useState(props.title)
     const [creatorData, setCreatorData] = useState<CreatorDataType | null>(null)
     const [originalCreatorData, setOriginalCreatorData] = useState<CreatorDataType | null>(null)
 
@@ -25,11 +23,6 @@ export const CreatorDataContextProvider = (props: PropsWithChildren<{ creatorDat
             setOriginalCreatorData(data)
         })
     }, [])
-    useEffect(() => {
-        title.then((t: string) => {
-            setTitle(t)
-        })
-    }, []);
 
 
     if (!creatorData) {
@@ -39,7 +32,6 @@ export const CreatorDataContextProvider = (props: PropsWithChildren<{ creatorDat
         creatorData,
         setCreatorData,
         originalCreatorData,
-        title
     }
 
     return (
@@ -51,7 +43,7 @@ export const CreatorDataContextProvider = (props: PropsWithChildren<{ creatorDat
 
 export const useCreatorData = (): CreatorDataContextType => {
     const ctx = useContext(CreatorDataContext)
-    if(!ctx){
+    if (!ctx) {
         throw new Error("Creator data context error")
     }
     return ctx

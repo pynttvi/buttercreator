@@ -111,6 +111,9 @@ function TrainingItem(props: { guild: FullGuild }) {
         return reinc.filteredData.skills.concat(reinc.filteredData.spells).filter((s) => s.trained > 0 && s.enabled)
     }, [reinc.filteredData, reinc.level])
 
+    if (reinc.level === 0) {
+        return <></>
+    }
     return (
         <>
             {guild.subGuilds.filter((sg) => sg.trained > 0).map((g) => {

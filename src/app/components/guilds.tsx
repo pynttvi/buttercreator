@@ -91,7 +91,7 @@ function GuildItem(props: {
     const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
 
     const onChange = (value: number | null) => {
-        setValue(value || 0)
+        setValue(Math.min(value || 0, props.guild.levels))
     }
 
     function deleteGuild(guild: FullGuild): void {
@@ -185,10 +185,6 @@ function GuildItem(props: {
 
 export default function Guilds(props: { myData: CreatorDataType }) {
     const reinc = useReinc()
-    const {
-        guilds,
-        level
-    } = reinc
 
     let data = sortByName<FullGuild>(reinc.filteredData.guilds)  //creatorData
 

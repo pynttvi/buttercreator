@@ -1,3 +1,4 @@
+'use client'
 import React, {PropsWithChildren, useMemo} from "react";
 import {FullGuild} from "@/app/service/guildService";
 import {DataGrid, GridColDef} from "@mui/x-data-grid";

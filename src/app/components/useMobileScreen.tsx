@@ -1,3 +1,4 @@
+'use client'
 import {useEffect, useState} from "react";
 
 const useCheckMobileScreen = (): {isMobileScreen: boolean, width: number} => {

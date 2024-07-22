@@ -23,6 +23,7 @@ const TrainedInput = (props: { reinc: ReincContextType, params: GridRenderEditCe
     const [value, setValue] = useState(reinc.stats.find((s) => {
         return s.name === params.row.name
     })?.trained || 0)
+
     const parse = (newValue: number) => {
         console.log("STAT", params.row)
         newValue = Math.min(newValue, max)
