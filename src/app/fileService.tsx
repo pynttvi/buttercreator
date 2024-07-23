@@ -3,7 +3,7 @@ import ParserFactory, {CreatorDataType} from "./parserFactory";
 
 export async function getFile(url: string) {
 
-    console.log("URL", url)
+    console.debug("URL", url)
 
     const res = await fetch(url)
 

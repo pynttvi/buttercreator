@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import SectionBox from './sectionBox';
 import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useState} from "react";
 import {FullGuild, GuildUtils, MAX_GUILD_LEVELS} from "@/app/utils/guildUtils";
 import NumberInputBasic from "@/app/components/numberInput";
 import {GridDeleteIcon} from "@mui/x-data-grid";
@@ -77,7 +77,7 @@ function GuildItem(props: {
 
     }, [value]);
 
-    function checkGuilds() {
+    const checkGuilds = useCallback(() => {
         const trained = GuildUtils(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
         setTrainedFroGuild(trained)
         setDisabled(
@@ -86,7 +86,7 @@ function GuildItem(props: {
             (props.guild.guildType === "sub" && trainedForGuild < 45) ||
             !guildMeetsRequirements(props.guild, reinc.guildUtils.getReincGuildsFlat(), reinc.level - reinc.freeLevels, reinc?.race)
         )
-    }
+    }, [creatorDataContext, reinc]);
 
     useEffect(() => {
         if (ready) {
@@ -94,13 +94,13 @@ function GuildItem(props: {
         }
     }, [level, reinc.guilds, ready]);
 
-    const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
+    const className = useMemo(() => `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`, [props.guild])
 
-    const onChange = (value: number | null) => {
+    const onChange = useCallback((value: number | null) => {
         setValue(Math.min(value || 0, props.guild.levels))
-    }
+    }, [value])
 
-    function deleteGuild(guild: FullGuild): void {
+    const deleteGuild = useCallback((guild: FullGuild): void => {
         setReady(false)
         let value: number
         if (disabled || (level === MAX_LEVEL && guild.guildType === 'sub')) {
@@ -113,13 +113,13 @@ function GuildItem(props: {
         }
         setValue(value)
         setReady(true)
-    }
+    }, [value])
 
     const onDelete = () => {
         deleteGuild(props.guild)
     };
 
-    const focusClass = (className: string) => {
+    const focusClass = useCallback((className: string) => {
         (async () => {
             await new Promise(resolve => setTimeout(resolve, 50));
             const active: HTMLInputElement | null = document.querySelector(`.${className || 'none'} .base-NumberInput-input`);
@@ -128,7 +128,7 @@ function GuildItem(props: {
                 active?.select();
             }
         })()
-    }
+    }, [className])
 
 
     return (
@@ -202,7 +202,8 @@ export default function Guilds() {
                             {data?.sort((a, b) => b.levels - a.levels).map((g: FullGuild) => {
                                 return (
                                     <Box key={'guild-item-' + g.name} sx={{minWidth: "400px"}}>
-                                        <GuildItem guild={g as FullGuild} isSubguild={false}/>
+                                        <GuildItem key={'guild-item-content-' + g.name} guild={g as FullGuild}
+                                                   isSubguild={false}/>
                                     </Box>
                                 )
                             })}
