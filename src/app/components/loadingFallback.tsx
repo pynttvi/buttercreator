@@ -14,6 +14,7 @@ export default function LoadingFallback() {
                     width={800}
                     height={800}
                     priority
+                    unoptimized
                 />
             </Box>
         </>

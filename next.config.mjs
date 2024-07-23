@@ -25,5 +25,4 @@ const nextConfig = {
     },
 };
 
-const baseTrustFactor = process.env.trustFactor
 export default nextConfig;
