@@ -2,6 +2,7 @@ import React, {PropsWithChildren, useCallback, useContext, useEffect, useState} 
 import {ReincAbility, useReinc} from "@/app/contexts/reincContext";
 import {FullGuild} from "@/app/utils/guildUtils";
 import {GuildAbility} from "@/app/parsers/guildParser";
+import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 
 export type AbilityContextType = {
@@ -13,7 +14,7 @@ export const AbilityContext = React.createContext<AbilityContextType | null>(nul
 export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
     const ctx = useContext(AbilityContext)
     const [ready, setReady] = useState(false)
-
+    const creatorDataContext = useCreatorData()
     const reinc = useReinc()
     const {
         filteredData,
@@ -52,13 +53,17 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
                     const level = guild.levelMap.get(i.toString())
 
                     level?.abilities.forEach((guildAbility: GuildAbility) => {
+                        const target = guildAbility.type === "skill" ? creatorDataContext.creatorData.skills : creatorDataContext.creatorData.spells
+                        const a = target.find(a => a.name === guildAbility.name)
+
                         const ra: ReincAbility = {
-                            cost: 0,
                             enabled: true,
+                            cost: a?.cost || 0,
                             id: gaIdx,
                             maxed: false,
                             guild: guild,
-                            trained: 0, ...guildAbility
+                            trained: 0,
+                            ...guildAbility
                         }
                         guildAbilities.push(ra)
                     })
@@ -90,7 +95,6 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
                     const allSkills = guildSkills.map((gs) => {
                         const ra: ReincAbility = {
                             ...gs,
-                            cost: 0,
                             enabled: true,
                             id: gaIdx++,
                             maxed: false,
@@ -104,7 +108,6 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
                     const allSpells = guildSpells.map((gs) => {
                         const ra: ReincAbility = {
                             ...gs,
-                            cost: 0,
                             enabled: true,
                             id: gaIdx++,
                             maxed: false,
@@ -116,9 +119,6 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
                     setSpells(allSpells)
 
                 }
-
-                console.debug("INIT ABILITIES DONE", allSkills)
-
             }
         },
         [allGuilds]
