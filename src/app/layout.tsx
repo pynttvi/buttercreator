@@ -15,7 +15,7 @@ export default function RootLayout({
         <html lang="en">
         <head>
             <title>Buttercreator</title>
-            <link rel="icon" href={`${BASE_URL === "/" ? "" : BASE_URL}favicon.svg`} sizes="any"/>
+            <link rel="icon" href={`/favicon.svg`} sizes="any"/>
         </head>
         <body className={inter.className}>{children}</body>
         </html>
