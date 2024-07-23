@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
+import React, {PropsWithChildren, useCallback, useContext, useEffect, useState} from 'react';
 import {ReincAbility, useReinc} from "@/app/contexts/reincContext";
 import {FullGuild} from "@/app/utils/guildUtils";
 import {GuildAbility} from "@/app/parsers/guildParser";
@@ -31,96 +31,98 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
         wishes
     } = reinc
 
-    useEffect(() => {
-        initAbilities(allGuilds)
-    }, [allGuilds])
 
-    const initAbilities = (guilds: FullGuild[]) => {
-
-        let gaIdx = 0
-
-        let guildAbilities: ReincAbility[] = []
+    const initAbilities = useCallback((guilds: FullGuild[]) => {
 
 
-        function addAbilities(guild: FullGuild) {
+            let gaIdx = 0
 
-            if (level > 0 && guild.trained === 0) {
-                return
+            let guildAbilities: ReincAbility[] = []
+
+
+            function addAbilities(guild: FullGuild) {
+
+                if (level > 0 && guild.trained === 0) {
+                    return
+                }
+
+                console.debug("ADDING ABILITYS!", guild.name, guild)
+                for (let i = guild.levels + 2; i > 0; i--) {
+
+                    const level = guild.levelMap.get(i.toString())
+
+                    level?.abilities.forEach((guildAbility: GuildAbility) => {
+                        const ra: ReincAbility = {
+                            cost: 0,
+                            enabled: true,
+                            id: gaIdx,
+                            maxed: false,
+                            guild: guild,
+                            trained: 0, ...guildAbility
+                        }
+                        guildAbilities.push(ra)
+                    })
+                }
             }
 
-            console.debug("ADDING ABILITYS!", guild.name, guild)
-            for (let i = guild.levels + 2; i > 0; i--) {
+            if (allGuilds && allGuilds.length > 0 && !ready) {
 
-                const level = guild.levelMap.get(i.toString())
-
-                level?.abilities.forEach((guildAbility: GuildAbility) => {
-                    const ra: ReincAbility = {
-                        cost: 0,
-                        enabled: true,
-                        id: gaIdx,
-                        maxed: false,
-                        guild: guild,
-                        trained: 0, ...guildAbility
-                    }
-                    guildAbilities.push(ra)
-                })
-            }
-        }
-
-        if (allGuilds && allGuilds.length > 0 && !ready) {
-
-            guilds?.forEach((guild) => {
-                guild.subGuilds.forEach((sg => {
-                    addAbilities(sg)
-                }))
-                guild.subGuilds.forEach((sg => {
-                    sg.subGuilds.forEach((sg => {
+                guilds?.forEach((guild) => {
+                    guild.subGuilds.forEach((sg => {
                         addAbilities(sg)
                     }))
-                }))
-                addAbilities(guild)
+                    guild.subGuilds.forEach((sg => {
+                        sg.subGuilds.forEach((sg => {
+                            addAbilities(sg)
+                        }))
+                    }))
+                    addAbilities(guild)
 
-            })
-
-            console.debug("Ability GUILDS", guilds)
-            const guildSkills = guildAbilities.filter(ga => ga.type === 'skill')
-            const guildSpells = guildAbilities.filter(ga => ga.type === 'spell')
-
-            console.debug("GUILD ABILITIS", guildSkills, guildSpells)
-
-            if (allSkills.length === 0 && allSpells.length === 0) {
-                const allSkills = guildSkills.map((gs) => {
-                    const ra: ReincAbility = {
-                        ...gs,
-                        cost: 0,
-                        enabled: true,
-                        id: gaIdx++,
-                        maxed: false,
-                        trained: 0,
-                    }
-                    return ra
                 })
 
-                setAllSkills(allSkills)
-                setSkills(allSkills)
-                const allSpells = guildSpells.map((gs) => {
-                    const ra: ReincAbility = {
-                        ...gs,
-                        cost: 0,
-                        enabled: true,
-                        id: gaIdx++,
-                        maxed: false,
-                        trained: 0,
-                    }
-                    return ra
-                })
-                setAllSpells(allSpells)
-                setSpells(allSpells)
+                console.debug("Ability GUILDS", guilds)
+                const guildSkills = guildAbilities.filter(ga => ga.type === 'skill')
+                const guildSpells = guildAbilities.filter(ga => ga.type === 'spell')
+
+                console.debug("GUILD ABILITIS", guildSkills, guildSpells)
+
+                if (allSkills.length === 0 && allSpells.length === 0) {
+                    const allSkills = guildSkills.map((gs) => {
+                        const ra: ReincAbility = {
+                            ...gs,
+                            cost: 0,
+                            enabled: true,
+                            id: gaIdx++,
+                            maxed: false,
+                            trained: 0,
+                        }
+                        return ra
+                    })
+
+                    setAllSkills(allSkills)
+                    setSkills(allSkills)
+                    const allSpells = guildSpells.map((gs) => {
+                        const ra: ReincAbility = {
+                            ...gs,
+                            cost: 0,
+                            enabled: true,
+                            id: gaIdx++,
+                            maxed: false,
+                            trained: 0,
+                        }
+                        return ra
+                    })
+                    setAllSpells(allSpells)
+                    setSpells(allSpells)
+
+                }
+
+                console.debug("INIT ABILITIES DONE", allSkills)
 
             }
-            console.debug("INIT ABILITIES DONE", allSkills)
-        }
-    }
+        },
+        [allGuilds]
+    )
 
     const updateAbility = (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
         let targetArray: ReincAbility[]
@@ -176,6 +178,10 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
         updateAbility
     }
 
+
+    useEffect(() => {
+        initAbilities(allGuilds)
+    }, [allGuilds])
     useEffect(() => {
 
         if (level > 0) {
