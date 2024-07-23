@@ -20,7 +20,7 @@ import {Accordion, AccordionDetails, AccordionSummary, Stack, TextField} from "@
 import {BackhgroundColor} from "@/app/theme";
 import {NumberInput} from "@/app/components/numberInput";
 import {ExpandMore} from "@mui/icons-material";
-import {useReinc} from "@/app/contexts/reincContext";
+import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {roundAbilityTrained} from "@/app/utils/utils";
 import useCheckMobileScreen from "@/app/components/useMobileScreen";
 import LoadingFallback from "@/app/components/loadingFallback";
@@ -251,6 +251,17 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
                                         <DrawerNumberInput value={reinc.customSpellMaxBonus}
                                                            onChange={(value) => {
                                                                reinc.setCustomSpellMaxBonus(roundAbilityTrained(reinc.customSpellMaxBonus, value || 0))
+                                                           }}/>
+                                    </DrawerItem>
+                                </ListItem>
+                                <ListItem>
+                                    <DrawerItem direction={'row'}>
+                                        <DrawerInputLabel>Free levels</DrawerInputLabel>
+                                        <DrawerNumberInput value={reinc.freeLevels}
+                                                           onChange={(value) => {
+                                                               if(!value) value = 0
+                                                               if(value > (MAX_LEVEL - reinc.level) ) value = MAX_LEVEL - reinc.level
+                                                               reinc.setFreeLevels(value)
                                                            }}/>
                                     </DrawerItem>
                                 </ListItem>

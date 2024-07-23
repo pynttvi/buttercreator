@@ -62,6 +62,7 @@ export type ReincFunctionsType = {
     setWishes: Dispatch<SetStateAction<Wish[]>>
     setSkillMax: Dispatch<SetStateAction<number>>
     setSpellMax: Dispatch<SetStateAction<number>>
+    setFreeLevels: Dispatch<SetStateAction<number>>
     setCustomSkillMaxBonus: Dispatch<SetStateAction<number>>
     setCustomSpellMaxBonus: Dispatch<SetStateAction<number>>
     setCopyPasteSeparator: Dispatch<SetStateAction<string>>
@@ -173,6 +174,7 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         setSpellMax,
         setAllSkills,
         setAllSpells,
+        setFreeLevels,
         setCustomSkillMaxBonus,
         setCustomSpellMaxBonus,
         setCopyPasteSeparator,
