@@ -3,7 +3,7 @@ import {Lesser, minorWishCosts, RESIST_WISH_NAME_SUFFIX, STAT_WISH_NAME_PREFIX, 
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {Ability} from "@/app/parsers/abilityCostParser";
 import {baseStats, resistanceNames, ResistanceTypeName} from "@/app/parsers/raceParser";
-import {simplifyStat, sortByName} from "@/app/utils/utils";
+import {onlyUniqueNameWithHighestMax, simplifyStat, sortByName} from "@/app/utils/utils";
 
 export type ReincResist = { name: ResistanceTypeName, value: number }
 
@@ -18,9 +18,9 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         let tpCount = 0
 
         if (data.wishCost) {
-            console.debug("Wishcosts", data.wishCost)
             const greaterCount = reinc.wishes.filter((w) => w.type === WishType.GREATER).length
-            tpCount = tpCount + (greaterCount > 0 ? data.wishCost.slice(Lesser.length, Lesser.length + greaterCount + 1)
+            console.debug("Wishcosts", data.wishCost, greaterCount)
+            tpCount = tpCount + (greaterCount > 0 ? data.wishCost.slice(Lesser.length, Lesser.length + greaterCount )
                 .reduce((tp1, tp2,) => tp1 + tp2, 0) : 0)
 
             const lesserCount = reinc.wishes.filter((w) => w.type === WishType.LESSER).length
@@ -78,17 +78,19 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
     const countAbilitiesCost = (type: 'skill' | 'spell', name?: string): { exp: number, gold: number } => {
         let abilityCost = 0
         const target = type === 'skill' ? reinc.skills : reinc.spells
-        target.filter((a) => a.trained > 0 && (!name || name === a.name)).forEach((a: Ability) => {
-            const trainCount = Math.min(a.trained / 5) || 0
-            let tempCost = 0
-            for (let i = 0; i < trainCount + 1; i++) {
-                tempCost = tempCost + Math.min(costFactors[Math.min(i, costFactors.length - 1)] * a.cost, 10000000)
-            }
-            tempCost = ((tempCost * (type === 'skill' ? reinc?.race?.skill_cost || 100 : reinc?.race?.spell_cost || 100)) / 100)
+        onlyUniqueNameWithHighestMax(target.filter(a => a.enabled)
+            .filter((a) => a.trained > 0 && (!name || name === a.name)))
+            .forEach((a: Ability) => {
+                const trainCount = Math.min(a.trained / 5) || 0
+                let tempCost = 0
+                for (let i = 0; i < trainCount + 1; i++) {
+                    tempCost = tempCost + Math.min(costFactors[Math.min(i, costFactors.length - 1)] * a.cost, 10000000)
+                }
+                tempCost = ((tempCost * (type === 'skill' ? reinc?.race?.skill_cost || 100 : reinc?.race?.spell_cost || 100)) / 100)
 
-            console.debug("Ability cost", tempCost, a)
-            abilityCost = abilityCost + tempCost
-        })
+                console.debug("Ability cost", tempCost, a)
+                abilityCost = abilityCost + tempCost
+            })
         console.debug("Ability total cost", abilityCost)
 
         return {exp: abilityCost, gold: (abilityCost * 0.044444) / 100}

@@ -1,6 +1,6 @@
 'use client'
 
-import React, {Suspense, useMemo} from "react"
+import React, {Suspense, useDeferredValue, useEffect, useState} from "react"
 import SectionBox from "@/app/components/sectionBox";
 import Box from "@mui/material/Box";
 import {useReinc} from "@/app/contexts/reincContext";
@@ -24,30 +24,80 @@ function CostItem(props: { title: string, value: number | string }) {
     )
 }
 
+type Costs = {
+    taskPoints: number
+    qpCost: number
+    levelCost: number
+    levelCostWithQps: number
+    guildLevelCost: number
+    skillsCost: { exp: number, gold: number }
+    spellCosts: { exp: number, gold: number }
+    statCost: number
+    totalCost: number
+}
+
 export default function Costs() {
 
     const creatorDataContext = useCreatorData()
     const reinc = useReinc()
-    const counters = Counters(reinc, creatorDataContext)
-    const {
-        countTaskPoints,
-        countQpCost,
-        countLevelCost,
-        countLevelCostWithQps,
-        countGuildLevelCost,
-        countAbilitiesCost,
-        countStats,
-    } = counters
 
-    const taskPoints = useMemo(() => countTaskPoints(), [reinc.wishes])
-    const qpCost = useMemo(() => countQpCost(), [reinc.level])
-    const levelCost = useMemo(() => (countLevelCost()), [reinc.level])
-    const levelCostWithQps = useMemo(() => (countLevelCostWithQps()), [reinc.level])
-    const guildLevelCost = useMemo(() => (countGuildLevelCost()), [reinc.level])
-    const skillsCost = useMemo(() => (countAbilitiesCost('skill')), [reinc.skills, reinc.race])
-    const spellCosts = useMemo(() => (countAbilitiesCost('spell')), [reinc.spells, reinc.race])
-    const statCost = useMemo(() => (countStats()), [reinc.stats])
-    const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost.exp + spellCosts.exp + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
+    const [costs, setCosts] = useState<Costs>({
+        guildLevelCost: 0,
+        levelCost: 0,
+        levelCostWithQps: 0,
+        qpCost: 0,
+        skillsCost: {exp: 0, gold: 0},
+        spellCosts: {exp: 0, gold: 0},
+        statCost: 0,
+        taskPoints: 0,
+        totalCost: 0
+    })
+
+    useEffect(() => {
+
+        if (reinc.ready) {
+            (async () => {
+
+                const counters = Counters(reinc, creatorDataContext)
+                const {
+                    countTaskPoints,
+                    countQpCost,
+                    countLevelCost,
+                    countLevelCostWithQps,
+                    countGuildLevelCost,
+                    countAbilitiesCost,
+                    countStats,
+                } = counters
+
+                const taskPoints = countTaskPoints()
+                const qpCost = countQpCost()
+                const levelCost = countLevelCost()
+                const levelCostWithQps = countLevelCostWithQps()
+                const guildLevelCost = countGuildLevelCost()
+                const skillsCost = countAbilitiesCost('skill')
+                const spellCosts = countAbilitiesCost('spell')
+                const statCost = countStats()
+                const totalCost = levelCostWithQps + guildLevelCost + skillsCost.exp + spellCosts.exp + statCost
+
+                return {
+                    taskPoints,
+                    qpCost,
+                    levelCost,
+                    levelCostWithQps,
+                    guildLevelCost,
+                    skillsCost,
+                    spellCosts,
+                    statCost,
+                    totalCost
+                }
+            })().then((ctr: Costs) => {
+                setCosts(ctr)
+            })
+
+        }
+    }, [reinc.ready, reinc.guilds, reinc.skills, reinc.spells, reinc.wishes]);
+
+
     return (
         <SectionBox id={'costs'}>
             <Suspense fallback="Loading...">
@@ -56,17 +106,17 @@ export default function Costs() {
                 <Box>
                     {/*// @ts-ignore*/}
                     <Grid container direction={'row'} xs={12} sm={12} md={12}>
-                        <CostItem title={'Taskpoints'} value={formatNumber(taskPoints)}/>
-                        <CostItem title={'Questpoints'} value={formatNumber(qpCost)}/>
+                        <CostItem title={'Taskpoints'} value={formatNumber(costs.taskPoints)}/>
+                        <CostItem title={'Questpoints'} value={formatNumber(costs.qpCost)}/>
                         <CostItem title={'Level cost'}
-                                  value={`${formatNumber(levelCostWithQps)} (${formatNumber(levelCost)} without qp)`}/>
-                        <CostItem title={'Guild level cost'} value={formatNumber(guildLevelCost)}/>
-                        <CostItem title={'Skill costs exp'} value={formatNumber(skillsCost.exp)}/>
-                        <CostItem title={'Skill costs gold'} value={formatNumber(skillsCost.gold)}/>
-                        <CostItem title={'Spell costs exp'} value={formatNumber(spellCosts.exp)}/>
-                        <CostItem title={'Spell costs gold'} value={formatNumber(spellCosts.gold)}/>
-                        <CostItem title={'Stats costs'} value={formatNumber(statCost)}/>
-                        <CostItem title={'Total cost'} value={formatNumber(totalCost)}/>
+                                  value={`${formatNumber(costs.levelCostWithQps)} (${formatNumber(costs.levelCost)} without qp)`}/>
+                        <CostItem title={'Guild level cost'} value={formatNumber(costs.guildLevelCost)}/>
+                        <CostItem title={'Skill costs exp'} value={formatNumber(costs.skillsCost.exp)}/>
+                        <CostItem title={'Skill costs gold'} value={formatNumber(costs.skillsCost.gold)}/>
+                        <CostItem title={'Spell costs exp'} value={formatNumber(costs.spellCosts.exp)}/>
+                        <CostItem title={'Spell costs gold'} value={formatNumber(costs.spellCosts.gold)}/>
+                        <CostItem title={'Stats costs'} value={formatNumber(costs.statCost)}/>
+                        <CostItem title={'Total cost'} value={formatNumber(costs.totalCost)}/>
                     </Grid>
 
                 </Box>
