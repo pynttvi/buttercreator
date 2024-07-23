@@ -20,7 +20,7 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         if (data.wishCost) {
             const greaterCount = reinc.wishes.filter((w) => w.type === WishType.GREATER).length
             console.debug("Wishcosts", data.wishCost, greaterCount)
-            tpCount = tpCount + (greaterCount > 0 ? data.wishCost.slice(Lesser.length, Lesser.length + greaterCount )
+            tpCount = tpCount + (greaterCount > 0 ? data.wishCost.slice(Lesser.length, Lesser.length + greaterCount)
                 .reduce((tp1, tp2,) => tp1 + tp2, 0) : 0)
 
             const lesserCount = reinc.wishes.filter((w) => w.type === WishType.LESSER).length
@@ -166,7 +166,8 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
                 return entry[0] === simplifyStat(stat)
             })?.at(1) as number || 100
 
-        const reincStat = 100 + ((reinc.guildUtils.getStatTotalFromGuilds(stat)) || 0)
+        const reincStat = 100 + ((reinc.guildUtils.getStatTotalFromGuilds(stat)) || 0) +
+            (reinc.stats.find(s => simplifyStat(s.name) === simplifyStat(stat))?.trained || 0)
 
         return Math.round((raceFactor * reincStat) / 100)
     }
