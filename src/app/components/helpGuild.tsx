@@ -61,7 +61,7 @@ export default function HelpGuild(props: PropsWithChildren<{ guild: FullGuild }>
         })
 
         return {guildStats, statKey, resKeys}
-    }, [props.guild.levelMap, props.guild.levels])
+    }, [reinc.helpText])
 
     const defaultCellProps: Partial<GridColDef> = {
         width: 75,
