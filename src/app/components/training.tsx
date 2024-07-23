@@ -10,7 +10,7 @@ import {FullGuild} from "@/app/utils/guildUtils";
 import {nanoid} from 'nanoid'
 import CopyToClipboardButton from "@/app/components/copyToClipboard";
 import guildDirections from "@/app/data/guildDirections.json"
-import {BackhgroundColor} from "@/app/theme";
+import {backgroundColor} from "@/app/theme";
 import {onlyUniqueNameWithHighestMax} from "@/app/utils/utils";
 
 type GuildDirection = {
@@ -43,7 +43,7 @@ function DirBox(props: { title: string, dirs: string, info?: string }) {
                 <Box>
                     <Typography variant={"subtitle1"}>{props.title}</Typography>
                     {info && info !== "" && (
-                        <Alert sx={{backgroundColor: BackhgroundColor}} severity="info">{info}</Alert>
+                        <Alert sx={{backgroundColor: backgroundColor}} severity="info">{info}</Alert>
                     )}
                     <Stack direction={"row"} sx={{alignItems: 'center'}}><Typography
                         variant={"caption"}>{props.dirs}</Typography>
