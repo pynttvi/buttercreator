@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {mockCreatorData, renderWrapper} from "../../../vitestSetup";
-import {FullGuild, MainGuild, SubGuild} from "@/app/service/guildService";
+import {FullGuild, MainGuild, SubGuild} from "@/app/utils/guildUtils";
 import {waitFor} from "@testing-library/react";
 import {LoggingConfig} from "@/app/config/loggingConfig";
 import {doFilter} from "@/app/filters/creatorDataFilters";

@@ -1,9 +1,9 @@
 'use client'
 import {Ability} from "@/app/parsers/abilityCostParser";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
-import {FullGuild} from "@/app/service/guildService";
+import {FullGuild} from "@/app/utils/guildUtils";
 import {GuildAbility} from "@/app/parsers/guildParser";
-import {onlyUniqueNameWithHighestMax, sortByName} from "@/app/filters/utils";
+import {onlyUniqueNameWithHighestMax, sortByName} from "@/app/utils/utils";
 import {ReincAbility, ReincContextType} from "@/app/contexts/reincContext";
 
 export type FilterDataType = {
@@ -71,7 +71,7 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
 
             let newSkills: ReincAbility[] = []
             let newSpells: ReincAbility[] = []
-            const flatGuilds = reinc.level === 0 ? reinc.guildService.getAllGuildsFlat() : reinc.guildService.getReincGuildsFlat()
+            const flatGuilds = reinc.level === 0 ? reinc.guildUtils.getAllGuildsFlat() : reinc.guildUtils.getReincGuildsFlat()
             console.debug("FLAT GUILDS", flatGuilds)
             console.debug("REINC SKILLS", allSkills)
             console.debug("LEVEL", reinc.level)
@@ -83,7 +83,7 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
                 newSkills.push({
                     ...rs,
                     enabled: enabled,
-                    max: reinc.guildService.maxForGuilds(rs, flatGuilds)
+                    max: reinc.guildUtils.maxForGuilds(rs, flatGuilds)
                 })
             })
 
@@ -95,12 +95,12 @@ export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextTy
                 newSpells.push({
                     ...rs,
                     enabled: enabled,
-                    max: reinc.guildService.maxForGuilds(rs, flatGuilds)
+                    max: reinc.guildUtils.maxForGuilds(rs, flatGuilds)
                 })
             })
 
 
-            console.debug("NEW SKILLS", newSkills.filter(ns => ns.enabled))
+            console.debug("NEW SKILLS", newSkills)
             console.debug("NEW SPELLS", sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(newSpells.filter(ns => ns.enabled))))
             console.debug("Attack", newSkills.find(ns => ns.name === "attack"))
 
@@ -123,11 +123,11 @@ export const GuildsByAbilitiesFilter = (creatorDataContext: CreatorDataContextTy
             }
 
             const allGuilds = reinc.allGuilds as FullGuild[]
-            const flatGuilds = reinc.guildService.getAllGuildsFlat() as FullGuild[]
+            const flatGuilds = reinc.guildUtils.getAllGuildsFlat() as FullGuild[]
 
             const trainedAbilities = [...reinc.filteredData.skills, ...reinc.filteredData.spells].filter(a => a.trained > 0)
 
-            console.log("TRAINED ABILITIES", trainedAbilities)
+            console.debug("TRAINED ABILITIES", trainedAbilities)
             const tempGuilds: FullGuild[] = []
             flatGuilds.forEach((g) => {
                 Array.from(g.levelMap.entries()).forEach((entry) => {

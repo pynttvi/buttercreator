@@ -18,6 +18,8 @@ import Training from "@/app/components/training";
 import PersistentDrawerRight from "@/app/components/drawer";
 import CharInfo from "@/app/components/info";
 import LoadingFallback from "@/app/components/loadingFallback";
+import {AbilityContextProvider} from "@/app/contexts/abilityContext";
+import {GuildContextProvider} from "@/app/contexts/guildContext";
 
 
 export function Buttercreator(props: { creatorDataContext: CreatorDataContextType }) {
@@ -27,15 +29,22 @@ export function Buttercreator(props: { creatorDataContext: CreatorDataContextTyp
             <Grid xs={12} sm={12} md={12}>
                 <RaceList key={'race-section'} myData={props.creatorDataContext.creatorData}/>
             </Grid>
-            <Grid xs={12} sm={12} md={12}>
-                <Guilds key={'guild-section'} myData={props.creatorDataContext.creatorData}/>
-            </Grid>
-            <Grid xs={12} sm={12} md={12} lg={6}>
-                <AbilityList key={'skill-section'} type={"skills"} creatorData={props.creatorDataContext.creatorData}/>
-            </Grid>
-            <Grid xs={12} sm={12} md={12} lg={6}>
-                <AbilityList key={'spell-section'} type={"spells"} creatorData={props.creatorDataContext.creatorData}/>
-            </Grid>
+            <GuildContextProvider>
+                <Grid xs={12} sm={12} md={12}>
+                    <Guilds key={'guild-section'} myData={props.creatorDataContext.creatorData}/>
+                </Grid>
+            </GuildContextProvider>
+            <AbilityContextProvider>
+
+                <Grid xs={12} sm={12} md={12} lg={6}>
+                    <AbilityList key={'skill-section'} type={"skills"}
+                                 creatorData={props.creatorDataContext.creatorData}/>
+                </Grid>
+                <Grid xs={12} sm={12} md={12} lg={6}>
+                    <AbilityList key={'spell-section'} type={"spells"}
+                                 creatorData={props.creatorDataContext.creatorData}/>
+                </Grid>
+            </AbilityContextProvider>
             <Grid xs={12} sm={12} md={6} lg={6}>
                 <StatsList/>
             </Grid>
@@ -46,7 +55,7 @@ export function Buttercreator(props: { creatorDataContext: CreatorDataContextTyp
                 <Costs key={'cost-section'}/>
             </Grid>
             <Grid xs={12} sm={12} md={12}>
-                <CharInfo key={'charinfo-section'}/>
+                <CharInfo key={'char-section'}/>
             </Grid>
             <Grid xs={12} sm={12} md={12}>
                 <Training key={'training-section'}/>

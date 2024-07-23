@@ -1,6 +1,6 @@
 import {expect, test} from "vitest";
 import {Ability} from "@/app/parsers/abilityCostParser";
-import {onlyUniqueNameWithHighestMax, sortByMaxAndName} from "@/app/filters/utils";
+import {onlyUniqueNameWithHighestMax, sortByMaxAndName} from "@/app/utils/utils";
 
 test('sortByMaxAndName sorts bigger first', async () => {
     const abilities = [

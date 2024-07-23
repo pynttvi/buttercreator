@@ -9,7 +9,7 @@ import {
     CreatorDataContextProvider,
     CreatorDataContextType
 } from "@/app/contexts/creatorDataContext";
-import {GuildService} from "@/app/service/guildService";
+import {GuildUtils} from "@/app/utils/guildUtils";
 import React, {PropsWithChildren} from "react";
 import {render, waitFor} from "@testing-library/react";
 import {Buttercreator} from "@/app/components/mainContent";
@@ -35,7 +35,7 @@ vi.mock("next/font/google", () => ({
 
 
 const mockedGetFile = vi.mocked(getFile, true);
-const mockedGuildService = vi.mocked(GuildService, true);
+const mockedGuildService = vi.mocked(GuildUtils, true);
 
 export const renderWrapper = (reinc: ReincContextType | null, creatorDataContext: CreatorDataContextType) => {
     const component = render(

@@ -1,4 +1,4 @@
-import {FullGuild} from "@/app/service/guildService";
+import {FullGuild} from "@/app/utils/guildUtils";
 import {Race} from "@/app/parsers/raceParser";
 
 export type GuildRequirement = {

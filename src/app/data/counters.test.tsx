@@ -1,9 +1,9 @@
 import {expect, test, vi} from "vitest";
 import {getFile} from "@/app/fileService";
 import {ReincContextType} from "@/app/contexts/reincContext";
-import {GuildService} from "@/app/service/guildService";
+import {GuildUtils} from "@/app/utils/guildUtils";
 import Counters from "@/app/data/counters";
-import {formatNumber} from "@/app/filters/utils";
+import {formatNumber} from "@/app/utils/utils";
 import {mockCreatorData} from "../../../vitestSetup";
 
 const getDataMock = vi.fn()
@@ -18,7 +18,7 @@ vi.mock("@/app/service/guildService", () => ({
 }))
 
 const mockedGetFile = vi.mocked(getFile, true);
-const mockedGuildService = vi.mocked(GuildService, true);
+const mockedGuildService = vi.mocked(GuildUtils, true);
 
 
 test('Counter tests', async () => {

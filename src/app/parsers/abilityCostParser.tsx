@@ -1,7 +1,7 @@
 import {FileObject} from "../page"
 import {getFile} from "../fileService";
 import {ParserProcess} from "../parserFactory";
-import {FullGuild} from "@/app/service/guildService";
+import {FullGuild} from "@/app/utils/guildUtils";
 
 export type Ability = {
     id: number

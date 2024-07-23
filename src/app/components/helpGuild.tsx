@@ -1,9 +1,9 @@
 'use client'
 import React, {PropsWithChildren, useMemo} from "react";
-import {FullGuild} from "@/app/service/guildService";
+import {FullGuild} from "@/app/utils/guildUtils";
 import {DataGrid, GridColDef} from "@mui/x-data-grid";
 import {BaseStatName, BaseStats, baseStats, Resistances} from "@/app/parsers/raceParser";
-import {capitalize} from "@/app/filters/utils";
+import {capitalize} from "@/app/utils/utils";
 import {Divider, Typography} from "@mui/material";
 import {useReinc} from "@/app/contexts/reincContext";
 

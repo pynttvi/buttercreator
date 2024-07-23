@@ -3,7 +3,7 @@ import {Lesser, minorWishCosts, RESIST_WISH_NAME_SUFFIX, STAT_WISH_NAME_PREFIX, 
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {Ability} from "@/app/parsers/abilityCostParser";
 import {baseStats, resistanceNames, ResistanceTypeName} from "@/app/parsers/raceParser";
-import {simplifyStat, sortByName} from "@/app/filters/utils";
+import {simplifyStat, sortByName} from "@/app/utils/utils";
 import {GuildLevel} from "@/app/parsers/guildParser";
 
 export type ReincResist = { name: ResistanceTypeName, value: number }
@@ -127,8 +127,8 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
             hpmax += (1.5 * (reinc.race?.con) + reinc.race?.size + 50)
         }
 
-        const con = (reinc.guildService.getStatTotalFromGuilds("constitution")) || 0
-        const hitPoints = (reinc.guildService.getStatTotalFromGuilds("hit points")) || 0
+        const con = (reinc.guildUtils.getStatTotalFromGuilds("constitution")) || 0
+        const hitPoints = (reinc.guildUtils.getStatTotalFromGuilds("hit points")) || 0
         hpmax += hitPoints
         hpmax += Math.round(2 * (reinc.race.size) + (con * 3))
         return Math.round(hpmax)
@@ -148,9 +148,9 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
             spmax += (1.5 * (reinc.race?.int) + reinc.race?.wis + 100)
         }
 
-        const int = (reinc.guildService.getStatTotalFromGuilds("intelligence")) || 0
-        const wis = (reinc.guildService.getStatTotalFromGuilds("wisdom")) || 0
-        const spellPoints = (reinc.guildService.getStatTotalFromGuilds("spell points")) || 0
+        const int = (reinc.guildUtils.getStatTotalFromGuilds("intelligence")) || 0
+        const wis = (reinc.guildUtils.getStatTotalFromGuilds("wisdom")) || 0
+        const spellPoints = (reinc.guildUtils.getStatTotalFromGuilds("spell points")) || 0
         spmax += spellPoints
         spmax += (3 * wis + 4 * int)
         return Math.round(spmax)
@@ -165,14 +165,14 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
                 return entry[0] === simplifyStat(stat)
             })?.at(1) as number || 100
 
-        const reincStat = 100 + ((reinc.guildService.getStatTotalFromGuilds(stat)) || 0)
+        const reincStat = 100 + ((reinc.guildUtils.getStatTotalFromGuilds(stat)) || 0)
 
         return Math.round((raceFactor * reincStat) / 100)
     }
 
     const getGuildResists = (): ReincResist[] => {
         const resistances: ReincResist[] = []
-        const flatGuilds = reinc.guildService.getReincGuildsFlat()
+        const flatGuilds = reinc.guildUtils.getReincGuildsFlat()
         console.debug("FALTL", flatGuilds)
         const guildLevels = flatGuilds.map((g) => Array.from(g.levelMap.values()).slice(0, g.trained))
         console.debug("Trained GUILD LEVELS", guildLevels)
@@ -183,7 +183,7 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         const allStats = stats.reduce((s1, s2) => s1.concat(s2), [])
 
         resistanceNames.forEach((rn) => {
-            const res = reinc.guildService.getStatTotalFromGuilds(rn)
+            const res = reinc.guildUtils.getStatTotalFromGuilds(rn)
             const totalAmount = allStats.filter(s => simplifyStat(s.name) === simplifyStat(rn))
                 .map(s => s.value)
                 .reduce((s1, s2) => s1 + s2, 0)

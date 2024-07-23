@@ -16,8 +16,9 @@ import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
-import {onlyUniqueNameWithHighestMax, roundDown5, roundUp5, sortByName} from "@/app/filters/utils";
+import {onlyUniqueNameWithHighestMax, roundDown5, roundUp5, sortByName} from "@/app/utils/utils";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
+import {useAbilityContext} from "@/app/contexts/abilityContext";
 
 
 export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
@@ -27,39 +28,48 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     const creatorDataContext = useCreatorData()
     const [abilities, setAbilities] = useState<ReincAbility[]>(abi)
 
+    const {ready: reincReady} = reinc
     const [ready, setReady] = useState(false)
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
 
+    const abilityCtx = useAbilityContext()
+    const {updateAbility} = abilityCtx
+    const deps = abilityType === "skills" ? [reinc.skills, reinc.skillMax, reinc.customSkillMaxBonus] : [reinc.spells, reinc.spellMax, reinc.customSpellMaxBonus]
     useEffect(() => {
-        if (abi.length === 0 && reinc.level === 0) {
-            abi = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
+        setReady(false)
+        if (reincReady) {
+            if (abi.length === 0 && reinc.level === 0) {
+                abi = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
+            }
+            const filtered = [...abi.filter(a => a.enabled)]
+            console.debug("Abilities", abi)
+            setAbilities(sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(filtered)))
+            setReady(true)
         }
-        const filtered = [...abi.filter(a => a.enabled)]
-        console.debug("Abilities", filtered)
-        setAbilities(sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(filtered)))
-        setReady(true)
-    }, [reinc.filteredData, reinc.skillMax, reinc.spellMax]);
+    }, [reinc.filteredData, ...deps]);
 
 
     useEffect(() => {
-        setSelectionModel(abilities.filter(a => a.trained > 0).map(a => a.id))
+        if (ready) {
+            setSelectionModel(abilities.filter(a => a.trained > 0).map(a => a.id))
+        }
     }, [ready]);
 
     function getMax(max: number) {
 
         if (props.type === 'skills') {
             if ((reinc.skillMax - max) >= 0) {
-                max = Math.min(max - (100 - reinc.skillMax), reinc.skillMax)
+                max = reinc.customSkillMaxBonus + Math.min(max - (100 - reinc.skillMax), reinc.skillMax)
             } else {
-                max = Math.min(max, reinc.race?.skill_max || 100)
+                max = reinc.customSkillMaxBonus + Math.min(max, reinc.race?.skill_max || 100)
             }
         }
 
         if (props.type === 'spells') {
             if ((reinc.spellMax - max) >= 0) {
-                max = Math.min(max - (100 - reinc.spellMax), reinc.spellMax)
+                max = reinc.customSpellMaxBonus + Math.min(max - (100 - reinc.spellMax), reinc.spellMax)
             } else {
-                max = Math.min(max, reinc.race?.spell_max || 100)
+                max = reinc.customSpellMaxBonus + Math.min(max, reinc.race?.spell_max || 100)
             }
         }
         return max;
@@ -87,7 +97,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         if (rowSelectionModel.length === 0) {
             const targetArray = props.type === "skills" ? reinc.skills : reinc.spells
             const newAbilities = targetArray.map((a) => ({...a, trained: 0}))
-            reinc.updateAbility(props.type, newAbilities)
+            updateAbility(props.type, newAbilities)
 
         }
 
@@ -101,7 +111,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
             })
 
             rows.forEach((r) => {
-                reinc.updateAbility(props.type, {...r, trained: getMax(r.max)})
+                updateAbility(props.type, {...r, trained: getMax(r.max)})
             })
         }
 
@@ -110,14 +120,13 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
     }
     const checkBoxChanged = (params: GridCellParams) => {
         const {value, row, colDef} = params
-        console.log(params, reinc.skillMax, reinc.spellMax)
         let max = getMax(row.max)
 
         if (value === false) {
             if (apiRef && apiRef.current) {
                 apiRef.current.setEditCellValue({id: row.id, field: 'trained', value: max})
             }
-            reinc.updateAbility(props.type, {...row, trained: max});
+            updateAbility(props.type, {...row, trained: max});
             if (apiRef && apiRef.current) {
                 //     apiRef.current.startCellEditMode({id: row.id, field: 'trained'})
             }
@@ -214,7 +223,7 @@ export default function AbilityList(props: { type: "skills" | "spells", creatorD
         if (newRow.trained > 0 && newRow.trained < 10) {
             newRow.trained = 5
         }
-        return reinc.updateAbility(props.type, newRow) as ReincAbility;
+        return updateAbility(props.type, newRow) as ReincAbility;
     };
 
     function showAbilityHelp(ability: ReincAbility) {

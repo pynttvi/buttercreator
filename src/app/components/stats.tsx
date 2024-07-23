@@ -11,7 +11,7 @@ import SectionBox from './sectionBox';
 import {MAX_STAT, ReincContextType, ReincStat, useReinc} from "@/app/contexts/reincContext";
 import {Input, Typography} from "@mui/material";
 import Box from "@mui/material/Box";
-import {sortById} from "@/app/filters/utils";
+import {sortById} from "@/app/utils/utils";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
 
 

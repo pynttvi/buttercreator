@@ -8,12 +8,13 @@ import {CreatorDataType} from "@/app/parserFactory";
 import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import React, {useEffect, useMemo, useState} from "react";
-import {FullGuild, GuildService, MAX_GUILD_LEVELS} from "@/app/service/guildService";
+import {FullGuild, GuildUtils, MAX_GUILD_LEVELS} from "@/app/utils/guildUtils";
 import NumberInputBasic from "@/app/components/numberInput";
 import {GridDeleteIcon} from "@mui/x-data-grid";
-import {sortByName} from "@/app/filters/utils";
+import {sortByName} from "@/app/utils/utils";
 import HelpGuild from "@/app/components/helpGuild";
 import {guildMeetsRequirements} from "@/app/data/guildRequirements";
+import {useGuildContext} from "@/app/contexts/guildContext";
 
 const Item = styled(Stack)(({theme}) => ({
     padding: theme.spacing(1),
@@ -36,19 +37,22 @@ function GuildItem(props: {
     const [trainedForGuild, setTrainedFroGuild] = useState(0)
     const [disabled, setDisabled] = useState(false)
     const reinc = useReinc()
+    const guildContext = useGuildContext()
+    const [ready, setReady] = useState(false)
     const {
-        addOrUpdateGuild,
+        addOrUpdateGuild
+    } = guildContext
+
+    const {
         level, guilds,
     } = reinc
 
-    //console.log(props.guild)
     const creatorDataContext = useCreatorData()
 
     function showGuildHelp() {
         reinc.setHelpText(<HelpGuild guild={props.guild}/>)
         reinc.setDrawerOpen(true)
     }
-
 
     const onClick = () => {
         console.debug("Trained for guild", props.guild, trainedForGuild, level)
@@ -60,6 +64,7 @@ function GuildItem(props: {
     }
 
     useEffect(() => {
+        setReady(false)
         const existingGuild = reinc.guilds.find((g) => {
             return g.name === props.guild.name || g?.mainGuild?.name === g.name
         })
@@ -67,26 +72,25 @@ function GuildItem(props: {
         if (existingGuild || (!existingGuild && value !== 0)) {
             addOrUpdateGuild(props.guild.guildType, props.guild, value)
         }
+        setReady(true)
     }, [value]);
 
     function checkGuilds() {
-        const trained = GuildService(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
+        const trained = GuildUtils(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
         setTrainedFroGuild(trained)
         setDisabled(
             trainedForGuild >= MAX_GUILD_LEVELS ||
             level >= MAX_LEVEL ||
             (props.guild.guildType === "sub" && trainedForGuild < 45) ||
-            !guildMeetsRequirements(props.guild, reinc.guildService.getReincGuildsFlat(), reinc.level - reinc.freeLevels, reinc?.race)
+            !guildMeetsRequirements(props.guild, reinc.guildUtils.getReincGuildsFlat(), reinc.level - reinc.freeLevels, reinc?.race)
         )
     }
 
-    useMemo(() => {
-        checkGuilds();
-    }, [level]);
-
     useEffect(() => {
-        checkGuilds()
-    }, [level]);
+        if (ready) {
+            checkGuilds();
+        }
+    }, [level, reinc.guilds]);
 
     const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
 
@@ -95,6 +99,7 @@ function GuildItem(props: {
     }
 
     function deleteGuild(guild: FullGuild): void {
+        setReady(false)
         let value = 0
         if (disabled || (level === MAX_LEVEL && guild.guildType === 'sub')) {
             value = 1
@@ -105,14 +110,11 @@ function GuildItem(props: {
             addOrUpdateGuild(guild.guildType, guild, value)
         }
         setValue(value)
-        //    return value
+        setReady(true)
     }
 
     const onDelete = () => {
         deleteGuild(props.guild)
-        //     .then((n) => {
-        //
-        // })
     };
 
     const focusClass = (className: string) => {
@@ -159,7 +161,7 @@ function GuildItem(props: {
                                     value={props.guild.trained || 0}
                                     onClick={onClick}
                                     key={"guild-input" + props.guild.name}
-                                    disabled={disabled}
+                                    disabled={disabled || !ready}
                                 />
 
                             </Box>

@@ -8,7 +8,7 @@ import {Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import Counters from "@/app/data/counters";
-import {formatNumber} from "@/app/filters/utils";
+import {formatNumber} from "@/app/utils/utils";
 
 function CostItem(props: { title: string, value: number | string }) {
     return (

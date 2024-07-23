@@ -21,21 +21,22 @@ import {BackhgroundColor} from "@/app/theme";
 import {NumberInput} from "@/app/components/numberInput";
 import {ExpandMore} from "@mui/icons-material";
 import {useReinc} from "@/app/contexts/reincContext";
-import {roundAbilityTrained} from "@/app/filters/utils";
+import {roundAbilityTrained} from "@/app/utils/utils";
 import useCheckMobileScreen from "@/app/components/useMobileScreen";
+import LoadingFallback from "@/app/components/loadingFallback";
 
 
 const Main = styled('div', {shouldForwardProp: (prop) => prop !== 'open'})<{
     open?: boolean;
-    drawerWidth: number;
-}>(({theme, open, drawerWidth}) => ({
+    drawerwidth: number;
+}>(({theme, open, drawerwidth}) => ({
     flexGrow: 1,
     padding: 0,
     transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
-    marginRight: -drawerWidth,
+    marginRight: -drawerwidth,
     ...(open && {
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.easeOut,
@@ -54,23 +55,23 @@ const Main = styled('div', {shouldForwardProp: (prop) => prop !== 'open'})<{
 
 interface AppBarProps extends MuiAppBarProps {
     open?: boolean;
-    drawerWidth: number;
+    drawerwidth: number;
 }
 
 const AppBar = styled(MuiAppBar, {
     shouldForwardProp: (prop) => prop !== 'open',
-})<AppBarProps>(({theme, open, drawerWidth}) => ({
+})<AppBarProps>(({theme, open, drawerwidth}) => ({
     transition: theme.transitions.create(['margin', 'width'], {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
     ...(open && {
-        width: `calc(100% - ${drawerWidth}px)`,
+        width: `calc(100% - ${drawerwidth}px)`,
         transition: theme.transitions.create(['margin', 'width'], {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
         }),
-        marginRight: drawerWidth,
+        marginRight: drawerwidth,
     }),
 }));
 
@@ -84,10 +85,10 @@ const DrawerHeader = styled('div')(({theme}) => ({
     backgroundColor: BackhgroundColor
 }));
 
-const Content = styled(Grid)<{ drawerWidth: number }>(({theme, drawerWidth}) => ({
+const Content = styled(Grid)<{ drawerwidth: number }>(({theme, drawerwidth}) => ({
     padding: 0,
     textAlign: 'left',
-    width: `calc(100% - ${drawerWidth}px)`,
+    width: `calc(100% - ${drawerwidth}px)`,
     justifyContent: 'flex-start',
 }));
 
@@ -140,11 +141,11 @@ const NavigationItem = (props: PropsWithChildren<{ text: string, target: string 
 
 export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
     const {isMobileScreen, width: screenWidth} = useCheckMobileScreen()
-    const drawerWidth = isMobileScreen ? screenWidth : 800
+    const drawerwidth = isMobileScreen ? screenWidth : 800
 
     const theme = useTheme();
     const reinc = useReinc()
-    const {drawerOpen: open} = reinc
+    const {drawerOpen: open, ready: reincReady} = reinc
 
     const handleDrawerOpen = () => {
         reinc.setDrawerOpen(true);
@@ -159,10 +160,12 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
         setHelpText(reinc.helpText)
     }, [reinc.helpText]);
 
+    if(!reincReady) return <LoadingFallback />
+
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar drawerWidth={drawerWidth} position="fixed" open={open} sx={{backgroundColor: BackhgroundColor}}>
+            <AppBar drawerwidth={drawerwidth} position="fixed" open={open} sx={{backgroundColor: BackhgroundColor}}>
                 <Toolbar sx={{backgroundColor: BackhgroundColor}}>
                     <Typography variant="h6" noWrap sx={{flexGrow: 1}} component="div">
                         <Stack direction={'row'} spacing={3}>
@@ -193,11 +196,11 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
                 </Toolbar>
             </AppBar>
             <Grid direction={'row'} sx={{width: '100%'}}>
-                <Main drawerWidth={drawerWidth} open={open}>
+                <Main drawerwidth={drawerwidth} open={open}>
 
                     <DrawerHeader/>
                     {(!isMobileScreen || (!open && isMobileScreen)) && (
-                        <Content drawerWidth={drawerWidth}>
+                        <Content drawerwidth={drawerwidth}>
                             {props.children}
                         </Content>
                     )}
@@ -205,10 +208,10 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
                 </Main>
                 <Drawer
                     sx={{
-                        width: drawerWidth,
+                        width: drawerwidth,
                         flexShrink: 0,
                         '& .MuiDrawer-paper': {
-                            width: drawerWidth,
+                            width: drawerwidth,
                         },
                     }}
                     variant="persistent"

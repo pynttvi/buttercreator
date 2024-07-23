@@ -4,7 +4,7 @@ import {MAX_LEVEL, ReincAbility, ReincContextType} from "@/app/contexts/reincCon
 import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
-import {onlyUnique, simplifyStat, sortByName} from "@/app/filters/utils";
+import {onlyUnique, simplifyStat, sortByName} from "@/app/utils/utils";
 
 export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
@@ -41,7 +41,7 @@ export interface MainGuild {
 
 export type FullGuild = SubGuild & MainGuild
 
-export function GuildService(creatorDataContext: CreatorDataContextType, reincContext: ReincContextType): GuildServiceType {
+export function GuildUtils(creatorDataContext: CreatorDataContextType, reincContext: ReincContextType): GuildServiceType {
     const getGuildByGuildLevels = (guild: Partial<GuildLevels>): Guild | undefined => {
         // @ts-ignore
         return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase().replaceAll(" ", "_")}`]
