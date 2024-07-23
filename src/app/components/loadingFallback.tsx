@@ -9,12 +9,11 @@ export default function LoadingFallback() {
             <Typography variant={'h2'}>Loading...</Typography>
             <Box>
                 <Image
-                    src={`/favicon.svg`}
-                    alt="Vercel Logo"
+                    src={`${BASE_URL === "/" ? "" : BASE_URL}favicon.svg`}
+                    alt="Logo"
                     width={800}
                     height={800}
                     priority
-                    unoptimized
                 />
             </Box>
         </>
