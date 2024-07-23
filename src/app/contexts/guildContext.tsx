@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
+import React, {PropsWithChildren, useContext, useEffect, useMemo, useState} from 'react';
 import {GuildType} from "@/app/components/guilds";
 import {FullGuild, GuildUtils} from "@/app/utils/guildUtils";
 import {useReinc} from "@/app/contexts/reincContext";
@@ -70,13 +70,11 @@ export const GuildContextProvider = (props: PropsWithChildren<{}>) => {
 
     }
 
-    useEffect(() => {
-    }, [])
-
-
-    const values = {
-        addOrUpdateGuild,
-    }
+    const values = useMemo(() => {
+        return {
+            addOrUpdateGuild,
+        }
+    }, [addOrUpdateGuild])
 
     useEffect(() => {
         if (reincReady && !ready) {
