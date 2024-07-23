@@ -23,7 +23,7 @@ function CharItem(props: { title: string, value: number | string }) {
     )
 }
 
-export default function CharInfo(props: PropsWithChildren<{}>) {
+export default function CharInfo() {
 
     const creatorDataContext = useCreatorData()
     const [ready, setReady] = useState(false)

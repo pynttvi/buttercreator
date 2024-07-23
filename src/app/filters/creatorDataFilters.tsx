@@ -12,13 +12,7 @@ export type CreatorDataFilterType = {
 }
 
 
-export const trainedAbilities = (reinc: ReincContextType) => {
-    const skills = reinc.skills.filter((s) => s.trained > 0)
-    const spells = reinc.spells.filter((s) => s.trained > 0)
-    return {skills, spells, totalCount: skills.length + spells.length}
-}
-
-export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincContextType, lastCount?: number): FilterDataType | undefined => {
+export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincContextType): FilterDataType | undefined => {
     if (reinc) {
         const abilities = AbilitiesByGuildsFilter(creatorDataContext, reinc).doFilter() as {
             skills: ReincAbility[],
@@ -49,13 +43,9 @@ export const doFilter = (creatorDataContext: CreatorDataContextType, reinc: Rein
 
 
 export const AbilitiesByGuildsFilter = (creatorDataContext: CreatorDataContextType, reinc: ReincContextType): CreatorDataFilterType => {
-    const {creatorData} = creatorDataContext
 
     return {
         doFilter: () => {
-            let guilds: FullGuild[] = []
-            const allGuilds = reinc.allGuilds
-
             if (reinc.level === 0) {
                 return {
                     skills: reinc.allSkills,

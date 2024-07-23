@@ -26,7 +26,7 @@ export async function getGuildFile(url: string) {
     return res.text()
 }
 
-export async function getData(important: boolean): Promise<Partial<CreatorDataType>> {
+export async function getData(): Promise<Partial<CreatorDataType>> {
 
     let myData: Partial<CreatorDataType> = {};
     const res = await fetch('https://api.github.com/repos/juuussi/zCreator_data/contents/data?ref=master');
@@ -38,7 +38,7 @@ export async function getData(important: boolean): Promise<Partial<CreatorDataTy
     const factory = ParserFactory();
     const json = await res.json();
 
-    async function readFiles(fileList: Promise<FileObject[]>) {
+    async function readFiles() {
         for await (const f of await json) {
             // if ((important && NON_GUILD_FILES.includes((f.name))) || (!important && !NON_GUILD_FILES.includes((f.name)))) {
             const process = await factory.createProcessForFile(f);
@@ -49,7 +49,7 @@ export async function getData(important: boolean): Promise<Partial<CreatorDataTy
         }
     }
 
-    await readFiles(json)
+    await readFiles()
     // readFiles(lessImportantFiles)
 
     return myData;

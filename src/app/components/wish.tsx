@@ -9,12 +9,12 @@ import {GridApiCommunity} from "@mui/x-data-grid/internals";
 import WishHandler, {getDefaultWishes, WishWithId} from "@/app/data/wishHandler";
 
 
-export default function WishList(props: {}) {
+export default function WishList() {
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
     const reinc = useReinc()
     const apiRef = React.useRef<GridApiCommunity | undefined>();
 
-    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
+    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails) => {
         setSelectionModel(rowSelectionModel)
     }
     const defaultCellProps: Partial<GridColDef<(WishWithId)>> = {

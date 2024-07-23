@@ -90,7 +90,7 @@ export default function AbilityList(props: { type: "skills" | "spells"}) {
     }, [lastEdit]);
 
 
-    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
+    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails) => {
 
         setReady(false)
         if (rowSelectionModel.length === 0) {

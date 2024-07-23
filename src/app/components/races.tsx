@@ -120,13 +120,13 @@ const columns: GridColDef<(Race)>[] = [
     },
 ];
 
-export default function RaceList(props: {}) {
+export default function RaceList() {
     const creatorDataContext = useCreatorData()
     const {creatorData} = creatorDataContext
     const [races,setRaces] = useState<Race[]>(creatorData.races)
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
     const reinc = useReinc()
-    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
+    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails) => {
         const race: Race | null = details.api.getRow(rowSelectionModel[0]) || null
         reinc.setRace(race)
         console.debug("SETTING RACE", race)

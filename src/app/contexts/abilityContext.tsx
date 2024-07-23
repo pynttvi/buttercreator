@@ -53,7 +53,7 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
 
                 const level = guild.levelMap.get(i.toString())
 
-                level?.abilities.forEach((guildAbility: GuildAbility, idx) => {
+                level?.abilities.forEach((guildAbility: GuildAbility) => {
                     const ra: ReincAbility = {
                         cost: 0,
                         enabled: true,
@@ -123,13 +123,13 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
     }
 
     const updateAbility = (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
-        let targetArray: ReincAbility[] = []
+        let targetArray: ReincAbility[]
         if (type === "skills") {
             targetArray = filteredData.skills
         } else {
             targetArray = filteredData.spells
         }
-        let newAbilities: ReincAbility[] = []
+        let newAbilities: ReincAbility[]
 
         function getNewAbility(oldAbility: ReincAbility, newAbility: ReincAbility) {
             if (oldAbility.name === newAbility.name) {

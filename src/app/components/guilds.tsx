@@ -102,7 +102,7 @@ function GuildItem(props: {
 
     function deleteGuild(guild: FullGuild): void {
         setReady(false)
-        let value = 0
+        let value: number
         if (disabled || (level === MAX_LEVEL && guild.guildType === 'sub')) {
             value = 1
             addOrUpdateGuild(guild.guildType, guild, value)
@@ -186,7 +186,7 @@ function GuildItem(props: {
     )
 }
 
-export default function Guilds(props: {}) {
+export default function Guilds() {
     const reinc = useReinc()
     const [data, setData] = useState(sortByName<FullGuild>(reinc.filteredData.guilds))
     useEffect(() => {
@@ -199,7 +199,7 @@ export default function Guilds(props: {}) {
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
                 {data ? (
                         <>
-                            {data?.sort((a, b) => b.levels - a.levels).map((g: FullGuild, index: number) => {
+                            {data?.sort((a, b) => b.levels - a.levels).map((g: FullGuild) => {
                                 return (
                                     <Box key={'guild-item-' + g.name} sx={{minWidth: "400px"}}>
                                         <GuildItem guild={g as FullGuild} isSubguild={false}/>

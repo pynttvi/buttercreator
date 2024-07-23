@@ -133,7 +133,7 @@ function TrainingItem(props: { guild: FullGuild }) {
     )
 }
 
-export default function Training(props: PropsWithChildren<{}>) {
+export default function Training() {
 
     const reinc = useReinc()
 

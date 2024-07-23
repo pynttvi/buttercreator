@@ -132,7 +132,7 @@ export default function WishHandler(reinc: ReincContextType) {
         if (name !== wishName) {
             return
         }
-        let cancelSuccess = false
+        let cancelSuccess: boolean
         if (doApply) {
             cancelSuccess = doApply()
         } else {
@@ -242,8 +242,6 @@ export default function WishHandler(reinc: ReincContextType) {
 
                 newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
                 newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus
-                newData.skillMax = newData.skillMax
-                newData.spellMax = newData.spellMax
                 reinc.setSkillMax(newData.skillMax)
                 reinc.setSpellMax(newData.spellMax)
                 return true

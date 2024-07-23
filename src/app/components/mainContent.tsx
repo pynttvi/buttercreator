@@ -22,7 +22,7 @@ import {AbilityContextProvider} from "@/app/contexts/abilityContext";
 import {GuildContextProvider} from "@/app/contexts/guildContext";
 
 
-export function Buttercreator(props: { creatorDataContext: CreatorDataContextType }) {
+export function Buttercreator() {
 
     return <Suspense fallback={<LoadingFallback/>}>
         <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>

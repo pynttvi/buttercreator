@@ -46,9 +46,7 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
         // @ts-ignore
         return creatorDataContext.originalCreatorData[`guild_${guild.name?.toLowerCase().replaceAll(" ", "_")}`]
     }
-    const getGuildLevelsFromGuild = (guild: Guild): GuildLevels => {
-        return {name: guild.name, levels: Object.keys(guild.levelMap.keys()).length}
-    }
+
     const getSubguildsFromGuild = (guild: Guild | undefined): GuildLevels[] => {
         const subGuilds: GuildLevels[] = []
         if (guild) {
@@ -97,11 +95,7 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
         return dataGuilds
     }
 
-    const getAllGuildAndSubguildLevels = (): GuildLevels[] => {
-        return getAllGuildsAndSubguilds().map((g: Guild): GuildLevels => {
-            return {name: g.name, levels: Object.keys(g.levelMap.keys()).length}
-        })
-    }
+
 
     const trainedLevelForGuild = (guild: FullGuild) => {
         let trained = 0
@@ -144,8 +138,8 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
     }
 
     const totalTrainedLevels = () => {
-        let trained = 0
-        let trainedSubs = 0
+        let trained: number
+        let trainedSubs: number
         trained = (reincContext?.guilds?.map((g) => g.trained) || [0])?.reduce((a, b) => a + b, 0)
         trainedSubs = (reincContext?.guilds?.map((g) => g.subGuilds.map((sg) => sg.trained)?.reduce((a, b) => a + b, 0)))?.reduce((a, b) => a + b, 0)
 
@@ -184,7 +178,6 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
                             if (!match) {
                                 if (s.name.trim().toLowerCase() === stat.trim().toLowerCase()) {
                                     statTotal += s.value
-                                    match = true
                                 }
                             }
                         }
@@ -225,12 +218,10 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
 
                     const subGuilds = g?.subGuildLevels.map((sgl) => {
                         const sg = getGuildByGuildLevels(sgl)
-                        const subGuild: SubGuild = {
+                        return {
                             ...sg,
                             ...sgl,
                         } as unknown as SubGuild
-                        // subGuild.subGuilds = getSubGuilds(gl) || []
-                        return subGuild
                     })
                     return subGuilds || []
 
@@ -250,9 +241,6 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
                     })
                 })
                 subGuilds = flatSubguilds
-
-                //  console.debug("GUILD LEVELS", guild)
-
 
                 const mainGuildPartial: Partial<MainGuild> = {
                     ...guild,

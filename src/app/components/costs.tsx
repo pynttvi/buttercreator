@@ -1,6 +1,6 @@
 'use client'
 
-import React, {PropsWithChildren, Suspense, useMemo} from "react"
+import React, {Suspense, useMemo} from "react"
 import SectionBox from "@/app/components/sectionBox";
 import Box from "@mui/material/Box";
 import {useReinc} from "@/app/contexts/reincContext";
@@ -24,7 +24,7 @@ function CostItem(props: { title: string, value: number | string }) {
     )
 }
 
-export default function Costs(props: PropsWithChildren<{}>) {
+export default function Costs() {
 
     const creatorDataContext = useCreatorData()
     const reinc = useReinc()

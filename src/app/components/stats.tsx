@@ -58,7 +58,7 @@ const TrainedInput = (props: { reinc: ReincContextType, params: GridRenderEditCe
 
 }
 
-export default function StatsList(props: {}) {
+export default function StatsList() {
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
     const reinc = useReinc()
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -76,7 +76,7 @@ export default function StatsList(props: {}) {
 
     }, [lastEdit]);
 
-    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
+    const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails) => {
         setSelectionModel(rowSelectionModel)
     }
     const defaultCellProps: Partial<GridColDef<(ReincStat)>> = {
