@@ -77,7 +77,7 @@ export default function CharInfo() {
                 }
             )
         })
-    }, [reinc.race, reinc.filteredData, reinc.wishes, reinc.level])
+    }, [reinc.race, reinc.filteredData, reinc.wishes, reinc.level, reinc.stats])
 
 
     if (reinc.level === 0 || !reinc.race || !ready) {
