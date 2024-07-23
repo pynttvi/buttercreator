@@ -1,6 +1,6 @@
-import { FileObject } from "../page"
-import { getFile } from "../fileService";
-import { ParserProcess } from "../parserFactory";
+import {FileObject} from "../page"
+import {getFile} from "../fileService";
+import {ParserProcess} from "../parserFactory";
 
 export type StatCost = Array<number>
 

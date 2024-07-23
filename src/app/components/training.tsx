@@ -9,8 +9,9 @@ import Grid from "@mui/material/Unstable_Grid2";
 import {FullGuild} from "@/app/utils/guildUtils";
 import {nanoid} from 'nanoid'
 import CopyToClipboardButton from "@/app/components/copyToClipboard";
-import Divider from "@mui/material/Divider";
-import {setGlobal} from "jest-util";
+import guildDirections from "@/app/data/guildDirections.json"
+import {BackhgroundColor} from "@/app/theme";
+import {onlyUniqueNameWithHighestMax} from "@/app/utils/utils";
 
 type GuildDirection = {
     name: string,
@@ -19,9 +20,6 @@ type GuildDirection = {
     infoTo?: string
     infoBack?: string
 }
-import guildDirections from "@/app/data/guildDirections.json"
-import {BackhgroundColor} from "@/app/theme";
-import {onlyUniqueNameWithHighestMax} from "@/app/utils/utils";
 
 const getTrainingText = (a: ReincAbility, separator: string) => {
     const count = a.trained / 5

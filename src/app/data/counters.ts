@@ -4,7 +4,6 @@ import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {Ability} from "@/app/parsers/abilityCostParser";
 import {baseStats, resistanceNames, ResistanceTypeName} from "@/app/parsers/raceParser";
 import {simplifyStat, sortByName} from "@/app/utils/utils";
-import {GuildLevel} from "@/app/parsers/guildParser";
 
 export type ReincResist = { name: ResistanceTypeName, value: number }
 

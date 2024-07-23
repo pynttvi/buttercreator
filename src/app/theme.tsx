@@ -1,6 +1,6 @@
 'use client';
-import { Space_Mono } from 'next/font/google';
-import { createTheme } from '@mui/material/styles';
+import {Space_Mono} from 'next/font/google';
+import {createTheme} from '@mui/material/styles';
 
 export const BackhgroundColor = "black"
 const space = Space_Mono({

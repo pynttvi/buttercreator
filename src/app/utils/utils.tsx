@@ -1,6 +1,4 @@
 import {ReincAbility} from "@/app/contexts/reincContext";
-import {useEffect, useState} from "react";
-import {stats} from "@/app/parsers/raceParser";
 
 export function sortByName<T>(array: { name: string }[]): T[] {
     return array.sort((a, b) => (a.name < b.name) ? -1 : 1) as T[]

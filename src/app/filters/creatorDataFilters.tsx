@@ -1,8 +1,6 @@
 'use client'
-import {Ability} from "@/app/parsers/abilityCostParser";
 import {CreatorDataContextType} from "@/app/contexts/creatorDataContext";
 import {FullGuild} from "@/app/utils/guildUtils";
-import {GuildAbility} from "@/app/parsers/guildParser";
 import {onlyUniqueNameWithHighestMax, sortByName} from "@/app/utils/utils";
 import {ReincAbility, ReincContextType} from "@/app/contexts/reincContext";
 

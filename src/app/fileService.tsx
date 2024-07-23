@@ -1,6 +1,6 @@
 'use server'
 import {FileObject} from "./page";
-import ParserFactory, {CreatorDataType, NON_GUILD_FILES} from "./parserFactory";
+import ParserFactory, {CreatorDataType} from "./parserFactory";
 
 export async function getFile(url: string) {
 

@@ -9,12 +9,11 @@ import {
     GridColDef,
     GridRenderEditCellParams,
     GridRowSelectionModel,
-    GridValueGetter, GridValueSetter
+    GridValueGetter
 } from '@mui/x-data-grid';
-import React, {Suspense, useEffect, useMemo, useState} from 'react';
+import React, {Suspense, useEffect, useState} from 'react';
 import {ReincAbility, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
-import {CreatorDataType} from "@/app/parserFactory";
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
 import {onlyUniqueNameWithHighestMax, roundDown5, roundUp5, sortByName} from "@/app/utils/utils";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";

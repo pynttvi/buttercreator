@@ -1,7 +1,8 @@
 'use client'
 import {
     DataGrid,
-    GridCallbackDetails, GridCellParams,
+    GridCallbackDetails,
+    GridCellParams,
     GridColDef,
     GridRenderEditCellParams,
     GridRowSelectionModel

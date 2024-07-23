@@ -11,7 +11,6 @@ import {Race} from '../parsers/raceParser';
 import React, {Suspense, useState} from 'react';
 import SectionBox from './sectionBox';
 import {useReinc} from "@/app/contexts/reincContext";
-import {CreatorDataType} from "@/app/parserFactory";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 const defaultCellProps: Partial<GridColDef<(Race)>> = {
