@@ -1,5 +1,4 @@
 'use client'
-import Box from '@mui/material/Box';
 import {
     DataGrid,
     GridCallbackDetails,
@@ -9,10 +8,11 @@ import {
     MuiEvent
 } from '@mui/x-data-grid';
 import {Race} from '../parsers/raceParser';
-import React, {Suspense, useDeferredValue, useEffect, useState} from 'react';
+import React, {Suspense, useState} from 'react';
 import SectionBox from './sectionBox';
 import {useReinc} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
+import {useCreatorData} from "@/app/contexts/creatorDataContext";
 
 const defaultCellProps: Partial<GridColDef<(Race)>> = {
     width: 75,
@@ -121,8 +121,10 @@ const columns: GridColDef<(Race)>[] = [
     },
 ];
 
-export default function RaceList(props: { myData: CreatorDataType }) {
-    const creatorData = props.myData
+export default function RaceList(props: {}) {
+    const creatorDataContext = useCreatorData()
+    const {creatorData} = creatorDataContext
+    const [races,setRaces] = useState<Race[]>(creatorData.races)
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
     const reinc = useReinc()
     const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails<any>) => {
@@ -145,7 +147,7 @@ export default function RaceList(props: { myData: CreatorDataType }) {
                 {creatorData?.races ? (
                     <DataGrid
                         sx={{height: 400}}
-                        rows={props.myData.races}
+                        rows={races}
                         columns={columns}
                         initialState={{}}
                         checkboxSelection

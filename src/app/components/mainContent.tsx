@@ -27,22 +27,20 @@ export function Buttercreator(props: { creatorDataContext: CreatorDataContextTyp
     return <Suspense fallback={<LoadingFallback/>}>
         <Grid container spacing={{xs: 2, md: 3}} columns={{xs: 12, sm: 12, md: 12}}>
             <Grid xs={12} sm={12} md={12}>
-                <RaceList key={'race-section'} myData={props.creatorDataContext.creatorData}/>
+                <RaceList key={'race-section'} />
             </Grid>
             <GuildContextProvider>
                 <Grid xs={12} sm={12} md={12}>
-                    <Guilds key={'guild-section'} myData={props.creatorDataContext.creatorData}/>
+                    <Guilds key={'guild-section'}/>
                 </Grid>
             </GuildContextProvider>
             <AbilityContextProvider>
 
                 <Grid xs={12} sm={12} md={12} lg={6}>
-                    <AbilityList key={'skill-section'} type={"skills"}
-                                 creatorData={props.creatorDataContext.creatorData}/>
+                    <AbilityList key={'skill-section'} type={"skills"} />
                 </Grid>
                 <Grid xs={12} sm={12} md={12} lg={6}>
-                    <AbilityList key={'spell-section'} type={"spells"}
-                                 creatorData={props.creatorDataContext.creatorData}/>
+                    <AbilityList key={'spell-section'} type={"spells"} />
                 </Grid>
             </AbilityContextProvider>
             <Grid xs={12} sm={12} md={6} lg={6}>

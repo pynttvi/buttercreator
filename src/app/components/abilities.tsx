@@ -21,7 +21,7 @@ import {useCreatorData} from "@/app/contexts/creatorDataContext";
 import {useAbilityContext} from "@/app/contexts/abilityContext";
 
 
-export default function AbilityList(props: { type: "skills" | "spells", creatorData: CreatorDataType }) {
+export default function AbilityList(props: { type: "skills" | "spells"}) {
     const reinc = useReinc()
     const abilityType = props.type
     let abi: ReincAbility[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []

@@ -4,10 +4,9 @@ import {Divider, Stack, Typography} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import Box from '@mui/material/Box';
 import SectionBox from './sectionBox';
-import {CreatorDataType} from "@/app/parserFactory";
 import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FullGuild, GuildUtils, MAX_GUILD_LEVELS} from "@/app/utils/guildUtils";
 import NumberInputBasic from "@/app/components/numberInput";
 import {GridDeleteIcon} from "@mui/x-data-grid";
@@ -64,15 +63,18 @@ function GuildItem(props: {
     }
 
     useEffect(() => {
-        setReady(false)
-        const existingGuild = reinc.guilds.find((g) => {
-            return g.name === props.guild.name || g?.mainGuild?.name === g.name
-        })
-        console.debug("Existing guild", existingGuild, value)
-        if (existingGuild || (!existingGuild && value !== 0)) {
-            addOrUpdateGuild(props.guild.guildType, props.guild, value)
+        if (props.guild.trained !== value) {
+            setReady(false)
+            const existingGuild = reinc.guilds.find((g) => {
+                return g.name === props.guild.name || g?.mainGuild?.name === g.name
+            })
+            console.debug("Existing guild", existingGuild, value)
+            if (existingGuild || (!existingGuild && value !== 0)) {
+                addOrUpdateGuild(props.guild.guildType, props.guild, value)
+            }
         }
         setReady(true)
+
     }, [value]);
 
     function checkGuilds() {
@@ -90,7 +92,7 @@ function GuildItem(props: {
         if (ready) {
             checkGuilds();
         }
-    }, [level, reinc.guilds]);
+    }, [level, reinc.guilds, ready]);
 
     const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
 
@@ -175,7 +177,6 @@ function GuildItem(props: {
                     </Item>
                 </Box>
             </Grid>
-            {/*!(trainedAbilities(reinc).totalCount > 0 && level === 0) &&*/}
             {sortByName<FullGuild>(props.guild.subGuilds)?.map((sg) => {
                 return (
                     <GuildItem guild={sg} key={'guild-item-' + sg.name} isSubguild={true}/>
@@ -185,18 +186,20 @@ function GuildItem(props: {
     )
 }
 
-export default function Guilds(props: { myData: CreatorDataType }) {
+export default function Guilds(props: {}) {
     const reinc = useReinc()
-
-    let data = sortByName<FullGuild>(reinc.filteredData.guilds)  //creatorData
-
+    const [data, setData] = useState(sortByName<FullGuild>(reinc.filteredData.guilds))
+    useEffect(() => {
+        if (reinc.ready) {
+            setData(sortByName<FullGuild>(reinc.filteredData.guilds))
+        }
+    }, [reinc.filteredData]);
     return (
         <SectionBox id={'guilds'} title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>
                 {data ? (
                         <>
                             {data?.sort((a, b) => b.levels - a.levels).map((g: FullGuild, index: number) => {
-                                const className = `guild-${g.name}`
                                 return (
                                     <Box key={'guild-item-' + g.name} sx={{minWidth: "400px"}}>
                                         <GuildItem guild={g as FullGuild} isSubguild={false}/>
