@@ -102,7 +102,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
             setAbilities(sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(filtered)))
             setReady(true)
         }
-    }, [reincReady]);
+    }, [props.type === "skills" ? reinc.filteredData.skills : reinc.filteredData.spells]);
 
 
     useEffect(() => {
