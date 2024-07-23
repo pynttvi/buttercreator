@@ -1,5 +1,4 @@
-'use server'
-import {FileObject} from "./page";
+'use client'
 import ParserFactory, {CreatorDataType} from "./parserFactory";
 
 export async function getFile(url: string) {
