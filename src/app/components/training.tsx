@@ -108,7 +108,7 @@ function TrainingItem(props: { guild: FullGuild }) {
     const reinc = useReinc()
     const trainedAbilities = useMemo(() => {
         return onlyUniqueNameWithHighestMax(reinc.filteredData.skills.concat(reinc.filteredData.spells).filter((s) => s.trained > 0 && s.enabled))
-    }, [reinc.filteredData, reinc.level])
+    }, [reinc.filteredData])
 
     if (reinc.level === 0) {
         return <></>

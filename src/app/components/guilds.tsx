@@ -6,7 +6,7 @@ import Box from '@mui/material/Box';
 import SectionBox from './sectionBox';
 import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
-import React, {useEffect, useState} from "react";
+import React, {useCallback, useEffect, useState} from "react";
 import {FullGuild, GuildUtils, MAX_GUILD_LEVELS} from "@/app/utils/guildUtils";
 import NumberInputBasic from "@/app/components/numberInput";
 import {GridDeleteIcon} from "@mui/x-data-grid";
@@ -75,9 +75,9 @@ function GuildItem(props: {
         }
         setReady(true)
 
-    }, [value]);
+    }, [addOrUpdateGuild, props.guild, reinc.guilds, value]);
 
-    function checkGuilds() {
+    const checkGuilds = useCallback(() => {
         const trained = GuildUtils(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
         setTrainedFroGuild(trained)
         setDisabled(
@@ -86,13 +86,14 @@ function GuildItem(props: {
             (props.guild.guildType === "sub" && trainedForGuild < 45) ||
             !guildMeetsRequirements(props.guild, reinc.guildUtils.getReincGuildsFlat(), reinc.level - reinc.freeLevels, reinc?.race)
         )
-    }
+    }, [creatorDataContext, level, props.guild, reinc, trainedForGuild]);
+
 
     useEffect(() => {
         if (ready) {
             checkGuilds();
         }
-    }, [level, reinc.guilds, ready]);
+    }, [level, reinc.guilds, ready, checkGuilds]);
 
     const className = `guild-${props.guild.name} ${disabled ? 'disabled' : ''}`
 
@@ -193,7 +194,7 @@ export default function Guilds() {
         if (reinc.ready) {
             setData(sortByName<FullGuild>(reinc.filteredData.guilds))
         }
-    }, [reinc.filteredData]);
+    }, [reinc.filteredData, reinc.ready]);
     return (
         <SectionBox id={'guilds'} title='Guilds'>
             <Grid container direction={"row"} gap={4} spacing={1} columns={{xs: 4, sm: 6, md: 12}}>

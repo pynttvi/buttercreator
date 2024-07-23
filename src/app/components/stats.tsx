@@ -41,7 +41,7 @@ const TrainedInput = (props: { reinc: ReincContextType, params: GridRenderEditCe
             field: params.field,
             value: value,
         });
-    }, [value]);
+    }, [params.api, params.field, params.id, params.row, reinc, value]);
 
 
     return (
