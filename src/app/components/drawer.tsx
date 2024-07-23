@@ -17,7 +17,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ListItem from '@mui/material/ListItem';
 import Grid from "@mui/material/Unstable_Grid2";
 import {Accordion, AccordionDetails, AccordionSummary, Stack, TextField} from "@mui/material";
-import {BackhgroundColor} from "@/app/theme";
+import {backgroundColor} from "@/app/theme";
 import {NumberInput} from "@/app/components/numberInput";
 import {ExpandMore} from "@mui/icons-material";
 import {MAX_LEVEL, useReinc} from "@/app/contexts/reincContext";
@@ -32,12 +32,15 @@ const Main = styled('div', {shouldForwardProp: (prop) => prop !== 'open'})<{
 }>(({theme, open, drawerwidth}) => ({
     flexGrow: 1,
     padding: 0,
+    backgroundColor: backgroundColor,
     transition: theme.transitions.create('margin', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
     }),
     marginRight: -drawerwidth,
     ...(open && {
+
+
         transition: theme.transitions.create('margin', {
             easing: theme.transitions.easing.easeOut,
             duration: theme.transitions.duration.enteringScreen,
@@ -73,6 +76,8 @@ const AppBar = styled(MuiAppBar, {
         }),
         marginRight: drawerwidth,
     }),
+    backgroundColor: backgroundColor
+
 }));
 
 const DrawerHeader = styled('div')(({theme}) => ({
@@ -82,7 +87,7 @@ const DrawerHeader = styled('div')(({theme}) => ({
     // necessary for content to be below app bar
     ...theme.mixins.toolbar,
     justifyContent: 'flex-start',
-    backgroundColor: BackhgroundColor
+    backgroundColor: backgroundColor
 }));
 
 const Content = styled(Grid)<{ drawerwidth: number }>(({theme, drawerwidth}) => ({
@@ -90,6 +95,8 @@ const Content = styled(Grid)<{ drawerwidth: number }>(({theme, drawerwidth}) => 
     textAlign: 'left',
     width: `calc(100% - ${drawerwidth}px)`,
     justifyContent: 'flex-start',
+    backgroundColor: backgroundColor
+
 }));
 
 
@@ -165,8 +172,8 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
     return (
         <Box sx={{display: 'flex'}}>
             <CssBaseline/>
-            <AppBar drawerwidth={drawerwidth} position="fixed" open={open} sx={{backgroundColor: BackhgroundColor}}>
-                <Toolbar sx={{backgroundColor: BackhgroundColor}}>
+            <AppBar drawerwidth={drawerwidth} position="fixed" open={open} sx={{backgroundColor: backgroundColor}}>
+                <Toolbar sx={{backgroundColor: backgroundColor}}>
                     <Typography variant="h6" noWrap sx={{flexGrow: 1}} component="div">
                         <Stack direction={'row'} spacing={3}>
                             <NavigationItem target={'races-section'} text={"Races"}/>
@@ -198,9 +205,8 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
             <Grid direction={'row'} sx={{width: '100%'}}>
                 <Main drawerwidth={drawerwidth} open={open}>
 
-                    <DrawerHeader/>
                     {(!isMobileScreen || (!open && isMobileScreen)) && (
-                        <Content drawerwidth={drawerwidth}>
+                        <Content drawerwidth={drawerwidth} sx={{marginTop: '40px'}}>
                             {props.children}
                         </Content>
                     )}
@@ -219,12 +225,11 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
                     open={open}
                 >
 
-                    <DrawerHeader sx={{backgroundColor: BackhgroundColor}}>
+                    <DrawerHeader sx={{backgroundColor: backgroundColor, width: 'inherit'}}>
                         <IconButton onClick={handleDrawerClose}>
                             {theme.direction === 'rtl' ? <ChevronLeftIcon/> : <ChevronRightIcon/>}
                         </IconButton>
                     </DrawerHeader>
-                    <Divider/>
                     <Accordion>
                         <AccordionSummary
                             expandIcon={<ExpandMore/>}
