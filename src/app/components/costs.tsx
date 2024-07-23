@@ -95,7 +95,7 @@ export default function Costs() {
             })
 
         }
-    }, [reinc.ready, reinc.guilds, reinc.skills, reinc.spells, reinc.wishes]);
+    }, [reinc.ready, reinc.guilds, reinc.skills, reinc.spells, reinc.wishes, reinc.stats]);
 
 
     return (
