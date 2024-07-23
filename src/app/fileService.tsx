@@ -38,7 +38,7 @@ export async function getData(): Promise<Partial<CreatorDataType>> {
     const json = await res.json();
 
     async function readFiles() {
-        for await (const f of await json) {
+        for (const f of await json) {
             // if ((important && NON_GUILD_FILES.includes((f.name))) || (!important && !NON_GUILD_FILES.includes((f.name)))) {
             const process = await factory.createProcessForFile(f);
             const dataField = {key: process.key, data: await process.run()};
