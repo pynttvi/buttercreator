@@ -169,7 +169,8 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         const reincStat = 100 + ((reinc.guildUtils.getStatTotalFromGuilds(stat)) || 0) +
             (reinc.stats.find(s => simplifyStat(s.name) === simplifyStat(stat))?.trained || 0)
 
-        return Math.round((raceFactor * reincStat) / 100)
+        const statBonus = reinc.bonusBaseStats.find(bs => simplifyStat(bs.name) === simplifyStat(stat))?.percent || 0
+        return Math.round(((raceFactor + statBonus) * reincStat) / 100)
     }
 
     const getGuildResists = (): ReincResist[] => {
