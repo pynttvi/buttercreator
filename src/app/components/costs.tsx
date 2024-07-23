@@ -3,10 +3,10 @@
 import React, {Suspense, useMemo} from "react"
 import SectionBox from "@/app/components/sectionBox";
 import Box from "@mui/material/Box";
-import {useReinc} from "@/app/contexts/reincContext";
+import {ReincContextType, useReinc} from "@/app/contexts/reincContext";
 import {Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {useCreatorData} from "@/app/contexts/creatorDataContext";
+import {CreatorDataContextType, useCreatorData} from "@/app/contexts/creatorDataContext";
 import Counters from "@/app/data/counters";
 import {formatNumber} from "@/app/utils/utils";
 
@@ -24,10 +24,7 @@ function CostItem(props: { title: string, value: number | string }) {
     )
 }
 
-export default function Costs() {
-
-    const creatorDataContext = useCreatorData()
-    const reinc = useReinc()
+const getCounters = (reinc: ReincContextType, creatorDataContext: CreatorDataContextType) => {
     const counters = Counters(reinc, creatorDataContext)
     const {
         countTaskPoints,
@@ -38,16 +35,42 @@ export default function Costs() {
         countAbilitiesCost,
         countStats,
     } = counters
+    return {
+        countTaskPoints,
+        countQpCost,
+        countLevelCost,
+        countLevelCostWithQps,
+        countGuildLevelCost,
+        countAbilitiesCost,
+        countStats,
+    }
+}
 
-    const taskPoints = useMemo(() => countTaskPoints(), [reinc.wishes])
-    const qpCost = useMemo(() => countQpCost(), [reinc.level])
-    const levelCost = useMemo(() => (countLevelCost()), [reinc.level])
-    const levelCostWithQps = useMemo(() => (countLevelCostWithQps()), [reinc.level])
-    const guildLevelCost = useMemo(() => (countGuildLevelCost()), [reinc.level])
-    const skillsCost = useMemo(() => (countAbilitiesCost('skill')), [reinc.skills, reinc.race])
-    const spellCosts = useMemo(() => (countAbilitiesCost('spell')), [reinc.spells, reinc.race])
-    const statCost = useMemo(() => (countStats()), [reinc.stats])
-    const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost.exp + spellCosts.exp + statCost), [levelCost, guildLevelCost, skillsCost, spellCosts, statCost])
+export default function Costs() {
+
+    const creatorDataContext = useCreatorData()
+    const reinc = useReinc()
+    const {
+        countTaskPoints,
+        countQpCost,
+        countLevelCost,
+        countLevelCostWithQps,
+        countGuildLevelCost,
+        countAbilitiesCost,
+        countStats,
+    } = useMemo(() => {
+        return getCounters(reinc, creatorDataContext)
+    }, [reinc, creatorDataContext])
+
+    const taskPoints = useMemo(() => countTaskPoints(), [countTaskPoints])
+    const qpCost = useMemo(() => countQpCost(), [countQpCost])
+    const levelCost = useMemo(() => (countLevelCost()), [countLevelCost])
+    const levelCostWithQps = useMemo(() => (countLevelCostWithQps()), [countLevelCostWithQps])
+    const guildLevelCost = useMemo(() => (countGuildLevelCost()), [countGuildLevelCost])
+    const skillsCost = useMemo(() => (countAbilitiesCost('skill')), [countAbilitiesCost])
+    const spellCosts = useMemo(() => (countAbilitiesCost('spell')), [countAbilitiesCost])
+    const statCost = useMemo(() => (countStats()), [countStats])
+    const totalCost = useMemo(() => (levelCostWithQps + guildLevelCost + skillsCost.exp + spellCosts.exp + statCost), [levelCostWithQps, guildLevelCost, skillsCost, spellCosts, statCost])
     return (
         <SectionBox id={'costs'}>
             <Suspense fallback="Loading...">

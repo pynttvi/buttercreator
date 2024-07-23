@@ -3,10 +3,10 @@
 import React, {PropsWithChildren, Suspense, useEffect, useState} from "react"
 import SectionBox from "@/app/components/sectionBox";
 import Box from "@mui/material/Box";
-import {useReinc} from "@/app/contexts/reincContext";
+import {ReincContextType, useReinc} from "@/app/contexts/reincContext";
 import {Stack, Typography} from "@mui/material";
 import Grid from "@mui/material/Unstable_Grid2";
-import {useCreatorData} from "@/app/contexts/creatorDataContext";
+import {CreatorDataContextType, useCreatorData} from "@/app/contexts/creatorDataContext";
 import Counters, {ReincResist} from "@/app/data/counters";
 
 function CharItem(props: { title: string, value: number | string }) {
@@ -22,6 +22,28 @@ function CharItem(props: { title: string, value: number | string }) {
         </Grid>
     )
 }
+
+const getStats = async (reinc: ReincContextType, creatorDataContext: CreatorDataContextType) => {
+    const counters = Counters(reinc, creatorDataContext)
+    return {
+        spMax: counters.getSpmax(),
+        hpMax: counters.getHpmax(),
+        str: counters.getReincStat("strength"),
+        dex: counters.getReincStat("dexterity"),
+        con: counters.getReincStat("constitution"),
+        int: counters.getReincStat("intelligence"),
+        wis: counters.getReincStat("wisdom"),
+        cha: counters.getReincStat("charisma"),
+        siz: counters.getReincStat("size"),
+        hpr: counters.getReincStat("Hit point regeneration"),
+        spr: counters.getReincStat("Sp_regen")
+    }
+}
+const getResistances = async (reinc: ReincContextType, creatorDataContext: CreatorDataContextType) => {
+    const counters = Counters(reinc, creatorDataContext)
+    return counters.getGuildResists()
+}
+
 
 export default function CharInfo() {
 
@@ -46,38 +68,18 @@ export default function CharInfo() {
 
     const reinc = useReinc()
 
-    const getStats = async () => {
-        const counters = Counters(reinc, creatorDataContext)
-        return {
-            spMax: counters.getSpmax(),
-            hpMax: counters.getHpmax(),
-            str: counters.getReincStat("strength"),
-            dex: counters.getReincStat("dexterity"),
-            con: counters.getReincStat("constitution"),
-            int: counters.getReincStat("intelligence"),
-            wis: counters.getReincStat("wisdom"),
-            cha: counters.getReincStat("charisma"),
-            siz: counters.getReincStat("size"),
-            hpr: counters.getReincStat("Hit point regeneration"),
-            spr: counters.getReincStat("Sp_regen")
-        }
-    }
-    const getResistances = async () => {
-        const counters = Counters(reinc, creatorDataContext)
-        return counters.getGuildResists()
-    }
 
     useEffect(() => {
         setReady(false)
-        getStats().then((stats) => {
+        getStats(reinc, creatorDataContext).then((stats) => {
             setStats(stats)
-            getResistances().then((res) => {
+            getResistances(reinc, creatorDataContext).then((res) => {
                     setResistances(res)
                     setReady(true)
                 }
             )
         })
-    }, [reinc.race, reinc.filteredData, reinc.wishes, reinc.level])
+    }, [reinc.race, reinc.filteredData, reinc.wishes, reinc.level, reinc, creatorDataContext])
 
 
     if (reinc.level === 0 || !reinc.race || !ready) {

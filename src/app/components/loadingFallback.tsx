@@ -1,6 +1,7 @@
 'use client'
 import {Typography} from "@mui/material";
 import Box from "@mui/material/Box";
+import Image from "next/image";
 
 
 export default function LoadingFallback() {
@@ -8,7 +9,10 @@ export default function LoadingFallback() {
         <>
             <Typography variant={'h2'}>Loading...</Typography>
             <Box>
-                <img src="/favicon.svg" alt="Logo" width={'70%'} height={'70%'}/>
+                <Image src="/favicon.svg" alt="Logo" style={{
+                    width: '70%',
+                    height: '70%'
+                }}/>
             </Box>
         </>
     )

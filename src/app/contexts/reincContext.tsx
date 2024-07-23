@@ -1,4 +1,13 @@
-import React, {Dispatch, PropsWithChildren, ReactNode, SetStateAction, useContext, useEffect, useState} from 'react';
+import React, {
+    Dispatch,
+    PropsWithChildren,
+    ReactNode,
+    SetStateAction, useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState
+} from 'react';
 import {Ability} from '../parsers/abilityCostParser';
 import {BaseStatName, baseStats, BaseStats, Race} from '../parsers/raceParser';
 import {doFilter, FilterDataType} from "@/app/filters/creatorDataFilters";
@@ -130,90 +139,104 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
     const [drawerOpen, setDrawerOpen] = useState(false)
 
     const [filteredData, setFilteredData] = useState<FilterDataType>(defaultReincContext.filteredData)
-    const values: ReincType = {
-        ...defaultReincContext,
-        ...ctx,
-        guilds,
-        skills,
-        spells,
-        race,
-        skillMax,
-        spellMax,
-        level,
-        freeLevels,
-        allGuilds,
-        stats,
-        wishes,
-        bonusBaseStats,
-        filteredData,
-        allSkills,
-        allSpells,
-        customSkillMaxBonus,
-        customSpellMaxBonus,
-        copyPasteSeparator,
-        helpText,
-        drawerOpen,
-        ready
-    }
+    const values: ReincType = useMemo(() => {
+        return {
+            ...defaultReincContext,
+            ...ctx,
+            guilds,
+            skills,
+            spells,
+            race,
+            skillMax,
+            spellMax,
+            level,
+            freeLevels,
+            allGuilds,
+            stats,
+            wishes,
+            bonusBaseStats,
+            filteredData,
+            allSkills,
+            allSpells,
+            customSkillMaxBonus,
+            customSpellMaxBonus,
+            copyPasteSeparator,
+            helpText,
+            drawerOpen,
+            ready
+        }
+    }, [allGuilds, allSkills, allSpells, bonusBaseStats, copyPasteSeparator, ctx, customSkillMaxBonus, customSpellMaxBonus, drawerOpen, filteredData, freeLevels, guilds, helpText, level, race, ready, skillMax, skills, spellMax, spells, stats, wishes])
 
 
-    let transientContex: TransientReincType = {}
     const guildUtils = GuildUtils(creatorDataContext, values as ReincContextType)
 
-    const reincFunctions: ReincFunctionsType = {
-        setSkills,
-        setSpells,
-        setRace,
-        setAllGuilds,
-        setGuilds,
-        setStats,
-        guildUtils,
-        setWishes,
-        setBonusBaseStats,
-        setSkillMax,
-        setSpellMax,
-        setAllSkills,
-        setAllSpells,
-        setFreeLevels,
-        setCustomSkillMaxBonus,
-        setCustomSpellMaxBonus,
-        setCopyPasteSeparator,
-        setHelpText,
-        setDrawerOpen
-    }
+    const reincFunctions: ReincFunctionsType = useMemo(() => {
+        return {
+            setSkills,
+            setSpells,
+            setRace,
+            setAllGuilds,
+            setGuilds,
+            setStats,
+            guildUtils,
+            setWishes,
+            setBonusBaseStats,
+            setSkillMax,
+            setSpellMax,
+            setAllSkills,
+            setAllSpells,
+            setFreeLevels,
+            setCustomSkillMaxBonus,
+            setCustomSpellMaxBonus,
+            setCopyPasteSeparator,
+            setHelpText,
+            setDrawerOpen
+        }
+    }, [guildUtils])
 
-    let context = {...values, ...reincFunctions, ...transientContex,}
-    context = {
-        ...values, ...reincFunctions, ...transientContex,
-        guildUtils: GuildUtils(creatorDataContext, context as ReincContextType)
-    }
+    let transientContex = useMemo(() => {
+        let transientContex: TransientReincType = {}
+        return transientContex
+    }, [])
 
-    transientContex = {...transientContex}
 
-    const filterData = () => {
+    let context = useMemo(() => {
+        return {...values, ...reincFunctions, ...transientContex,}
+    }, [reincFunctions, transientContex, values])
+
+
+    context = useMemo(() => {
+        return {
+            ...values, ...reincFunctions, ...transientContex,
+            guildUtils: GuildUtils(creatorDataContext, context as ReincContextType)
+        }
+    }, [context, creatorDataContext, reincFunctions, transientContex, values])
+
+
+    const filterData = useCallback(() => {
         setReady(false)
         const fd = doFilter(creatorDataContext, context as ReincContextType)
         console.debug("FILTERING DATA", fd?.spells)
         if (fd) setFilteredData({...fd})
         setReady(true)
-    }
+    }, [context, creatorDataContext])
 
     transientContex = {...transientContex} as TransientReincType
 
     useEffect(() => {
         filterData()
-    }, [race, skills, spells, level, wishes, skillMax, spellMax]);
+    }, [race, skills, spells, level, wishes, skillMax, spellMax, filterData]);
 
 
     useEffect(() => {
         filterData()
-    }, []);
+    }, [filterData]);
 
     useEffect(() => {
         const guildService = GuildUtils(creatorDataContext, context as ReincContextType)
         setLevel(guildService.totalTrainedLevels() + freeLevels)
 
-    }, [guilds]);
+    }, [context, creatorDataContext, freeLevels, guilds]);
 
 
     useEffect(() => {
@@ -231,13 +254,13 @@ export const FullReincContext = (creatorDataContext: CreatorDataContextType) => 
         knowledgeWishes.forEach((w) => wishHandler.apply(w.name, true))
 
 
-    }, [race, customSpellMaxBonus, customSkillMaxBonus])
+    }, [race, customSpellMaxBonus, customSkillMaxBonus, context, wishes])
 
 
     const wishHandler = WishHandler(context)
     useEffect(() => {
         wishes.filter((w) => !w.applied).forEach((w) => wishHandler.apply(w.name))
-    }, [wishes]);
+    }, [wishHandler, wishes]);
     //   console.log(guildUtils.getAllGuildsFlat().map(g => ({name: g.name, to: "", back: ""})))
     return {...context, ...transientContex, guildService: GuildUtils(creatorDataContext, context)}
 
