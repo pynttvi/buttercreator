@@ -27,8 +27,24 @@ export default function CharInfo() {
 
     const creatorDataContext = useCreatorData()
     const [ready, setReady] = useState(false)
+
+    const [stats, setStats] = useState<{
+        hpMax: number,
+        spMax: number,
+        str: number,
+        dex: number,
+        con: number,
+        int: number,
+        wis: number,
+        cha: number,
+        hpr: number,
+        spr: number,
+        siz: number
+    }>({cha: 0, con: 0, dex: 0, hpMax: 0, hpr: 0, int: 0, siz: 0, spMax: 0, spr: 0, str: 0, wis: 0})
+
+    const [resistances, setResistances] = useState<ReincResist[]>([])
+
     const reinc = useReinc()
-    if (!reinc.ready) return <></>
 
     const getStats = async () => {
         const counters = Counters(reinc, creatorDataContext)
@@ -50,21 +66,7 @@ export default function CharInfo() {
         const counters = Counters(reinc, creatorDataContext)
         return counters.getGuildResists()
     }
-    const [stats, setStats] = useState<{
-        hpMax: number,
-        spMax: number,
-        str: number,
-        dex: number,
-        con: number,
-        int: number,
-        wis: number,
-        cha: number,
-        hpr: number,
-        spr: number,
-        siz: number
-    }>({cha: 0, con: 0, dex: 0, hpMax: 0, hpr: 0, int: 0, siz: 0, spMax: 0, spr: 0, str: 0, wis: 0})
 
-    const [resistances, setResistances] = useState<ReincResist[]>([])
     useEffect(() => {
         setReady(false)
         getStats().then((stats) => {

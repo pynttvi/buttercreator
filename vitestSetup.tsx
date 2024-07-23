@@ -39,7 +39,7 @@ const mockedGuildService = vi.mocked(GuildUtils, true);
 
 export const renderWrapper = (reinc: ReincContextType | null, creatorDataContext: CreatorDataContextType) => {
     const component = render(
-        <Buttercreator creatorDataContext={creatorDataContext}/>,
+        <Buttercreator />,
         {
             wrapper: (props) => {
                 return (

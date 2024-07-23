@@ -72,7 +72,7 @@ export default function MainContent(props: { myData: Promise<Partial<CreatorData
                         : (
                             <ReincContextProvider creatorDataContext={value}>
                                 <PersistentDrawerRight>
-                                    <Buttercreator key={'buttercrator'} creatorDataContext={value}/>
+                                    <Buttercreator key={'buttercreator'} />
                                 </PersistentDrawerRight>
                             </ReincContextProvider>
                         )
