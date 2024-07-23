@@ -22,7 +22,7 @@ export const CreatorDataContextProvider = (props: PropsWithChildren<{ creatorDat
             setCreatorData(data)
             setOriginalCreatorData(data)
         })
-    }, [props?.creatorData])
+    }, [])
 
 
     if (!creatorData) {

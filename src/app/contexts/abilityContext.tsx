@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useCallback, useContext, useEffect, useState} from 'react';
+import React, {PropsWithChildren, useContext, useEffect, useState} from 'react';
 import {ReincAbility, useReinc} from "@/app/contexts/reincContext";
 import {FullGuild} from "@/app/utils/guildUtils";
 import {GuildAbility} from "@/app/parsers/guildParser";
@@ -31,8 +31,11 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
         wishes
     } = reinc
 
+    useEffect(() => {
+        initAbilities(allGuilds)
+    }, [allGuilds])
 
-    const initAbilities = useCallback((guilds: FullGuild[]) => {
+    const initAbilities = (guilds: FullGuild[]) => {
 
         let gaIdx = 0
 
@@ -117,10 +120,9 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
             }
             console.debug("INIT ABILITIES DONE", allSkills)
         }
-    }, [allGuilds, allSkills, allSpells.length, level, ready, setAllSkills, setAllSpells, setSkills, setSpells])
+    }
 
-
-    const updateAbility = useCallback((type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
+    const updateAbility = (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
         let targetArray: ReincAbility[]
         if (type === "skills") {
             targetArray = filteredData.skills
@@ -168,16 +170,11 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
             return newA
         }
 
-    }, [filteredData.skills, filteredData.spells, setSkills, setSpells])
+    }
 
     const values = {
         updateAbility
     }
-
-    useEffect(() => {
-        initAbilities(allGuilds)
-    }, [allGuilds, initAbilities])
-
 
     useEffect(() => {
 
@@ -199,7 +196,7 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
             setSpells([...newSpells])
         }
 
-    }, [level, race, setSkills, setSpells, skills, spells, wishes]);
+    }, [level, race, wishes]);
 
     return (
         <AbilityContext.Provider value={{...ctx, ...values} as AbilityContextType}>
