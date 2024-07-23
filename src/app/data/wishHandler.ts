@@ -237,7 +237,7 @@ export default function WishHandler(reinc: ReincContextType) {
                     }))
                 return true
             })
-
+            //TODO: Elemental attunement
             cancelWish(name, "superior knowledge", WishType.GREATER, () => {
 
                 newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
