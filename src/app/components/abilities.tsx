@@ -11,7 +11,7 @@ import {
     GridRowSelectionModel,
     GridValueGetter
 } from '@mui/x-data-grid';
-import React, {Suspense, useEffect, useMemo, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useMemo, useState} from 'react';
 import {ReincAbility, ReincContextType, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
@@ -226,14 +226,14 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
     );
 
 
-    const processRowUpdate = (newRow: ReincAbility) => {
+    const processRowUpdate = useCallback((newRow: ReincAbility) => {
         if (newRow.trained > 0 && newRow.trained < 10) {
             newRow.trained = 5
         }
         return updateAbility(props.type, newRow) as ReincAbility;
-    };
+    },[]);
 
-    function showAbilityHelp(ability: ReincAbility) {
+    const showAbilityHelp = useCallback((ability: ReincAbility) => {
         const abilityName = ability.name.toLowerCase()
         const abilityHelpList = abilityType === "skills" ? creatorDataContext.creatorData.helpSkills : creatorDataContext.creatorData.helpSpells;
         const abilityHelp = abilityHelpList.find(ah => ah.name === abilityName)
@@ -244,7 +244,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
         console.log("No help found", abilityName)
         reinc.setHelpText(text)
         reinc.setDrawerOpen(true)
-    }
+    },[creatorDataContext.creatorData])
 
     return (
         <SectionBox id={props.type}>
