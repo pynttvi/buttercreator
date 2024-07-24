@@ -12,11 +12,6 @@ export type FileObject = {
     download_url: string
 }
 
-export function getBaseUrl() {
-    const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL
-    return BASE_URL === "/" ? "" : BASE_URL
-}
-
 export default function Home() {
     const [data, setData] = useState<Promise<Partial<CreatorDataType>> | null>(null)
 
