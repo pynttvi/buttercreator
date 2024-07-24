@@ -1,8 +1,6 @@
 'use client';
 import {Space_Mono} from 'next/font/google';
 import {createTheme} from '@mui/material/styles';
-import {GridColDef} from "@mui/x-data-grid";
-import {DataGridPropsWithoutDefaultValue} from "@mui/x-data-grid/models/props/DataGridProps";
 
 export const backgroundColor = "black"
 export const foregroundColor = "#fff"
