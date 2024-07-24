@@ -6,11 +6,7 @@ import Costs from "@/app/components/costs";
 import {Suspense} from "react";
 import {ReincContextProvider} from "@/app/contexts/reincContext";
 import {CreatorDataType} from "@/app/parserFactory";
-import {
-    CreatorDataContext,
-    CreatorDataContextProvider,
-    CreatorDataContextType
-} from "@/app/contexts/creatorDataContext";
+import {CreatorDataContext, CreatorDataContextProvider} from "@/app/contexts/creatorDataContext";
 import Grid from "@mui/material/Unstable_Grid2";
 import StatsList from "@/app/components/stats";
 import WishList from "@/app/components/wish";
@@ -62,10 +58,10 @@ export function Buttercreator() {
     </Suspense>;
 }
 
-export default function MainContent(props: { myData: Promise<Partial<CreatorDataType>> }) {
+export default function MainContent(props: { myData: CreatorDataType }) {
 
     return (
-        <CreatorDataContextProvider creatorData={props.myData as Promise<CreatorDataType>}>
+        <CreatorDataContextProvider creatorData={props.myData}>
             <CreatorDataContext.Consumer>
                 {value => (
                     !value?.creatorData ? (<LoadingFallback/>)

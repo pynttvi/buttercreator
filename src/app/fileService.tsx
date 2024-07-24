@@ -3,9 +3,9 @@ import ParserFactory, {CreatorDataType} from "./parserFactory";
 
 export async function getFile(url: string) {
 
-    console.debug("URL", url)
+    console.log("Getting data", url)
 
-    const res = await fetch(url)
+    const res = await fetch(url, {cache: "force-cache"})
 
     if (!res.ok) {
         throw new Error('Failed to fetch data')
@@ -28,7 +28,7 @@ export async function getGuildFile(url: string) {
 export async function getData(): Promise<Partial<CreatorDataType>> {
 
     let myData: Partial<CreatorDataType> = {};
-    const res = await fetch('https://api.github.com/repos/juuussi/zCreator_data/contents/data?ref=master');
+    const res = await fetch('https://api.github.com/repos/juuussi/zCreator_data/contents/data?ref=master', {cache: "force-cache"});
 
     if (!res.ok) {
         throw new Error('Failed to fetch data');
