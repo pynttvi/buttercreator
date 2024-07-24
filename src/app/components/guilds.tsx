@@ -81,8 +81,8 @@ function GuildItem(props: {
         const trained = GuildUtils(creatorDataContext, reinc).trainedLevelForGuild(props.guild)
         setTrainedFroGuild(trained)
         setDisabled(
-            trainedForGuild >= MAX_GUILD_LEVELS ||
-            level >= MAX_LEVEL ||
+            (trainedForGuild >= MAX_GUILD_LEVELS && value === 0) ||
+            (level >= MAX_LEVEL && value === 0) ||
             (props.guild.guildType === "sub" && trainedForGuild < 45) ||
             !guildMeetsRequirements(props.guild, reinc.guildUtils.getReincGuildsFlat(), reinc.level - reinc.freeLevels, reinc?.race)
         )
