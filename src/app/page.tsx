@@ -12,15 +12,26 @@ export type FileObject = {
     download_url: string
 }
 
-export default function Home() {
-    const [data, setData] = useState<Promise<Partial<CreatorDataType>> | null>(null)
 
+export default function Home() {
+    const [data, setData] = useState<CreatorDataType | null>(null)
+
+    const [ready, setReady] = useState(false)
     useEffect(() => {
-        setData(getData())
+        if (!data) {
+            getData().then((data) => {
+                setData(data as CreatorDataType)
+            })
+        }
     }, []);
 
+    useEffect(() => {
+        if (data) {
+            setReady(true)
+        }
+    }, [data]);
 
-    if (!data) {
+    if (!ready || !data) {
         return (
             <RootLayout>
                 <main className="flex min-h-screen flex-col items-left justify-between p-10">
@@ -43,6 +54,4 @@ export default function Home() {
         </RootLayout>
 
     );
-
-
 }
