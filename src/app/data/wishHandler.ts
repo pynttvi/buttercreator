@@ -63,6 +63,7 @@ export const minorWishCosts: { name: MinorName, cost: number }[] = [
     {name: "giant size", cost: 500},
     {name: "true seeing", cost: 100},
     {name: "lucky", cost: 75},
+    {name: "elemental attunement", cost: 250},
     {name: STAT_WISH_NAME_PREFIX, cost: 40},
     {name: RESIST_WISH_NAME_SUFFIX, cost: 150},
 ]
@@ -208,6 +209,7 @@ export default function WishHandler(reinc: ReincContextType) {
             applyWish(name, "true seeing", WishType.MINOR)
             applyWish(name, "giant size", WishType.MINOR)
             applyWish(name, "ambidexterity", WishType.MINOR)
+            applyWish(name, "elemental attunement", WishType.MINOR)
 
             improvedStat.forEach((s) => {
                 applyWish(name, s, WishType.MINOR)
@@ -237,7 +239,6 @@ export default function WishHandler(reinc: ReincContextType) {
                     }))
                 return true
             })
-            //TODO: Elemental attunement
             cancelWish(name, "superior knowledge", WishType.GREATER, () => {
 
                 newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
@@ -272,6 +273,15 @@ export default function WishHandler(reinc: ReincContextType) {
 
             cancelWish(name, "superior endurance", WishType.GREATER)
             cancelWish(name, "improved endurance", WishType.LESSER)
+
+
+            cancelWish(name, "thick skin", WishType.MINOR)
+            cancelWish(name, "lucky", WishType.MINOR)
+            cancelWish(name, "true seeing", WishType.MINOR)
+            cancelWish(name, "giant size", WishType.MINOR)
+            cancelWish(name, "ambidexterity", WishType.MINOR)
+            cancelWish(name, "elemental attunement", WishType.MINOR)
+
 
             improvedStat.forEach((s) => {
                 cancelWish(name, s, WishType.MINOR)
