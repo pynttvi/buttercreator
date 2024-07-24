@@ -8,7 +8,7 @@ import {
     MuiEvent
 } from '@mui/x-data-grid';
 import {Race} from '../parsers/raceParser';
-import React, {Suspense, useState} from 'react';
+import React, {Suspense, useCallback, useState} from 'react';
 import SectionBox from './sectionBox';
 import {useReinc} from "@/app/contexts/reincContext";
 import {useCreatorData} from "@/app/contexts/creatorDataContext";
@@ -16,7 +16,7 @@ import {useCreatorData} from "@/app/contexts/creatorDataContext";
 const defaultCellProps: Partial<GridColDef<(Race)>> = {
     width: 75,
 }
-const columns: GridColDef<(Race)>[] = [
+const columns: readonly GridColDef<(Race)>[] = [
     {
         field: 'name',
         headerName: 'Name',
@@ -123,7 +123,7 @@ const columns: GridColDef<(Race)>[] = [
 export default function RaceList() {
     const creatorDataContext = useCreatorData()
     const {creatorData} = creatorDataContext
-    const [races,setRaces] = useState<Race[]>(creatorData.races)
+    const [races, setRaces] = useState<Race[]>(creatorData.races)
     const [selectionModel, setSelectionModel] = React.useState<GridRowSelectionModel>();
     const reinc = useReinc()
     const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails) => {
@@ -133,12 +133,12 @@ export default function RaceList() {
         setSelectionModel(rowSelectionModel)
     }
 
-    function showRaceHelp(params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) {
+    const showRaceHelp = useCallback((params: GridRowParams, event: MuiEvent<React.MouseEvent>, details: GridCallbackDetails) => {
         const raceName = params.row.name
         const raceHelp = creatorData.helpRace.find(hr => hr.name === raceName)
         reinc.setHelpText(raceHelp?.text || "")
         reinc.setDrawerOpen(true)
-    }
+    }, [creatorData])
 
     return (
         <SectionBox id={'races'} title='Races'>
