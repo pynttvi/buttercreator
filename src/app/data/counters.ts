@@ -128,10 +128,12 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
             hpmax += (1.5 * (reinc.race?.con) + reinc.race?.size + 50)
         }
 
-        const con = (reinc.guildUtils.getStatTotalFromGuilds("constitution")) || 0
+        const constitution = (reinc.guildUtils.getStatTotalFromGuilds("constitution")) || 0
         const hitPoints = (reinc.guildUtils.getStatTotalFromGuilds("hit points")) || 0
-        hpmax += hitPoints
-        hpmax += Math.round(2 * (reinc.race.size) + (con * 3))
+        const hp = (reinc.guildUtils.getStatTotalFromGuilds("hp")) || 0
+        hpmax += hitPoints + hp
+        console.debug("COUNTING HPM", constitution, hitPoints, hp, hpmax)
+        hpmax += Math.round(2 * (reinc.race.size) + (constitution * 3))
         return Math.round(hpmax)
     }
 
