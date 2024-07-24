@@ -153,7 +153,7 @@ export default function Counters(reinc: ReincContextType, creatorDataContext: Cr
         const wis = (reinc.guildUtils.getStatTotalFromGuilds("wisdom")) || 0
         const spellPoints = (reinc.guildUtils.getStatTotalFromGuilds("spell points")) || 0
         spmax += spellPoints
-        spmax += (3 * wis + 4 * int)
+        spmax += (3 * wis) + (4 * int)
         return Math.round(spmax)
     }
 
