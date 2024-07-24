@@ -7,7 +7,7 @@ import {
     GridRenderEditCellParams,
     GridRowSelectionModel
 } from '@mui/x-data-grid';
-import React, {Suspense, useEffect, useState} from 'react';
+import React, {Suspense, useCallback, useEffect, useState} from 'react';
 import SectionBox from './sectionBox';
 import {MAX_STAT, ReincContextType, ReincStat, useReinc} from "@/app/contexts/reincContext";
 import {Input, Typography} from "@mui/material";
@@ -25,12 +25,12 @@ const TrainedInput = (props: { reinc: ReincContextType, params: GridRenderEditCe
         return s.name === params.row.name
     })?.trained || 0)
 
-    const parse = (newValue: number) => {
-        console.log("STAT", params.row)
+    const parse = useCallback((newValue: number) => {
+        console.debug("STAT", params.row)
         newValue = Math.min(newValue, max)
         newValue = Math.max(newValue, 0)
         setValue(newValue)
-    }
+    }, [])
 
     useEffect(() => {
         const newStats = [...reinc.stats.filter((s) => s.name !== params.row.name), {...params.row, trained: value}]
@@ -86,7 +86,7 @@ export default function StatsList() {
             return <TrainedInput reinc={reinc} params={params}/>
         },
     }
-    const columns: GridColDef<(ReincStat)>[] = [
+    const columns: readonly GridColDef<(ReincStat)>[] = [
         {
             field: 'name',
             headerName: 'Name'
