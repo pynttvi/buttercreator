@@ -84,6 +84,13 @@ export function simplifyStat(statName: string) {
     if(stat.startsWith("spm")){
         return statName
     }
+    if (stat === "sp") {
+        return "spm"
+    }
+    if (stat === "hp") {
+        return "hpm"
+    }
+
     if (stat === "strength") {
         return "str"
     }
@@ -105,6 +112,9 @@ export function simplifyStat(statName: string) {
 
     if (stat === "sp regen") {
         return "spr"
+    }
+    if (stat == "spell points") {
+        return "spm"
     }
     if (stat == "spell point regeneration") {
         return "spr"
