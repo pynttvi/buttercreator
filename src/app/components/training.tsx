@@ -139,17 +139,21 @@ export default function Training() {
 
     const reinc = useReinc()
 
+    const trainingItems = useMemo(() => {
+        if (reinc.ready) {
+            return reinc.guilds.map((g) => {
+                return <TrainingItem key={'tr-it-' + g.name} guild={g}/>
+            })
+        }
+    }, [reinc.ready, reinc.skills, reinc.spells])
+
     return (
         <SectionBox id={'training'}>
             <Suspense fallback="Loading...">
                 <Typography variant='h4' textTransform={'capitalize'}
                             marginBlock={'40px'}>Training</Typography>
                 <Box sx={{height: 400}}>
-                    {reinc?.guilds && reinc.guilds.map((g) => {
-                        return (
-                            <TrainingItem key={'tr-it-' + g.name} guild={g}/>
-                        )
-                    })}
+                    {reinc?.guilds && trainingItems && (trainingItems)}
 
                 </Box>
             </Suspense>
