@@ -5,6 +5,7 @@ import {GuildLevels} from "@/app/parsers/guildsFileParser";
 import {Guild, GuildLevel} from "@/app/parsers/guildParser";
 import {GuildType} from "@/app/components/guilds";
 import {onlyUnique, simplifyStat, sortByName} from "@/app/utils/utils";
+import {Race} from "@/app/parsers/raceParser";
 
 export const MAX_GUILD_LEVELS = 60
 export type GuildServiceType = {
@@ -96,7 +97,6 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
     }
 
 
-
     const trainedLevelForGuild = (guild: FullGuild) => {
         let trained = 0
         let trainedSubs = 0
@@ -162,6 +162,7 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
     const getStatTotalFromGuilds = (stat: string): number => {
         let statTotal = 0
         const flatGuilds: FullGuild[] = getReincGuildsFlat()
+        const simpleStat = simplifyStat(stat)
         flatGuilds
             .filter(g => g.trained > 0)
             .forEach((g) => {
@@ -171,7 +172,7 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
                     guildLevel.stats.forEach((s) => {
                         let match = false
 
-                        if (simplifyStat(s.name) === simplifyStat(stat)) {
+                        if (simplifyStat(s.name) === simpleStat) {
                             statTotal += s.value
                             match = true
 
@@ -184,7 +185,10 @@ export function GuildUtils(creatorDataContext: CreatorDataContextType, reincCont
                     })
                 }
             })
-        return statTotal
+        return statTotal > 0 ? statTotal : (
+            (reincContext.race ? reincContext?.race[simpleStat as keyof Race] as number : 0) +
+            (reincContext?.stats.find(s => s.name === simpleStat)?.trained || 0)
+        )
     }
 
     const getReincGuildsFlat = () => {
