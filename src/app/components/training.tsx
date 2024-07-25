@@ -26,10 +26,10 @@ const getTrainingText = (a: ReincAbility, separator: string) => {
     let text = "";
 
     if (count <= 20) {
-        text += `${count} ${a.type === "skill" ? "train" : " study"} ${a.name}${separator}`;
+        text += `${count} ${a.type === "skill" ? "train" : "study"} ${a.name}${separator}`;
     } else {
-        text += `${20} ${a.type === "skill" ? "train" : " study"} ${a.name}${separator}`;
-        text += `${count - 20} ${a.type === "skill" ? "train" : " study"} ${a.name}${separator}`;
+        text += `${20} ${a.type === "skill" ? "train" : "study"} ${a.name}${separator}`;
+        text += `${count - 20} ${a.type === "skill" ? "train" : "study"} ${a.name}${separator}`;
     }
     return text
 }
