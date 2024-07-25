@@ -1,4 +1,4 @@
-import React, {PropsWithChildren, useCallback, useContext, useEffect, useState} from 'react';
+import React, {PropsWithChildren, useCallback, useContext, useEffect, useMemo, useState} from 'react';
 import {ReincAbility, useReinc} from "@/app/contexts/reincContext";
 import {FullGuild} from "@/app/utils/guildUtils";
 import {GuildAbility} from "@/app/parsers/guildParser";
@@ -30,7 +30,9 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
         spells,
         race,
         wishes
-    } = reinc
+    } = useMemo(() => {
+        return reinc
+    }, [reinc, reinc.skills, reinc.spells])
 
 
     const initAbilities = useCallback((guilds: FullGuild[]) => {
@@ -124,12 +126,12 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
         [allGuilds]
     )
 
-    const updateAbility = (type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
+    const updateAbility = useCallback((type: 'skills' | 'spells', ability: ReincAbility | ReincAbility[]) => {
         let targetArray: ReincAbility[]
         if (type === "skills") {
-            targetArray = filteredData.skills
+            targetArray = reinc.skills
         } else {
-            targetArray = filteredData.spells
+            targetArray = reinc.spells
         }
         let newAbilities: ReincAbility[]
 
@@ -140,6 +142,7 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
                 if (newAbility.trained === newAbility.max) {
                     oldAbility.maxed = true
                 }
+                oldAbility.trained = newAbility.trained
             }
             return oldAbility
         }
@@ -158,21 +161,19 @@ export const AbilityContextProvider = (props: PropsWithChildren<{}>) => {
             })
         }
 
-        console.debug("UPDATING ABILITY", ability, newA)
+        console.debug("UPDATING ABILITY", ability, newA, newAbilities)
 
         if (type === "skills") {
             setSkills([...newAbilities])
         } else {
             setSpells([...newAbilities])
         }
-        console.debug("UPDATING ABILITY", ability, newA, newAbilities)
         if (ability instanceof Array) {
-            return newAbilities;
+            return newAbilities
         } else {
             return newA
         }
-
-    }
+    }, [reinc.skills, reinc.spells])
 
     const values = {
         updateAbility

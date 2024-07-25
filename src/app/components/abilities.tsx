@@ -11,7 +11,7 @@ import {
     GridRowSelectionModel,
     GridValueGetter
 } from '@mui/x-data-grid';
-import React, {Suspense, useCallback, useEffect, useMemo, useState} from 'react';
+import React, {MutableRefObject, Suspense, useCallback, useEffect, useMemo, useState} from 'react';
 import {ReincAbility, ReincContextType, useReinc} from '../contexts/reincContext';
 import SectionBox from './sectionBox';
 import {GridApiCommunity} from "@mui/x-data-grid/internals";
@@ -22,12 +22,14 @@ import {useAbilityContext} from "@/app/contexts/abilityContext";
 const TrainedInput = (props: {
     params: GridRenderEditCellParams<ReincAbility>,
     abilityType: "skills" | "spells",
-    reinc: ReincContextType
+    reinc: ReincContextType,
+    apiRef: MutableRefObject<GridApiCommunity | undefined>
 }) => {
     const reinc = props.reinc
     const abilityType = props.abilityType
     const abi = props.params.row
     const max = abilityType === "skills" ? Math.min(reinc.skillMax, abi.max) : Math.min(reinc.spellMax, abi.max)
+    const apiRef = props.apiRef
     const params = props.params
     const [value, setValue] = useState(max)
     const parse = (newValue: number) => {
@@ -42,6 +44,12 @@ const TrainedInput = (props: {
             setValue(newValue)
         }
     }
+
+    useEffect(() => {
+        if (apiRef && apiRef.current) {
+            apiRef.current.setEditCellValue({id: abi.id, field: 'trained', value: value})
+        }
+    }, [value]);
 
     return (
         <Input
@@ -109,7 +117,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
         if (ready) {
             setSelectionModel(abilities.filter(a => a.trained > 0).map(a => a.id))
         }
-    }, [ready, abilities]);
+    }, [ready]);
 
 
     const apiRef = React.useRef<GridApiCommunity | undefined>();
@@ -131,48 +139,74 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
     const changeSelectionMode = (rowSelectionModel: GridRowSelectionModel, details: GridCallbackDetails) => {
 
         setReady(false)
-        if (rowSelectionModel.length === 0) {
-            const targetArray = props.type === "skills" ? reinc.skills : reinc.spells
-            const newAbilities = targetArray.map((a) => ({...a, trained: 0}))
-            updateAbility(props.type, newAbilities)
+        // if (rowSelectionModel.length === 0) {
+        //     const targetArray = props.type === "skills" ? reinc.skills : reinc.spells
+        //     const newAbilities = targetArray.map((a) => ({...a, trained: 0}))
+        //     updateAbility(props.type, newAbilities)
+        //
+        // }
 
-        }
-
-        if (rowSelectionModel.length >= 0 && apiRef.current?.getRowsCount() === rowSelectionModel.length) {
-
-            const model = [...rowSelectionModel]
-            const rows: ReincAbility[] = []
-            model.map((id) => {
-                const r = apiRef.current?.getRow(id)
-                rows.push(r)
-            })
-
-            rows.forEach((r) => {
-                updateAbility(props.type, {...r, trained: getMax(r.max, props, reinc)})
-            })
-        }
+        // if (rowSelectionModel.length >= 0 && apiRef.current?.getRowsCount() === rowSelectionModel.length) {
+        //
+        //     const model = [...rowSelectionModel]
+        //     const rows: ReincAbility[] = []
+        //     model.map((id) => {
+        //         const r = apiRef.current?.getRow(id)
+        //         rows.push(r)
+        //     })
+        //
+        //     rows.forEach((r) => {
+        //         updateAbility(props.type, {...r, trained: getMax(r.max, props, reinc)})
+        //     })
+        // }
+        selectionModel?.forEach((row) => {
+            if (apiRef && apiRef.current) {
+                const newRow = rowSelectionModel?.find(row1 => row === row1)
+                if (!newRow) {
+                    checkBoxChanged(apiRef.current.getCellParams(row, "__check__"))
+                }
+            }
+        })
+        rowSelectionModel?.forEach((row) => {
+            if (apiRef && apiRef.current) {
+                const oldRow = selectionModel?.find(row1 => row === row1)
+                if (!oldRow) {
+                    checkBoxChanged(apiRef.current.getCellParams(row, "__check__"))
+                }
+            }
+        })
 
         setSelectionModel(rowSelectionModel)
+        setReady(true)
+
 
     }
-    const checkBoxChanged = (params: GridCellParams) => {
+    const checkBoxChanged = useCallback((params: GridCellParams) => {
         const {value, row, colDef} = params
         let max = getMax(row.max, props, reinc)
 
+
+        console.debug("CHECKBOX CHANGED", params)
         if (value === false) {
-            if (apiRef && apiRef.current) {
-                apiRef.current.setEditCellValue({id: row.id, field: 'trained', value: max})
-            }
+
             updateAbility(props.type, {...row, trained: max});
             if (apiRef && apiRef.current) {
+                if (apiRef && apiRef.current) {
+                    apiRef.current.setEditCellValue({id: row.id, field: 'trained', value: max})
+                }
                 //     apiRef.current.startCellEditMode({id: row.id, field: 'trained'})
             }
 
             setLastEdit(`edit-ability${params.row.id}`)
 
         } else {
+            updateAbility(props.type, {...row, trained: 0});
+            if (apiRef && apiRef.current) {
+                apiRef.current.setEditCellValue({id: row.id, field: 'trained', value: 0})
+            }
+
         }
-    }
+    }, [selectionModel, reinc.skills, reinc.spells])
 
 
     const dataColumns = useMemo(() => {
@@ -187,7 +221,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
                 editable: true,
                 align: 'right',
                 renderEditCell: (params) => {
-                    return <TrainedInput params={params} abilityType={abilityType} reinc={reinc}/>
+                    return <TrainedInput params={params} abilityType={abilityType} reinc={reinc} apiRef={apiRef}/>
                 },
                 cellClassName: (params => {
                     if (params.cellMode === 'edit') {
@@ -230,8 +264,9 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
         if (newRow.trained > 0 && newRow.trained < 10) {
             newRow.trained = 5
         }
+        console.debug("UPDATING ABILITY", newRow)
         return updateAbility(props.type, newRow) as ReincAbility;
-    },[]);
+    }, [reinc.skills, reinc.spells]);
 
     const showAbilityHelp = useCallback((ability: ReincAbility) => {
         const abilityName = ability.name.toLowerCase()
@@ -244,7 +279,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
         console.log("No help found", abilityName)
         reinc.setHelpText(text)
         reinc.setDrawerOpen(true)
-    },[creatorDataContext.creatorData])
+    }, [creatorDataContext.creatorData])
 
     return (
         <SectionBox id={props.type}>
@@ -266,9 +301,9 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
                                 console.error(error)
                             }}
                             onCellClick={(params: GridCellParams, event, details) => {
-                                if (params.field === '__check__') {
-                                    checkBoxChanged(params)
-                                }
+                                // if (params.field === '__check__') {
+                                //     checkBoxChanged(params)
+                                // }
                                 if (params.field === "name") {
                                     showAbilityHelp(params.row)
                                 }
