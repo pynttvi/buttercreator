@@ -69,7 +69,7 @@ function getMax(max: number, props: { type: "skills" | "spells"; }, reinc: Reinc
 
     if (props.type === 'skills') {
         if ((reinc.skillMax - max) >= 0) {
-            max = reinc.customSkillMaxBonus + Math.min(max - (100 - reinc.skillMax), reinc.skillMax)
+            max = reinc.customSkillMaxBonus + Math.min(Math.floor(((max / 5) * reinc.skillMax) / 100) * 5, reinc.skillMax)
         } else {
             max = reinc.customSkillMaxBonus + Math.min(max, reinc.race?.skill_max || 100)
         }
@@ -77,7 +77,7 @@ function getMax(max: number, props: { type: "skills" | "spells"; }, reinc: Reinc
 
     if (props.type === 'spells') {
         if ((reinc.spellMax - max) >= 0) {
-            max = reinc.customSpellMaxBonus + Math.min(max - (100 - reinc.spellMax), reinc.spellMax)
+            max = reinc.customSpellMaxBonus + Math.min(Math.floor(((max / 5) * reinc.spellMax) / 100) * 5, reinc.spellMax)
         } else {
             max = reinc.customSpellMaxBonus + Math.min(max, reinc.race?.spell_max || 100)
         }
