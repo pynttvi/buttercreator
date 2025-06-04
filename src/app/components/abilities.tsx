@@ -31,7 +31,11 @@ const TrainedInput = (props: {
     const max = abilityType === "skills" ? Math.min(reinc.skillMax, abi.max) : Math.min(reinc.spellMax, abi.max)
     const apiRef = props.apiRef
     const params = props.params
-    const [value, setValue] = useState(max)
+    const [value, setValue] = useState(() => {
+        const initial = Math.min(abilityType === "skills" ? reinc.skillMax : reinc.spellMax, abi.max);
+        return initial;
+    });
+
     const parse = (newValue: number) => {
         console.debug("ABILITY", params.row)
         newValue = Math.min(newValue, max)
@@ -71,16 +75,18 @@ function getMax(max: number, props: { type: "skills" | "spells"; }, reinc: Reinc
         if ((reinc.skillMax - max) >= 0) {
             max = reinc.customSkillMaxBonus + Math.min(Math.floor(((max / 5) * reinc.skillMax) / 100) * 5, reinc.skillMax)
         } else {
-            max = reinc.customSkillMaxBonus + Math.min(max, reinc.race?.skill_max || 100)
+            max = reinc.customSkillMaxBonus + Math.min(max, reinc.skillMax || 100)
         }
     }
 
     if (props.type === 'spells') {
+
         if ((reinc.spellMax - max) >= 0) {
             max = reinc.customSpellMaxBonus + Math.min(Math.floor(((max / 5) * reinc.spellMax) / 100) * 5, reinc.spellMax)
         } else {
-            max = reinc.customSpellMaxBonus + Math.min(max, reinc.race?.spell_max || 100)
+            max = reinc.customSpellMaxBonus + Math.min(max, reinc.spellMax || 100)
         }
+
     }
     return max;
 }
@@ -100,17 +106,23 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
 
     useEffect(() => {
         setReady(false)
-        let abi: ReincAbility[] = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
+        let abi: ReincAbility[] = props.type === 'skills'
+            ? reinc.filteredData.skills || []
+            : reinc.filteredData.spells || [];
+
         if (reincReady) {
             if (abi.length === 0 && reinc.level === 0) {
-                abi = (props.type === 'skills' ? reinc.filteredData.skills : reinc.filteredData.spells) || []
+                abi = props.type === 'skills'
+                    ? reinc.filteredData.skills || []
+                    : reinc.filteredData.spells || [];
             }
-            const filtered = [...abi.filter(a => a.enabled)]
-            console.debug("Abilities", abi)
-            setAbilities(sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(filtered)))
-            setReady(true)
+            const filtered = [...abi.filter(a => a.enabled)];
+            console.debug("Abilities", abi);
+
+            setAbilities(sortByName<ReincAbility>(onlyUniqueNameWithHighestMax(filtered)));
+            setReady(true);
         }
-    }, [props.type === "skills" ? reinc.filteredData.skills : reinc.filteredData.spells]);
+    }, [props.type, reinc.filteredData.skills, reinc.filteredData.spells, reincReady, reinc.level, reinc.skillMax, reinc.spellMax]);
 
 
     useEffect(() => {
@@ -246,9 +258,17 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
 
         ];
         return dataCols
-    }, [abilityType, reinc, props])
+    }, [abilityType,
+        props,
+        abilities,
+        reinc.skillMax,
+        reinc.spellMax,
+        reinc.customSkillMaxBonus,
+        reinc.customSpellMaxBonus,
+        reinc.race?.skill_max,
+        reinc.race?.spell_max])
 
-    const columns: GridColDef[] = React.useMemo(
+    const columns: GridColDef[] = useMemo(
         () => [
             {
                 ...GRID_CHECKBOX_SELECTION_COL_DEF,
