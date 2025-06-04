@@ -166,8 +166,13 @@ export default function WishHandler(reinc: ReincContextType) {
             })
 
             applyWish(name, "superior knowledge", WishType.GREATER, () => {
-                    newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus + 10
-                    newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus + 10
+                    let extra = 0
+                    const hasBetterKnowledge = reinc.wishes.find((w) => w.name === "better knowledge")
+                    extra += (hasBetterKnowledge ? 5 : 0)
+
+                    newData.skillMax = ((reinc.race?.skill_max || 100)) + reinc.customSkillMaxBonus + 10 + extra
+                    newData.spellMax = ((reinc.race?.spell_max || 100)) + reinc.customSpellMaxBonus + 10 + extra
+
                     reinc.setSkillMax(newData.skillMax)
                     reinc.setSpellMax(newData.spellMax)
                     return true
@@ -175,12 +180,17 @@ export default function WishHandler(reinc: ReincContextType) {
                 , force)
 
             applyWish(name, "better knowledge", WishType.LESSER, () => {
-                    newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus + 5
-                    newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus + 5
+                    let extra = 0
+
+                    const hasSuperiorKnowledge = reinc.wishes.find((w) => w.name === "superior knowledge")
+                    extra += (hasSuperiorKnowledge ? 10 : 0)
+
+                    newData.skillMax = ((reinc.race?.skill_max || 100)) + reinc.customSkillMaxBonus + 5 + extra
+                    newData.spellMax = ((reinc.race?.spell_max || 100)) + reinc.customSpellMaxBonus + 5 + extra
+
                     reinc.setSkillMax(newData.skillMax)
                     reinc.setSpellMax(newData.spellMax)
                     return true
-
                 }
                 , force)
 
@@ -240,17 +250,23 @@ export default function WishHandler(reinc: ReincContextType) {
                 return true
             })
             cancelWish(name, "superior knowledge", WishType.GREATER, () => {
-
-                newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
-                newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus
+                let extra = 0
+                const hasBetterKnowledge = reinc.wishes.find((w) => w.name === "better knowledge")
+                extra += (hasBetterKnowledge ? 5 : 0)
+                newData.skillMax = ((reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus) + extra
+                newData.spellMax = ((reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus) + extra
                 reinc.setSkillMax(newData.skillMax)
                 reinc.setSpellMax(newData.spellMax)
                 return true
             })
 
             cancelWish(name, "better knowledge", WishType.LESSER, () => {
-                newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus
-                newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus
+                let extra = 0
+                const hasSuperiorKnowledge = reinc.wishes.find((w) => w.name === "superior knowledge")
+                extra += (hasSuperiorKnowledge ? 10 : 0)
+
+                newData.skillMax = (reinc.race?.skill_max || 100) + reinc.customSkillMaxBonus + extra
+                newData.spellMax = (reinc.race?.spell_max || 100) + reinc.customSpellMaxBonus + extra
                 reinc.setSkillMax(newData.skillMax)
                 reinc.setSpellMax(newData.spellMax)
                 return true
