@@ -1,19 +1,16 @@
 // vitestSetup.ts
-import {vi} from "vitest";
-import * as fs from "node:fs";
-import ParserFactory, {CreatorDataType} from "@/app/parserFactory";
-import {getFile} from "@/app/fileService";
-import {ReincContext, ReincContextProvider, ReincContextType} from "@/app/contexts/reincContext";
+import { Buttercreator } from "@/app/components/mainContent";
 import {
     CreatorDataContext,
-    CreatorDataContextProvider,
     CreatorDataContextType
 } from "@/app/contexts/creatorDataContext";
-import {GuildUtils} from "@/app/utils/guildUtils";
-import React, {PropsWithChildren} from "react";
-import {render, waitFor} from "@testing-library/react";
-import {Buttercreator} from "@/app/components/mainContent";
-import {LoggingConfig} from "@/app/config/loggingConfig";
+import { ReincContext, ReincContextProvider, ReincContextType } from "@/app/contexts/reincContext";
+import { getFile } from "@/app/fileService";
+import ParserFactory, { CreatorDataType } from "@/app/parserFactory";
+import { GuildUtils } from "@/app/utils/guildUtils";
+import { render, waitFor } from "@testing-library/react";
+import * as fs from "node:fs";
+import { vi } from "vitest";
 
 const getDataMock = vi.fn()
 
@@ -23,15 +20,14 @@ vi.mock("@/app/fileService", () => ({
 }))
 
 vi.mock("next/font/google", () => ({
-
-    Space_Mono: vi.fn(() => ({
-        style: {
-            weight: ['400', '700']
-        },
-        subsets: ['latin'],
-        display: 'swap',
-    }))
-}))
+  Space_Mono: vi.fn(() => ({
+    style: {
+      weight: ["400", "700"],
+    },
+    subsets: ["latin"],
+    display: "swap",
+  })),
+}));
 
 
 const mockedGetFile = vi.mocked(getFile, true);
