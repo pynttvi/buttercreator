@@ -1,23 +1,22 @@
 // vitestSetup.ts
 import { Buttercreator } from "@/app/components/mainContent";
-import {
-    CreatorDataContext,
-    CreatorDataContextType
-} from "@/app/contexts/creatorDataContext";
-import { ReincContext, ReincContextProvider, ReincContextType } from "@/app/contexts/reincContext";
+import { CreatorDataContextType } from "@/app/contexts/creatorDataContext";
 import { getFile } from "@/app/fileService";
 import ParserFactory, { CreatorDataType } from "@/app/parserFactory";
+import { ReincContextType } from "@/app/redux/appContext";
+import { reincStore } from "@/app/redux/reincStore";
 import { GuildUtils } from "@/app/utils/guildUtils";
 import { render, waitFor } from "@testing-library/react";
 import * as fs from "node:fs";
+import { Provider } from "react-redux";
 import { vi } from "vitest";
 
-const getDataMock = vi.fn()
+const getDataMock = vi.fn();
 
 vi.mock("@/app/fileService", () => ({
-    getFile: vi.fn(),
-    getData: vi.fn()
-}))
+  getFile: vi.fn(),
+  getData: vi.fn(),
+}));
 
 vi.mock("next/font/google", () => ({
   Space_Mono: vi.fn(() => ({
@@ -29,78 +28,74 @@ vi.mock("next/font/google", () => ({
   })),
 }));
 
-
 const mockedGetFile = vi.mocked(getFile, true);
 const mockedGuildService = vi.mocked(GuildUtils, true);
 
-export const renderWrapper = (reinc: ReincContextType | null, creatorDataContext: CreatorDataContextType) => {
-    const component = render(
-        <Buttercreator />,
-        {
-            wrapper: (props) => {
-                return (
-                    <CreatorDataContext.Provider value={creatorDataContext}>
-                        <ReincContextProvider creatorDataContext={creatorDataContext}>
-                            <ReincContext.Consumer>
-                                {value => {
-                                    reinc = value
-                                    return <>props.children</>
-                                }}
-                            </ReincContext.Consumer>
-                        </ReincContextProvider>
-                    </CreatorDataContext.Provider>
-                )
-            }
-        })
+export const renderWrapper = (
+  reinc: ReincContextType | null,
+  creatorDataContext: CreatorDataContextType,
+) => {
+  const component = render(<Buttercreator />, {
+    wrapper: (props) => {
+      return (
+        <Provider store={reincStore}>
+          <>props.children</>
+        </Provider>
+      );
+    },
+  });
 
-    return {
-        reinc, component
-    }
-}
+  return {
+    reinc,
+    component,
+  };
+};
 
-export async function mockCreatorData(overrideReinc?: Partial<ReincContextType>) {
-    const folder = fs.readdirSync("./zCreator_data/data");
-    const fileObjects = folder.map((f) => ({
-        name: f,
-        download_url: "/zCreator_data/data"
-    }))
-    const factory = ParserFactory();
-    let myData: Partial<CreatorDataType> = {};
-    for await (const f of await fileObjects) {
-        const myPromise: Promise<string> = new Promise((resolve, reject) => {
-            return resolve(fs.readFileSync('./zCreator_data/data/' + f.name).toString())
-        });
+export async function mockCreatorData(
+  overrideReinc?: Partial<ReincContextType>,
+) {
+  const folder = fs.readdirSync("./zCreator_data/data");
+  const fileObjects = folder.map((f) => ({
+    name: f,
+    download_url: "/zCreator_data/data",
+  }));
+  const factory = ParserFactory();
+  let myData: Partial<CreatorDataType> = {};
+  for await (const f of await fileObjects) {
+    const myPromise: Promise<string> = new Promise((resolve, reject) => {
+      return resolve(
+        fs.readFileSync("./zCreator_data/data/" + f.name).toString(),
+      );
+    });
 
-        mockedGetFile.mockReturnValueOnce(myPromise)
+    mockedGetFile.mockReturnValueOnce(myPromise);
 
-        const process = await factory.createProcessForFile(f);
-        const dataField = {key: process.key, data: await process.run()};
-        // @ts-ignore
-        myData[dataField.key] = dataField.data
-    }
+    const process = await factory.createProcessForFile(f);
+    const dataField = { key: process.key, data: await process.run() };
+    // @ts-ignore
+    myData[dataField.key] = dataField.data;
+  }
 
-    const creatorDataContext: CreatorDataContextType = {
-        creatorData: myData as CreatorDataType,
-        originalCreatorData: myData as CreatorDataType,
-        setCreatorData: vi.fn()
-    }
+  const creatorDataContext: CreatorDataContextType = {
+    creatorData: myData as CreatorDataType,
+    originalCreatorData: myData as CreatorDataType,
+  };
 
-    let reinc: ReincContextType | null = null
+  let reinc: ReincContextType | null = null;
 
-    let wrapper: any = null
-    let component: any = null
+  let wrapper: any = null;
+  let component: any = null;
 
-    await waitFor(() => {
-        wrapper = renderWrapper(reinc, creatorDataContext)
-        component = wrapper.component
-        reinc = wrapper.reinc
-    })
+  await waitFor(() => {
+    wrapper = renderWrapper(reinc, creatorDataContext);
+    component = wrapper.component;
+    reinc = wrapper.reinc;
+  });
 
-    if (!reinc) {
-        throw new Error("Test setup error")
-    }
+  if (!reinc) {
+    throw new Error("Test setup error");
+  }
 
-    reinc = reinc as ReincContextType
-    return {myData, reinc, component, creatorDataContext};
-
+  reinc = reinc as ReincContextType;
+  return { myData, reinc, component, creatorDataContext };
 }
