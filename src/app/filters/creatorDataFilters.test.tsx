@@ -4,7 +4,8 @@ import {FullGuild, MainGuild, SubGuild} from "@/app/utils/guildUtils";
 import {waitFor} from "@testing-library/react";
 import {LoggingConfig} from "@/app/config/loggingConfig";
 import {doFilter} from "@/app/filters/creatorDataFilters";
-import {ReincAbility, ReincContextType} from "@/app/contexts/reincContext";
+import {ReincContextType} from "@/app/contexts/reincContext";
+import { ReincAbility } from "../redux/appContext";
 
 test('filters AbilitiesByGuild with max values', async () => {
     LoggingConfig().configure()
