@@ -1,16 +1,15 @@
 "use client";
-import { FileObject } from "./page";
 import ParserFactory, { CreatorDataType } from "./parserFactory";
-import fs from "fs/promises";
+// import fs from "fs/promises";
 import path from "path";
 
 const DATA_FOLDER = path.join(process.cwd(), "zCreator_data/data");
 const USE_LOCAL_FILES = true; // Set to false to fetch from GitHub
 
 export async function getFile(url: string) {
-  if (USE_LOCAL_FILES) {
-    return await getFileLocal(url);
-  }
+  // if (USE_LOCAL_FILES) {
+  //   return await getFileLocal(url);
+  // }
 
   console.log("URL", url);
 
@@ -24,9 +23,9 @@ export async function getFile(url: string) {
 }
 
 export async function getGuildFile(url: string) {
-  if (USE_LOCAL_FILES) {
-    return await getGuildFileLocal(url);
-  }
+  // if (USE_LOCAL_FILES) {
+  //   return await getGuildFileLocal(url);
+  // }
 
   const res = await fetch(url);
 
@@ -38,9 +37,9 @@ export async function getGuildFile(url: string) {
 }
 
 export async function getData(): Promise<Partial<CreatorDataType>> {
-  if (USE_LOCAL_FILES) {
-    return await getDataLocal();
-  }
+  // if (USE_LOCAL_FILES) {
+  //   return await getDataLocal();
+  // }
 
   let myData: Partial<CreatorDataType> = {};
   const res = await fetch(
@@ -72,45 +71,45 @@ export async function getData(): Promise<Partial<CreatorDataType>> {
   return myData;
 }
 
-export async function getDataLocal(): Promise<Partial<CreatorDataType>> {
-  let myData: Partial<CreatorDataType> = {};
+// export async function getDataLocal(): Promise<Partial<CreatorDataType>> {
+//   let myData: Partial<CreatorDataType> = {};
 
-  const factory = ParserFactory();
+//   const factory = ParserFactory();
 
-  // Read all filenames in data folder
-  const files = await fs.readdir(DATA_FOLDER);
+//   // Read all filenames in data folder
+//   const files = await fs.readdir(DATA_FOLDER);
 
-  for (const fileName of files) {
-    const filePath = path.join(DATA_FOLDER, fileName);
-    const stat = await fs.stat(filePath);
+//   for (const fileName of files) {
+//     const filePath = path.join(DATA_FOLDER, fileName);
+//     const stat = await fs.stat(filePath);
 
-    if (!stat.isFile()) continue;
+//     if (!stat.isFile()) continue;
 
-    // Simulate your previous FileObject structure
-    const fileObject: FileObject = {
-      name: fileName,
-      download_url: fileName, // now just filename
-    };
+//     // Simulate your previous FileObject structure
+//     const fileObject: FileObject = {
+//       name: fileName,
+//       download_url: fileName, // now just filename
+//     };
 
-    const process = await factory.createProcessForFile(fileObject);
-    const dataField = {
-      key: process.key,
-      data: await process.run(),
-    };
+//     const process = await factory.createProcessForFile(fileObject);
+//     const dataField = {
+//       key: process.key,
+//       data: await process.run(),
+//     };
 
-    // @ts-ignore
-    myData[dataField.key] = dataField.data;
-  }
+//     // @ts-ignore
+//     myData[dataField.key] = dataField.data;
+//   }
 
-  return myData;
-}
+//   return myData;
+// }
 
-export async function getFileLocal(fileName: string) {
-  const filePath = path.join(DATA_FOLDER, fileName);
-  return fs.readFile(filePath, "utf-8");
-}
+// export async function getFileLocal(fileName: string) {
+//   const filePath = path.join(DATA_FOLDER, fileName);
+//   return fs.readFile(filePath, "utf-8");
+// }
 
-export async function getGuildFileLocal(fileName: string) {
-  const filePath = path.join(DATA_FOLDER, "guilds", fileName);
-  return fs.readFile(filePath, "utf-8");
-}
+// export async function getGuildFileLocal(fileName: string) {
+//   const filePath = path.join(DATA_FOLDER, "guilds", fileName);
+//   return fs.readFile(filePath, "utf-8");
+// }
