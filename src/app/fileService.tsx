@@ -1,4 +1,4 @@
-"use server";
+"use client";
 import { FileObject } from "./page";
 import ParserFactory, { CreatorDataType } from "./parserFactory";
 import fs from "fs/promises";
