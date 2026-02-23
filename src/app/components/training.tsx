@@ -3,7 +3,6 @@
 import CopyToClipboardButton from "@/app/components/copyToClipboard";
 import SectionBox from "@/app/components/sectionBox";
 import guildDirections from "@/app/data/guildDirections.json";
-import { BackhgroundColor } from "@/app/theme";
 import { FullGuild } from "@/app/utils/guildUtils";
 import { entityToArray, onlyUniqueNameWithHighestMax } from "@/app/utils/utils";
 import { Alert, Stack, Typography } from "@mui/material";
@@ -13,6 +12,7 @@ import { nanoid } from "nanoid";
 import { PropsWithChildren, Suspense, useMemo } from "react";
 import { ReincAbility } from "../redux/appContext";
 import { useAppSelector } from "../redux/hooks";
+import { backgroundColor } from "../theme";
 
 type GuildDirection = {
   name: string;
@@ -36,7 +36,9 @@ const getTrainingText = (a: ReincAbility, separator: string) => {
 };
 
 function DirBox(props: { title: string; dirs: string; info?: string }) {
-  const copyPasteSeparator = useAppSelector((state) => state.reducer.reincContext.copyPasteSeparator);
+  const copyPasteSeparator = useAppSelector(
+    (state) => state.reducer.reincContext.copyPasteSeparator,
+  );
   const info = props.info;
   const dirs = props.dirs.replaceAll(";", copyPasteSeparator);
   return (
@@ -45,7 +47,7 @@ function DirBox(props: { title: string; dirs: string; info?: string }) {
         <Box>
           <Typography variant={"subtitle1"}>{props.title}</Typography>
           {info && info !== "" && (
-            <Alert sx={{ backgroundColor: BackhgroundColor }} severity="info">
+            <Alert sx={{ backgroundColor: backgroundColor }} severity="info">
               {info}
             </Alert>
           )}
@@ -67,7 +69,9 @@ const GuildItem = (
 ) => {
   const { guild, trainedAbilities } = props;
   let mainTrainingText = "";
-  const copyPasteSeparator = useAppSelector((state) => state.reducer.reincContext.copyPasteSeparator);
+  const copyPasteSeparator = useAppSelector(
+    (state) => state.reducer.reincContext.copyPasteSeparator,
+  );
 
   const dirs: GuildDirection[] = guildDirections as GuildDirection[];
   const dirGuild = dirs.find((d) => d.name === guild.name);
@@ -95,10 +99,7 @@ const GuildItem = (
               {trainedAbilities
                 .filter((a) => a.guild?.name === guild.name)
                 .map((a) => {
-                  const trainingText = getTrainingText(
-                    a,
-                    copyPasteSeparator,
-                  );
+                  const trainingText = getTrainingText(a, copyPasteSeparator);
                   mainTrainingText += trainingText;
                   return (
                     <Typography
@@ -128,15 +129,17 @@ const GuildItem = (
 
 function TrainingItem(props: { guild: FullGuild }) {
   const level = useAppSelector((state) => state.reducer.reincContext.level);
-  const skills = entityToArray(useAppSelector((state) => state.reducer.reincContext.skills));
-  const spells = entityToArray(useAppSelector((state) => state.reducer.reincContext.spells));
+  const skills = entityToArray(
+    useAppSelector((state) => state.reducer.reincContext.skills),
+  );
+  const spells = entityToArray(
+    useAppSelector((state) => state.reducer.reincContext.spells),
+  );
   const guild: FullGuild = props.guild;
 
   const trainedAbilities = useMemo(() => {
     return onlyUniqueNameWithHighestMax(
-      skills
-        .concat(spells)
-        .filter((s) => s.trained > 0 && s.enabled),
+      skills.concat(spells).filter((s) => s.trained > 0 && s.enabled),
     );
   }, [skills, spells]);
 

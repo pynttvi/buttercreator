@@ -3,7 +3,6 @@ import LoadingFallback from "@/app/components/loadingFallback";
 import { NumberInput } from "@/app/components/numberInput";
 import useCheckMobileScreen from "@/app/components/useMobileScreen";
 import { MAX_LEVEL } from "../redux/reincReducer";
-import { BackhgroundColor } from "@/app/theme";
 import { roundAbilityTrained } from "@/app/utils/utils";
 import { ExpandMore } from "@mui/icons-material";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -37,6 +36,7 @@ import {
   setDrawerOpen,
   setFreeLevels,
 } from "../redux/reincReducer";
+import { backgroundColor } from "../theme";
 
 const Main = styled("div", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;
@@ -94,7 +94,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   // necessary for content to be below app bar
   ...theme.mixins.toolbar,
   justifyContent: "flex-start",
-  backgroundColor: BackhgroundColor,
+  backgroundColor: backgroundColor,
 }));
 
 const Content = styled(Grid)<{ drawerwidth: number }>(
@@ -206,9 +206,9 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
         drawerwidth={drawerwidth}
         position="fixed"
         open={open}
-        sx={{ backgroundColor: BackhgroundColor }}
+        sx={{ backgroundColor: backgroundColor }}
       >
-        <Toolbar sx={{ backgroundColor: BackhgroundColor }}>
+        <Toolbar sx={{ backgroundColor: backgroundColor }}>
           <Typography variant="h6" noWrap sx={{ flexGrow: 1 }} component="div">
             <Stack direction={"row"} spacing={3}>
               <NavigationItem target={"races-section"} text={"Races"} />
@@ -256,7 +256,7 @@ export default function PersistentDrawerRight(props: PropsWithChildren<{}>) {
           anchor="right"
           open={open}
         >
-          <DrawerHeader sx={{ backgroundColor: BackhgroundColor }}>
+          <DrawerHeader sx={{ backgroundColor: backgroundColor }}>
             <IconButton onClick={handleDrawerClose}>
               {theme.direction === "rtl" ? (
                 <ChevronLeftIcon />
