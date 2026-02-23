@@ -30,7 +30,7 @@ import {
   useAppDispatch,
   useAppSelector,
   useCreatorData,
-  useFilteredData
+  useFilteredData,
 } from "../redux/hooks";
 import {
   removeAbility,

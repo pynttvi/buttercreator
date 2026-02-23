@@ -18,7 +18,7 @@ import {
   setFilteredData,
   setInitialized,
   setReady,
-} from "./reincReducer";
+} from "../redux/reincReducer"
 import { AppDispatch, RootState } from "./reincStore";
 
 

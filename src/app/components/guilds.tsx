@@ -13,15 +13,13 @@ import { PropsWithChildren, useCallback } from "react";
 import {
   useAppDispatch,
   useAppSelector,
-  useGuildUtils,
-  useReinc,
+  useGuildUtils
 } from "../redux/hooks";
 import {
   addOrUpdateGuild,
   MAX_LEVEL,
   setDrawerOpen,
-  setHelpText,
-  setLevel,
+  setHelpText
 } from "../redux/reincReducer";
 import LoadingFallback from "./loadingFallback";
 import SectionBox from "./sectionBox";
@@ -57,14 +55,13 @@ function GuildItem(props: { guild: FullGuild; isSubguild: boolean }) {
     dispatch(setDrawerOpen(true));
   }, [dispatch, guild]);
 
-  const addOrUpdate = useCallback((g: {
-    guildType: GuildType;
-    guild: FullGuild;
-    trained: number;
-  }) => {
-    dispatch(addOrUpdateGuild(g));
-    // console.debug("Added or updated guild", reinc);
-  }, [dispatch]);
+  const addOrUpdate = useCallback(
+    (g: { guildType: GuildType; guild: FullGuild; trained: number }) => {
+      dispatch(addOrUpdateGuild(g));
+      // console.debug("Added or updated guild", reinc);
+    },
+    [dispatch],
+  );
 
   const onClick = () => {
     console.debug("Trained for guild", guild, level);
