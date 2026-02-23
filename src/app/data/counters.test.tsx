@@ -2,7 +2,7 @@ import {expect, test, vi} from "vitest";
 import {getFile} from "@/app/fileService";
 import {ReincContextType} from "@/app/contexts/reincContext";
 import {GuildUtils} from "@/app/utils/guildUtils";
-import Counters from "@/app/data/counters";
+import useCounters from "@/app/data/counters";
 import {formatNumber} from "@/app/utils/utils";
 import {mockCreatorData} from "../../../vitestSetup";
 
@@ -28,7 +28,7 @@ test('Counter tests', async () => {
         ]
     }
     const {creatorDataContext, reinc} = await mockCreatorData(override);
-    const cost = Counters(reinc, creatorDataContext).countAbilitiesCost("skill")
+    const cost = useCounters(reinc, creatorDataContext).countAbilitiesCost("skill")
     expect(formatNumber(cost.exp)).toEqual("52.74M")
     expect(formatNumber(cost.gold)).toEqual("23.44K")
 })

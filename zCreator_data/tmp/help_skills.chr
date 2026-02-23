@@ -1,0 +1,1306 @@
+Help on skill:     Acrobatics
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): str and dex
+High training in this skill adds a flashy touch to many of the
+bard's normal acts and skills like flip kick, for example.
+The bard receives training in how to tumble, jump and spin in
+air, which allows her to entertain her audience a great deal.
+---------------------------------------------------
+Help on skill:  Adrenal surge
+Usage duration: 2 rounds
+Skill type:     neutral
+The user of this skill has developed enough control
+over their bodies that they can force the pumping of
+adrenaline into their system, causing enhanced physical
+characteristics. These enhancements last only a short
+while, and it is difficult to summon the strength to
+do it again quickly.
+---------------------------------------------------
+Help on skill:  Anatomy
+Usage duration: automatic
+Skill type:     knowledge
+With this skill, you will know better where to stab your weapon
+to make more damage, thus increasing the damage of backstab.
+---------------------------------------------------
+Help on skill:  Animal summoning
+Usage duration: 7 rounds
+Skill type:     neutral
+This skill allows you to summon an animal from the wild to come to your
+aid.  Obviously, it won't work indoors.  To attempt and control the
+animal you must use the animal handling skill.  The animal that you summon
+is dependant upon your level and skill knowledge.  The amount of time the
+animal remains by your side is also dependant upon your skill knowledge.
+If your animal is killed you will lose 1/5 of your experience, so be careful
+with how you handle your animal friends.
+---------------------------------------------------
+Help on skill:  Archery
+Usage duration: automatic
+Skill type:     special
+This skill is used when firing bows.
+---------------------------------------------------
+Help on skill:  Armour piercing
+Usage duration: automatic
+Skill type:     special
+The skill grants a skilled polearm fighter knowledge on the various
+types of armours and their weak spots.  This skill is automatically
+in use, and when a successful proficiency check is made, the warrior
+has successfully found a weak spot in his opponent's armour, allowing
+him to deal a wicked blow.
+---------------------------------------------------
+Help on skill:  The art of bushido
+Usage duration: automatic
+Skill type:     special
+Gi - Rectitude
+Yuu - Courage
+Jin - Benevolence
+Rei - Respect
+Shin - Honesty
+Yo - Honor
+Chuu - Loyalty
+Bushido is the tradition of the Samurai, the ethical and moral
+pinnacle carried through the ages from each Samurai Warrior to their
+eldest proven son. It is the very essence of the Way, and to neglect it
+is to forfeit all privilege and status of the Samurai. Bushido can not be
+taught, it is only observed and learned through faithful and diligent
+adherence to its virtues. This skill does not teach the Art of Bushido,
+as each Samurai to reach the status of Samurai Shogunate is brought up to
+this tradition from the cradle. Instead, this Art teaches the Samurai
+Shogunate on how to display their virtue and adherence to the traditions
+to the younger Samurais. As a result, each young Samurai fortunate enough
+to join the party of a Samurai Shogunate shall learn from his experience,
+gaining mastery in the Samurai's special skills considerably faster.
+Skill percent determines the Samurai Shogunate's extent of influence.
+---------------------------------------------------
+Help on skill:  Artistic license
+Usage duration: automatic
+Skill type:     special
+The creation of jewelry is as much an art as it is a science.  Some of most valuable jewlery has been created by those whom throw out the conventional rules of jewelry making.  This skills allows one to carve one's gems into new, 'special' shapes that normally would never be done.  However it must be noted it that if one trains this skill, he is even more likely to produce utter garbage rather than world-reknown jewelry.
+---------------------------------------------------
+Help on skill:  Assess quality
+Usage duration: automatic
+Skill type:     special
+With this skill, the skilled jeweler can find small flaws in gems that are normally hidden to the untrained eye.
+---------------------------------------------------
+Help on skill:  Barbs
+Usage duration: 3 rounds
+Skill type:     neutral
+This skill allows a monster to fill a room with deadly barbs,
+harming all players in the area.
+---------------------------------------------------
+Help on skill:     Batter
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength, constitution and dexterity
+This skill is stronger when leading a party (3+).
+This skill is designed for warriors who fight with a shield and a bludgeon
+combination. With an arming like this is clear that the warrior cannot use
+both of his hands in guiding of his weapon therefore a skill that bases
+entirely on one handed attack moves was created. The warrior is taught how
+to use his weapon to launch powerful attack moves from the safety of his
+shield. Without knowledge where to strike the warrior will however always
+be incomplete. The perfect executing of this skill requires that the warrior
+has also gathered knowledge from a skill called 'combat sense'. It is also
+noteworthy that the speed of this skill depends heavily from the size of
+the used weapon.
+Batter has a chance to do additional damage, and apply various negative effects,
+if used while fighting from a defensive stance behind a wall of steel. The user's
+mastery of shield-fighting techniques, and concentration on parrying, determines
+the likelihood of these additional effects. Moreso than other Myrmidon skills,
+batter is especially effective at creating opportunities to strike with the shield.
+---------------------------------------------------
+Help on skill:  Battle stamina
+Usage duration: automatic
+Skill type:     special
+This skill measures a polearm fighter's ability to keep up with an execute
+many of the bizarre attack combinations possible with his various skills.
+The more skilled that the warrior is in this skill, the less likely he will
+have to stop between skills to "take a breather", thereby ruining his chance
+at scoring some of the more potent hits available to him.
+---------------------------------------------------
+Help on skill:     Bear hug
+Usage duration:    random
+Skill type:        attack
+Affecting stat(s): str
+This skill allows you to hug your opponent.
+---------------------------------------------------
+Help on skill:  Benediction of embedding
+Usage duration: random
+Skill type:     neutral
+Benediction of embedding is a delicate prayer, taught only to members
+of the clergy. While the reasons for performing vary from one faith to
+another, this is a ritual that has but one goal. To harness the dormant
+powers of the godly fragments known simply as Shards in a manner that
+entwines their power permanently to a piece of armour or a weapon. Once
+the Shard has been properly embedded, it will grant to its host item
+mystical powers that vary greatly from one Shard to another, due to
+multiple forms and sizes the Shards take.
+Syntax: use benediction of embedding at <item> and <shard>
+Both the item and the shard must be on the ground.
+---------------------------------------------------
+Help on skill:  Benumb
+Usage duration: 3 rounds
+Skill type:     neutral
+This skill allows a monster to stun a person to such an extent that they
+drop everything and drool.
+---------------------------------------------------
+Help on skill:  Blade parry
+Usage duration: automatic
+Skill type:     defensive
+This skill allows you to parry hits in combat
+using a sword in your leftwield.  It requires
+knowledge of regular parry.
+---------------------------------------------------
+Help on skill:  Body control
+Usage duration: automatic
+Skill type:     automatic
+During the years of vigorous training of mind and body the death knights
+learn this skill which gives them a better control of their own bodies.
+Knowing how ones body works makes the knight better prepared
+to face sudden changes in his body functions which he might face in the
+field of battle, for example stun. Knowing this skill very well sometimes
+gives the knight a chance to gain back the control of his body a bit
+faster than those who are not trained thus.
+---------------------------------------------------
+Help on skill:  Body_slam
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to eject an opponent from its room.
+---------------------------------------------------
+Help on skill:  Breathless brilliance
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in asphyxiation attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:  Build body
+Usage duration: 2 rounds
+Skill type:     neutral
+With this skill the death knight can attach the parts of the body into a
+form he wants. Different races require different parts for the body, for
+example some races need only bones, not the flesh. This skill requires
+spell points according to the amount of body parts the knight needs to
+attach to each other in order to form the body. The outcome of the succesful
+use of this skill is a new body which can be stored in the death room.
+The knight gets feedback on how well he made the corpse, 100% is a perfect
+body, 0% is a total failure. The affecting stats are skill %, wisdom,
+skill % of focus death magic and the quality of the bodyparts which are used.
+When the knight wants to actually make the body he needs to have all the parts
+needed for a body of the target race. The syntax is: use build body at
+<race name>,<part1>,<part2>,<part n>.
+---------------------------------------------------
+Help on skill:  Caustic wit
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in acid attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:  Channel death magic
+Usage duration: automatic
+Skill type:     automatic
+This skill enhances the effects of various damage spells which the
+death knights use. It allows the knight to channel death magic with
+greater skill, thus allowing a greater amount of concentrated energy
+in
+the damage spells.
+---------------------------------------------------
+Help on skill:  Concentration
+Usage duration: random
+Skill type:     neutral
+This skill is used to store some raw energy into the
+sorcerer's aura.  Your skill percent affects what portion of the
+spell points you use during this skill actually get stored.
+---------------------------------------------------
+Help on skill:     Control transfer
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): int
+This skill is checked every time you cast a transfer
+damage spell.  It helps increase the damage done with the spell.
+---------------------------------------------------
+Help on skill:     Convert damage
+Usage duration:    0 round
+Skill type:        neutral
+Affecting stat(s): wis
+Converts the damage done to you to physical damage.
+---------------------------------------------------
+Help on skill:  Create pitfall
+Usage duration: 15 rounds
+Skill type:     neutral
+This skill allows you create a trap that will
+cause anyone entering the room to fall and take
+damage from.  This skill may only be used outdoors
+and requires a shovel.
+---------------------------------------------------
+Help on skill:  Cripple
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to cripple an opponent.
+---------------------------------------------------
+Help on skill:     Cross slash
+Usage duration:    random
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): dexterity and strength
+An efficient polearm fighting technique where the warrior attempts to slash
+their opponent twice in rapid succession across the mid-riff. While potentially
+very powerful, this technique is also quite unreliable due to its inherent
+simplicity: the quick slashes are relatively easy to block or deflect aside.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:     Cut gem
+Usage duration:    random
+Skill type:        Special
+Affecting stat(s): dex and wis
+This skill allows a skilled jeweler to cut his/her gems with utmost precision, allowing him/her to remove small flaws while cutting the stone to the proper shape and proportion to be set into an item.
+---------------------------------------------------
+Help on skill:  Death blow
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to do MASSIVE damage with
+but a light touch.
+---------------------------------------------------
+Help on skill:     Deceitful blow
+Usage duration:    random
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): dexterity and strength
+This clever attack, which is derived from the cross slash technique, involves
+a deceptive attack intended to miss, with the goal of creating an opening for
+a powerful follow-up slash. Not only has this devious attack the potential to
+inflict severe injuries, but it may also throw the opponent off balance.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:  Desecrate corpse
+Usage duration: automatic
+Skill type:     neutral
+Desecrating a corpse allows a priest to channel the corpse's life force
+into useable energy. The shadow sceptre is needed in this process.
+---------------------------------------------------
+Help on skill:  Desensitization
+Usage duration: 5 rounds
+Skill type:     neutral
+By focusing on killing his opponent, to the detriment of
+all else, users of this skill can actually take more
+damage than they otherwise are capable of sustaining.
+This has drawbacks, however, since when the skill wears
+off, they may find that they are thrown into shock due
+to damage they took but ignored.
+---------------------------------------------------
+Help on skill:  Dimensional awareness
+Usage duration: automatic
+Skill type:     special
+This skill allows the navigator to sense disturbances in the
+ethereal dimension, which usually indicates that teleportation
+magic is being directed to the location of the navigator. The
+skill navigators way greatly increases the chance of detection.
+---------------------------------------------------
+Help on skill:  Disarm
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to disarm an opponent.
+fully rested.) (Not in battle) (Very evil)|
+---------------------------------------------------
+Help on skill:     Disembowel
+Usage duration:    random
+Fatigue:           mediocre
+Skill type:        attack
+Affecting stat(s): strength and dexterity
+A brutally efficient technique that outright discards all pretense of finesse,
+relying on sheer force and surprise. With this attack the warrior attempts to
+plunge their polearm into their opponent's gut with the intent of causing as
+much internal damage as possible. However, a wild attack such as this is likely
+to fail should the opponent be aware.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:     Dismember
+Usage duration:    random
+Fatigue:           high
+Skill type:        attack
+Affecting stat(s): strength and dexterity
+This technique is the pinnacle of training for a polearm fighter. The attack
+entails a series of strikes with the ultimate goal of cutting the opponent
+literally into pieces. While effective in its own right, it becomes truly
+devastating when performed as the finishing move of a longer sequence of
+attacks.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:     Divine guidance
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): wisdom and skill percent
+The war of faiths is a neverending struggle and clerics fighting for their God
+must be tireless in their efforts. To this end some clerics are able to draw
+divine guidance from their Gods, reducing fatigue and allowing them to carry
+fighting for longer.
+The cleric's standing in the church of their chosen deity has a pronounced
+effect on the magnitude of the boon they are granted, as does the cleric's
+wisdom.
+---------------------------------------------------
+Help on skill:     Double backstab
+Usage duration:    automatic
+Skill type:        attack
+Affecting stat(s): str and dex
+This skill will allow you to augment the damage of
+a backstab.
+You must first succeed with your backstab.
+---------------------------------------------------
+Help on skill:     Downward strike
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength, constitution and dexterity
+A potentially devastating maneuver that consists of a single powerful slash,
+directed downwards, or diagonally downwards, at the opponent. In addition of the
+grievous injuries this attack may cause, it may also knock the opponent severely
+off balance.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:  Dragon lore
+Usage duration: automatic
+Skill type:     Knowledge
+This skill increases the strength and size of the dragon
+that a ranger can possibly summon.
+---------------------------------------------------
+Help on skill:  Drain vigour
+Usage duration: automatic
+Skill type:     automatic
+This skill allows the skilled grim reapers to drain vigour from the
+enemy they are draining with the spell suffocation or flesh rot. It
+allows the knight to redirect the draining powers of the spell into the
+enemy so that the vigour will flow to the knight and replenish his energy
+and lifeforce, at the same time making the target exhausted.
+---------------------------------------------------
+Help on skill:  Edged polearms
+Usage duration: automatic
+Skill type:     special
+This skill measures a polearm fighter's ability to handle the massive edged
+weapons such as the halberd, bardiche, voulge and glaive. Edged polearms are
+known to generally cause more damage than their thrusting cousins, but also
+seem to miss quite a bit more.
+---------------------------------------------------
+Help on skill:     Engrave message
+Usage duration:    0 round
+Skill type:        Special
+Affecting stat(s): dex
+This skill allows a skilled jeweler to engrave a short message somewhere on the piece, useful for adding a personal touch to gifts and whatnot.
+---------------------------------------------------
+Help on skill:  Enhance criticals
+Usage duration: automatic
+Skill type:     special
+This skill can greatly enhance the frequency and strength of impact
+of critical strikes. The enhancement is most potent when wielding a
+dagger-type weapon.
+---------------------------------------------------
+Help on skill:  Enhance tracking
+Usage duration: automatic
+Skill type:     special
+This skill enhances the tracking-skill's effects.
+---------------------------------------------------
+Help on skill:  Essence attunement
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in magical attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:  Establish roost
+Usage duration: 51 rounds
+Skill type:     neutral
+This skill allows you to establish a pigeon roost.  The
+higher your skill percent the shorter the time it will
+take to establish your roost.
+---------------------------------------------------
+Help on skill:  Evaluate corpse
+Usage duration: 1 round
+Skill type:     neutral
+Using this skill the knight can evaluate the quality of different parts
+of the body which the target has. The accuracy of the information
+knight gains on the value of different parts of the body is dependant
+on the skill % and wisdom of the user. This skill only works on monsters.
+If the knight doesn't recognize the race of the target the target can
+not be evaluated. Also only living targets can be evaluated, a dead
+body of a foe is often so messed that the parts can't be evaluated
+precisely. A body of the creature must be evaluated in order to be
+able to use extract bodypart after the foe has died.
+Note: All evaluated parts get an extra 20% bonus in quality if the
+race of the target is same as the race of the user, 15% bonus if the
+race is very close to the one of the user and 10% bonus if the race of
+the target is any of the death knight races.
+The knight can use this skill with a target 'list' if he needs to see
+the creatures which have bodies similiar to his own.
+---------------------------------------------------
+Help on skill:  Good omens
+Usage duration: automatic
+Skill type:     neutral
+Being a master of evil an advanced evil cleric can predict
+the changes in magic and use a beneficial change in his/her
+spells to make them work more efficiently. This is known to be
+-very- difficult skill to master and thus it might not always work
+like you would expect it to.
+---------------------------------------------------
+Help on skill:  Exsanguination
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to induce dibilitating bleeding in a victim.
+---------------------------------------------------
+Help on skill:  Extract bodypart
+Usage duration: 0 round
+Skill type:     neutral
+With this skill the knight can extract a well preserved part from a
+corpse. How skillfully the knight can extract the part and if the part
+gets damaged in the process or not depends on the skill % and the wisdom
+of the knight. Usage: use extract bodypart at corpse extract <part name>
+or use extract bodypart at corpse list. When using the target 'list' the
+knight can get a list of the parts evaluated earlier.
+---------------------------------------------------
+Help on skill:  Fake death
+Usage duration: 2 rounds
+Skill type:     neutral
+With this skill the death knight can make the people around him
+believe that he is dead, allowing the knight to make a preliminary
+strike. How easily others around the knight are fooled depends on
+the skill percent of fake death, skill percent of mastery of death
+illusions, wisdom and intelligence of the knight.
+---------------------------------------------------
+Help on skill:  Fake guilt
+Usage duration: automatic
+Skill type:     knowledge
+Knowledge in this skill will allow the thief to fake his failed
+stealing skills to be made by someone else in the room.
+---------------------------------------------------
+Help on skill:     Fatal blow
+Usage duration:    random
+Fatigue:           mediocre
+Skill type:        attack
+Affecting stat(s): dexterity and strength
+One of the most difficult techniques that a polearm fighter may learn, as well
+as one of the most devastating. With this maneuver the warrior seeks to exploit
+the weaknesses in their opponent's defenses with a single attack of precision.
+The crux of this technique is its precision, for a warrior performing this kind
+attack must not only possess the necessary agility to take advantage of a weakness,
+but also the keenness of mind to recognize those weaknesses.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:  Fell warding
+Usage duration: automatic
+Skill type:     knowledge
+The death knights are far from adepts of defensive magics, and their methods and
+temperament are rarely suited to such a passive approach but through considerable
+training they can conjure at least adequate wards.
+---------------------------------------------------
+Help on skill:  Firevision
+Usage duration: 2 rounds
+Mental Cost:    150 SPs
+Skill type:     neutral
+With skilled manipulation of the elemental fire, can
+monks simulate the effects of the infravision.
+---------------------------------------------------
+Help on skill:  Flow of life
+Usage duration: automatic
+Skill type:     special
+A good healer knows exactly how to manipulate body energies and raw magic
+into tangiable, life giving form, but the best healers know how to mold
+this ever-present flow of life into form with such speed that can only come
+from knowing the fabric of the heart of the world itself. Diligent study of
+the natural flow of life around us grants speed to the caster of true heal
+spells which, while difficult to truly master, can sometimes provide that
+added deftness to a heal which could make all the difference between life
+and death.
+---------------------------------------------------
+Help on skill:  Flying
+Usage duration: automatic
+Skill type:     Special
+Those people adept in this skill are better at flying whether they have
+wings or fly using a spell. Being better means that you are less likely
+to be swept away even in strong wind. You are also able to make a
+better landing from free fall thus reducing the damage taken.
+This skill is automatically in use.
+---------------------------------------------------
+Help on skill:     Flying tackle
+Usage duration:    2 rounds
+Skill type:        attack
+Affecting stat(s): str, dex and con
+This skill allows the user to jump and tackle his opponent, doing
+some damage and keeping himself and his opponent from attacking quickly.
+---------------------------------------------------
+Help on skill:     Flying toss
+Usage duration:    2 rounds
+Skill type:        attack
+Affecting stat(s): str and siz
+Users of this skill can grab their opponent during combat
+and toss them bodily through the air, causing damage and
+disorienting the opponent. Heavier opponents are, obviously
+more difficult to toss.
+---------------------------------------------------
+Help on skill:  Focus death magic
+Usage duration: automatic
+Skill type:     automatic
+This skill allows the knight to better direct and use his knowledge
+over death magic. The knight can direct his power to a smaller parts
+of the targets body with the help of this skill.
+---------------------------------------------------
+Help on skill:     Following
+Usage duration:    1 round
+Skill type:        neutral
+Affecting stat(s): level and con
+This skill allows you to follow other players without being in a party
+with them when they are walking outdoors. The better your constitution,
+level and the skill percent are, the longer you can follow your target.
+---------------------------------------------------
+Help on skill:     Forcepush
+Usage duration:    2 rounds
+Skill type:        attack
+Affecting stat(s): str
+This skill is very nice for arch's.
+---------------------------------------------------
+Help on skill:  Gem placement
+Usage duration: automatic
+Skill type:     special
+Even if a jeweler has an exact idea of where he wants to place a gem, it requires steady hands to get the placement exactly right.  In a task where a few millimeters in any general direction determines the difference between a masterpiece and disaster, precise gem placement is crucial.
+---------------------------------------------------
+Help on skill:  Gestalt conjuration
+Usage duration: automatic
+Skill type:     special
+Training in this skill allows master magicians to draw greater insight
+from the teachings of the mage guild when conjuring a power blast. Only
+through an intuitive grasp of this body of knowledge as a whole, may a
+mage realize the full potential of this spell. The more vast and diverse
+the mage's knowledge of underlying mage guild spells, the greater the
+benefit conferred by this skill.
+---------------------------------------------------
+Help on skill:  Golden dome
+Usage duration: 2 rounds
+Skill type:     neutral
+To facilitate their stargazing, the invokers of the Golden Company
+have invented a way for them to conjure a representation of the very
+golden dome they use as their guildhall. Through some aptitude with
+illusionary arts, an invoker is able to create a facsimile of the
+hallucinatory forest of the Druids. While this conjuration is not
+nearly as potent and somewhat more difficult to create, it does have
+the same benefits and drawbacks as the very spell that inspired it.
+Gold functions as the physical materia required for this conjuration.
+---------------------------------------------------
+Help on skill:     Golden spear
+Usage duration:    random
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): wisdom, charisma and constitution
+The Golden Company has vast knowledge about protective invocations that
+rival similar magics used by the guild of Abjurers. What the Company does
+not possess however, are abilities that would create persistent and potent
+vulnerabilities in their targets. In trying to solve this conundrum, one
+of the most inventive invoker found out that should the target be holding
+a golden conduit, the transference of stellar damage into its frame would
+be that much easier. It is, however, often folly to try and ask possible
+foes if they would be so kind as to hold on to a conduit while doing
+combat.
+And so, the members of the Golden Company fashioned a skill that allows
+an invoker to quickly fashion a conductive golden spear out of coins
+they carry and hurl that projectile against the target, hoping that
+it embeds itself deep enough so that it can do its job regardless of how
+the target might feel about it. As the conjuration is very volatile, and
+often great energies are transfered through the conduit, it will only
+last a short while until it disappears altogether.
+---------------------------------------------------
+Help on skill:  Good omens
+Usage duration: automatic
+Skill type:     neutral
+Being a master of evil an advanced evil cleric can predict
+the changes in magic and use a beneficial change in his/her
+spells to make them work more efficiently. This is known to be
+-very- difficult skill to master and thus it might not always work
+like you would expect it to.
+---------------------------------------------------
+Help on skill:  Greater illusion control
+Usage duration: automatic
+Skill type:     special
+This skill allows the sorcerer to direct summoned monsters forward
+forcing them to fight for him/her. This skill only works on greater
+forms of summoned phantoms.
+---------------------------------------------------
+Help on skill:  Hack-n-slash
+Usage duration: random
+Skill type:     attack
+This skill is used for devastating attack maneuvers with
+axes.  This skill is based upon knowledge of the art of
+bladed fury.  With this skill you can use your axes to
+butcher your opponent so badly, his own mother will not
+recognize him.
+---------------------------------------------------
+Help on skill:  Healing resonance
+Usage duration: automatic
+Skill type:     special
+Most magic induced healing within the realm is done by manipulating the
+flow of life in and around a being. This manipulation is has been known
+to
+cause strange resonance, much like a musical note, within the very bones
+and sinew of those hurt souls, and this fact has not been lost upon the true
+healers of the realm. Knowing how to control this reverberation and mold it
+into further healing is an art, and only the best healers in the land ever
+manage to perfect it, though many try. Oddly enough, it has been noted that
+no healer, not even Vorth, has ever managed to control this resonance upon
+their own body. Only from one soul to another can the reverberation be even
+remotely controlled; never in multiple heals. Even when artful with the skill,
+it has been noted that for the most powerful of heal spells, resonance is
+nigh impossible to achieve.
+---------------------------------------------------
+Help on skill:  Herb mixing
+Usage duration: random
+Skill type:     neutral
+This skill is used to make different types of herbal mixtures.
+Usage: use herb mixing at <what>
+<what> is the mixture you want to make (for example thieves kiss
+poison. The skill checks the needed herbs automatically.
+You need a mortar and pestle for this skill (and herbs of course.)
+---------------------------------------------------
+Help on skill:  Herbal food poison
+Usage duration: automatic
+Skill type:     knowledge
+This skill is used to create herbal mixture that can be used to poison
+food. The effectiveness of the poison is heavily dependent on the users
+level. This skill is used in conjunction with the skill herb mixing.
+Using this skill will show you the correct reagents.
+---------------------------------------------------
+Help on skill:  Heroic charge
+Usage duration: 3 rounds
+Skill type:     attack
+This skill is used for a powerful battle maneuver that
+can cause considerable damage, but it also will leave you
+wide open for attacks. Affecting stats: Dexterity and Strength.
+---------------------------------------------------
+Help on skill:  Hiding
+Usage duration: 3 rounds
+Skill type:     neutral
+This skill allows you to hide somewhere and not be noticed by other
+players. If there are people in the same room at the time you use this
+skill and they have noticed you, they have a quite good possibility
+to see you trying to hide. This skill is especially effective when used
+with backstab. The smaller you are, the easier time you have finding good
+hiding places.
+---------------------------------------------------
+Help on skill:     Hit placement
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): dex, int, organ knowledge, knowledge of ranged fighting,
+critical and weapon skill
+This skill measures the polearm fighter's discipline and ability to
+carefully aim where he wants his polearm attacks to land, allowing him
+critically wound his opponent.
+---------------------------------------------------
+Help on skill:     Idling
+Usage duration:    automatic
+Skill type:        very special
+Affecting stat(s): wis and dex
+This skill allows Del to perform his duties more efficiantly.
+---------------------------------------------------
+Help on skill:  Ignore zarch whines
+Usage duration: automatic
+Skill type:     automatic
+With this skill the arch in question can ignore all the whines coming
+from a player called Zarch, since all the whines are complete bs
+anyway.
+---------------------------------------------------
+Help on skill:  Incendiary instincts
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in fire attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:  Intentionality
+Usage duration: automatic
+Skill type:     special
+The power blast spell represents the pinnacle of the mage guild's teachings,
+drawing from the caster's knowledge in a wide variety of offensive spells to
+deal unrivaled damage. While the force of an uncontrolled power blast is
+impressive, the essence of the spell is unpredictable, making it difficult
+to strike an enemy's weaknesses.
+A more selective mage may study a smaller selection of underlying spells
+and apply a damage preference to achieve greater consistency in his damage
+output. Training in intentionality enhances this focus even further,
+helping the mage conjure stronger and more reliable blasts in his chosen
+damage type. If the mage has pursued a more generalized course of study,
+this skill will yield fewer benefits, but will reduce randomness somewhat,
+and will lessen the odds of doing physical damage.
+---------------------------------------------------
+Help on skill:     Kick placement
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): dex
+This skill is checked every time you use the skill.
+Flip kick.  It helps amplify the effects of the skill
+and can even induce special properties.
+---------------------------------------------------
+Help on skill:  Adrenal surge
+Usage duration: 2 rounds
+Skill type:     neutral
+The user of this skill has developed enough control
+over their bodies that they can force the pumping of
+adrenaline into their system, causing enhanced physical
+characteristics. These enhancements last only a short
+while, and it is difficult to summon the strength to
+do it again quickly.
+---------------------------------------------------
+Help on skill:  Knowledge of omens
+Usage duration: automatic
+Skill type:     neutral
+Knowledge of omens is a skill often practiced by neutral clerics. Some
+of them are known to have taken the skill a step further by studying the
+omens more carefully. This has divided the clerics into many different
+groups that all have their own specialities. The skill will help a cleric
+to predict the changes of casting conditions -during- their spellcasting.
+---------------------------------------------------
+Help on skill:  Life of the mind
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in psionic attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:     Locking
+Usage duration:    2 rounds
+Skill type:        neutral
+Affecting stat(s): str and level
+This skill allows you to lock your enemy's limbs with your own, therefore reducing the attacks your opponent (and you) get. The user of this skill can't use other skills while locking someone.
+---------------------------------------------------
+Help on skill:     Low blow
+Usage duration:    automatic
+Skill type:        attack
+Affecting stat(s): str and dex
+This skill will allow you to disable your opponent with
+the skill mutilate.  You must first succeed with mutilate.
+It also can augment the damage done by mutilate.
+---------------------------------------------------
+Help on skill:     Lunge
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): constitution, dexterity and strength
+As its name implies this technique is essentially a quick lunge forwards,
+weapon ready to impale the opponent. While in itself a very simple maneuver,
+the movement will give the weapon increased momentum which in turn increases
+the potential damage caused by the attack. The lack of finesse often proves to
+be the attempt's downfall, however, as a hurried leap at an enemy is easily
+recognized and countered.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:  Make bumerang
+Usage duration: 3 rounds
+Skill type:     neutral
+This skill allows a samurai to create a special bumerang for
+use in combat.  Its rather difficult so you may need to practice
+this a lot.
+---------------------------------------------------
+Help on skill:  Make incendiary shuriken
+Usage duration: 2 rounds
+Skill type:     neutral
+A part of the Samurai Arts is the creation of the deadly battlestars
+known as shuriken. As a Samurai reaches a higher circle in his studies,
+he obtains the techniques necessary to treat his weapons, both his blade
+and the shuriken, with various enchanting properties that modify the type
+of damage they inflict. While the blade requires a magical blessing to
+inflict other damage types beyond the physical, the shurikens can be created
+in select types directly. Many aspects of the Samurai's talents aid in the
+construction of these special weapons. Skill knowledge in making the type
+of shuriken used, the art of Zhinakoku, and the mastery in making shuriken,
+that can only be obtained through practice and devotion, all further develope
+this aspect of the Samurai Arts. Shurikens created with this skill will ignite
+once thrown, burning the flesh of anyone in their path.
+---------------------------------------------------
+Help on skill:  Mastery of coating
+Usage duration: automatic
+Skill type:     special
+The art of coating the deadly battlestars known as shuriken takes
+the better part of a Samurai's life to master. While the Artists of
+the Samurai are legendary in their ability to treat the shuriken, all
+sects of the Samurai Guild receive training in this aspect of the
+Samurai Art. Often, the best mentors are Artists of the Samurai
+themselves. Proficiency in the mastery of coating increases the
+effect of poisonous, incendiary and corrosive coatings applied
+to the Samurai's shuriken.
+---------------------------------------------------
+Help on skill:  Mastery of death illusions
+Usage duration: automatic
+Skill type:     automatic
+This skill enhances the effects of many death illusions which the
+knights use, both the skills/spells directed at knight by himself
+and the skills/spells directed at others, like paranoia.
+---------------------------------------------------
+Help on skill:  Mastery of death protection
+Usage duration: automatic
+Skill type:     automatic
+This skill enhances the effects of various protective spells which
+the death knights use. It also makes the chaos-materia easier to
+handle as a part of the protective spells. It also affects few
+half-protective spells like chaos cube and some bonding spells like
+bonded spirits.
+---------------------------------------------------
+Help on skill:  Mastery of draining
+Usage duration: automatic
+Skill type:     automatic
+This skill enhances the effects of draining spells and skills which
+the death knights use.
+---------------------------------------------------
+Help on skill:  Mastery of farfetching
+Usage duration: automatic
+Skill type:     automatic
+This skill is suitable for leaders who want to astonish arches
+with weird and funny ideas on how to kill eq monsters. It is
+rumored that Vili is one of the few masters of this skill.
+---------------------------------------------------
+Help on skill:  Mastery of idling
+Usage duration: automatic
+Skill type:     automatic
+Only arches can fully understand the meaning of this great skill and
+it can only be trained to 100% by them. It allows the arch in question
+to completely ignore all whines and continue the recordbreaking attempt
+of 5k days of idling.
+---------------------------------------------------
+Help on skill:  Mastery of time
+Usage duration: automatic
+Skill type:     automatic
+For centuries men have tried to fully understand the metaphysics of time.
+Some have gone even further by trying to harness timeflows under their command.
+Few are those who have a slightest grasp of this skill. Those are known as
+Keepers of chronology. Last remnants of this knowledge is stored in ten
+sacred time tomes.
+---------------------------------------------------
+Help on skill:  Mastery of war
+Usage duration: automatic
+Skill type:     automatic
+Knowledge of this skill gives the leader of the troops more control
+over them and keeps the morale of the troops higher since they acknowledge
+the skills of their master. This can prove useful in dangerous situations
+like retreating or ambushes and lessen the loss of men.
+---------------------------------------------------
+(You feel fully rested.) (Not in battle) (Very evil)|
+Help on skill:     Meteoric charge
+Usage duration:    2 rounds
+Fatigue:           minimal
+Skill type:        attack
+Affecting stat(s): constitution and wisdom
+Akin to the brutal technique used by the Fighter's guild, the Golden Art
+known as Meteoric Charge is a combat initiator. Once an enemy has been
+sighted, it is crucial to keep the initiative if possible. Starting
+the combat by launching themselves forward with using stored kinetic energy
+from deep within the cosmos, a member of the Golden Company is able to close
+the distance with their adversary, allowing them to relentlessly pursue
+their quarry all the while putting themselves in between the foe and
+any possible allies.
+A sword and a shield must be equipped to use this skill.
+---------------------------------------------------
+Help on skill:  Modify bodypart
+Usage duration: 0 round
+Skill type:     neutral
+Using this skill the knight can modify a bodypart to be more suitable
+for his chosen race. Nonmodified parts can not be attached to a body
+made by the knight. How well the knight can modify the part depends on
+the race of the corpse from which the part has been taken from, the
+knights wisdom, the skill % of focus death magic and the skill % of
+modify bodypart. The knight gets feedback how well he made the modification
+and this modification % affects the chance of succesful attachment of
+the part to the knights body when using build body skill. This skill
+uses mental energy in order to modify the part to correct shape. If
+the part is from a race which is same as the body which the knight intends
+to build it doesn't need to be modified. There are 4 modification classes
+and when using extract bodypart the knight will get feedback on the
+class of the part. The lower the modification class the more the knight
+needs sp to modify the bodypart. Class zero bodyparts need great modification,
+class three bodyparts need no modification. Usage: use modify bodypart at
+<part> modify towards <race>.
+---------------------------------------------------
+Help on skill:  Munch magic item
+Usage duration: 0 round
+Skill type:     neutral
+This skill allows the death knight to drain some of the magical powers
+stored inside a magical item, usually detoriating the item into a pile
+of dust. The amount of magical power restored depends on the skill %,
+int, wis, skill % of the mastery of draining and the magical value of
+the item in question.
+---------------------------------------------------
+Help on skill:  Mutilate
+Usage duration: random
+Skill type:     attack
+This skill is used for powerful attack maneuvers
+with bludgeons.  The damage caused by this
+skill is based on your weapon, stats and skill
+knowledge.  In addition knowledge of strike may help
+make this skill work better.
+This skill takes into account different
+weapon damage types.
+---------------------------------------------------
+Help on skill:     Obliteration
+Usage duration:    random
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): constitution, strength, wisdom, weapon skill, weapon stats,
+active offensive auras, ogham rhetoric, true transfer damage
+and sword techniques
+The majority of the combat prowess an invoker of the Golden Company
+possesses is sourced from their Golden Arts. As the Arts are mostly
+tied to the regenerative mental powers of the user, this leaves
+their physical stamina relatively untouched. To best utilize all
+the power available, the Golden Company has created a technique
+known as obliteration. Through clever use of dormant innate powers
+a strong invoker is able to become stronger still, fueling the
+impact of the skill with their active offensive Arts. This attack
+works best from a flanking position.
+If used with an armament of sufficient elemental potency, this ability
+often causes the target to become susceptible to followup attacks.
+This attack can only be executed while wielding a sword and a shield.
+---------------------------------------------------
+Help on skill:     Overload
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): int and lvl
+This skill is checked every time a sorcerer casts a
+spell it will occasional channel some of the sorcerer's
+raw energy back into the spell.
+---------------------------------------------------
+Help on skill:     Personalize
+Usage duration:    0 round
+Skill type:        Special
+Affecting stat(s): dex
+This skill allows a skilled jeweler to personalize an item such that only the assigne owner will be able to read it.
+---------------------------------------------------
+Help on skill:  Piercing-blows
+Usage duration: 0 round
+Skill type:     Attack
+Much like the polearm skill transpierce, a warrior using this
+technique attempts to thrust his weapon into an opponent, causing
+a puncture wound. However, unlike the transpierce skill, the warrior
+attempts to follow up their first strike with another piercing
+attack, to increase the effect.
+---------------------------------------------------
+Help on skill:  Prayer to gods
+Usage duration: 1 round
+Skill type:     defensive
+When all hope is lost and death is coming for you, this skill might
+be your last chance. It will allow you to perform a quick prayer to
+to the god of death to save you from the throes of hell. This skill is
+not to be used carelessly, god of death doesn't take lightly to being
+disturbed. Your chances of survival depend on your wisdom, skill % and
+skill % of mastery of death protection. If you fail, you will die.
+---------------------------------------------------
+Help on skill:  Prepare enchantment
+Usage duration: automatic
+Skill type:     neutral
+This skill prepares an item to be enchanted. This skill can only
+be used at non-magical weapons and armours.
+---------------------------------------------------
+Help on skill:     Primal scream
+Usage duration:    3 rounds
+Skill type:        attack
+Affecting stat(s): str and dex
+When a berserker uses this skill, they put themselves into a
+sub-human state, into an animal-like rage. Issuing a scream of
+rage, they become spurred into doing an incredible amount of
+damage to their combatant without regard for personal safety.
+---------------------------------------------------
+Help on skill:     Pummel
+Usage duration:    1 round
+Skill type:        attack
+Affecting stat(s): str, dex, siz and skill percent
+This skill is best suited for barehanded fighting. The attacker pummels
+the enemy with series of fast punches, sometimes making the enemy get
+stunned by excruciating pain.
+---------------------------------------------------
+Help on skill:  Quick-thrusts
+Usage duration: 0 round
+Skill type:     Attack
+Quick-thrusts is perhaps one of the fastest lancer skills available to
+a skilled polearm fighter, but in the need for speed, it tends to miss
+slightly more than other skills as well as doing a bit less damage.
+The purpose of the skill is to cause a minor wounds by thrusting your
+polearm at your enemy as quickly as possible, thereby opening up the
+possibility of scoring hits with more devastating skills.
+---------------------------------------------------
+Help on skill:  Rend
+Usage duration: 2 rounds
+Skill type:     attack
+This skill allows a monster to do signifigant damage with its bare claws.
+---------------------------------------------------
+Help on skill:  Ruinous utterance
+Usage duration: automatic
+Skill type:     knowledge
+While all death knights can wield destructive magics effectively, the
+Nightweavers are among them the most adept. In their hands such spells may even
+come to rival those of true sorcerous masters. But the most feared weapon in
+their arsenal is the pure destructive power of the Shadow which the Nightweavers
+wield with terrifying prowess.
+---------------------------------------------------
+Help on skill:  Sacrifice of extended life
+Usage duration: 10 rounds
+Skill type:     neutral
+This skill can only be used in the fortress, in the vicinity of the
+ritualistic altar of death knights. When using this skill the knight
+will offer a corpse (the bigger the better) to the god of death and
+as reward the knight will gain a greater chance to avoid the clutches
+of death the next time they meet. The effectiveness of this skill
+depends on the power of the corpse sacrificed, the skill % and the wisdom
+of the knight. The blessing will disappear if the knight in question
+avoids death.
+---------------------------------------------------
+Help on skill:  Sang froid
+Usage duration: automatic
+Skill type:     special
+This skill increases the influence of the mage's studies in cold damage
+spells when casting 'power blast.'
+---------------------------------------------------
+Help on skill:  Sense resistances
+Usage duration: 1 round
+Skill type:     neutral
+This skill shows you some info about target resistances.
+---------------------------------------------------
+Help on skill:  Sense stats
+Usage duration: 1 round
+Skill type:     neutral
+This skill shows you some info about target stats.
+---------------------------------------------------
+Help on skill:  Sharpen
+Usage duration: 10 rounds
+Skill type:     neutral
+This skill can be used to increase a weapon's WC.
+---------------------------------------------------
+Help on skill:  Shrapnel
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to fill a room with deadly shrapnel,
+harming all players in the area.
+---------------------------------------------------
+Help on skill:  Silent movement
+Usage duration: automatic
+Skill type:     special
+Silent movement is an aspect of Ninjutsu. It is the way of assassins to
+approach their targets without sound, unheard until the very last moment.
+While the Ninja focus in methods of assasination and combat in their studies
+rather than stealth, this skill complements the samurai magical walking
+techniques, and makes it possible for the Ninja to move in secret while
+walking magically. In combat, the art of silent movement makes the Ninja's
+foot movement harder to anticipate, which creates openings for additional
+headcuts and tameshivars and aids in the art of Tebukuro kenjutsu. Many of
+the legendary Master Ninjas have later continued their training in stealth
+by joining the Guild of Thieves. This has allowed them to achieve perfect
+understanding in the ways of the silent blade.
+---------------------------------------------------
+Help on skill:     Skewer
+Usage duration:    random
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): constitution and strength
+This technique lives up to its name when performed properly: a single strong
+thrust of a polearm aimed at the torso of the opponent. This type of a maneuver
+performs very well in general, even though it may not be the most damaging in
+the selection of a polearm fighter. This attack may very well be lethal, but
+it is powerful enough to knock the opponent off balance, interfering with their
+own maneuvers.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:  Sting
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to poison an opponent.
+---------------------------------------------------
+Help on skill:  Stupify
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill allows a monster to stun an opponent.
+---------------------------------------------------
+Help on skill:  Stupor stagger
+Usage duration: random
+Skill type:     defensive
+This skill allows you to use a drunken stupor to your
+advantage by allowing your staggering to confuse
+the enemy.  The advantage is dependent on your skill
+percent and the duration is dependent on your
+your intoxication.
+---------------------------------------------------
+Help on skill:     Sundering star
+Usage duration:    random
+Fatigue:           mediocre
+Skill type:        attack
+Affecting stat(s): constitution, strength, wisdom, weapon skill, weapon stats,
+active defensive auras, shield fighting, shield techniques,
+bash, parry, aegis, piety, righteousness and unyielding will
+Sometimes, in order to attack, one must first defend until sufficient
+information about the enemy can be gathered. Haphazardly throwing
+ones offensive abilities at a target is thus pointless, and something
+more calculated is required to buy sufficient time in the heat of the
+battle. In order to increase their own survivability and to reduce
+the combat effectiveness of an adversary, the invokers of the Golden
+Company have devised the technique of the Sundering Star. By enchanting
+their shield with the sidereal energies and striking the enemy with it
+can they do just that.
+The efficiency of this skill is largely determined by the amount of
+defensive Golden Arts the invoker is currently performing as well as
+the users proximity to the target.
+If used with an armament of sufficient elemental potency, this ability
+often causes the target to become susceptible to followup attacks.
+This attack can only be executed while wielding a sword and a shield.
+---------------------------------------------------
+Help on skill:     Sweep
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength and dexterity
+A technique of polearm fighting that is not aimed to injure the opponent, but
+to either trip the opponent or at the very least put them off balance, granting
+the attacker the upper hand for the next technique or an immediate follow-up
+strike of this maneuver.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:  Symmetry recognition
+Usage duration: automatic
+Skill type:     special
+Since the early times, people have acknowledged that things arranged in certain symmetries bring to it an astetic pleasure.  Mastery in this skill allows the jeweler to be able to recognize these astetically pleasing patterns, and arrange his/her gems in a way  maximize the effectiveness of his/her creation.
+---------------------------------------------------
+Help on skill:  Synaptic currents
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in electric attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:  Target
+Usage duration: 5 rounds
+Skill type:     neutral
+With this skill you are able to aim your ranged weapon for a better
+chance of hitting the target. After using this skill you only have
+to type 'fire' to shoot at the target. Subsequent uses may have some
+effect.
+---------------------------------------------------
+Help on skill:     The art of war
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): skill percent
+The Golden Company consists mostly of scholarly types, ponderous and
+full of wisdom. Their interests lie not on the tactical scale of
+battles, but on the grand scheme of warfare. Any actions they take
+works towards a greater goal; individual battles may go one way or
+another, but the end result is what is important. That is not to say,
+however, that an individual battle should be lost. Through countless
+hours of training the invokers of the Golden Company have found a way
+to strike with deadly ferocity when such a need arises. Fueled by
+their indomitable will, the invokers can, when pushed, best even the
+mightiest of warriors in single combat, using their wisdom and
+knowledge to strike upon a weakness possibly even unknown to the
+adversary themself.
+---------------------------------------------------
+Help on skill:  Thrusting polearms
+Usage duration: automatic
+Skill type:     special
+This skill is a measure of a polearm fighter's ability to handle thrusting
+polearms such as the lance, spear and pike. A polearm of this type relies on a
+strong, thrusting motion and a sharp point to cause damage to the enemy.
+---------------------------------------------------
+Help on skill:  Torch creation
+Usage duration: 10 rounds
+Skill type:     neutral
+This skill can be used for creating a torch when you are outdoors.
+If you are skilled enough with the skill wilderness survival, you
+might find more than just one torch.
+---------------------------------------------------
+Help on skill:  Toxic disposition
+Usage duration: automatic
+Skill type:     special
+Through training in this skill, a master magician will be better able to
+harness his studies in poison attack spells when casting 'power blast'.
+---------------------------------------------------
+Help on skill:     Transpierce
+Usage duration:    random
+Fatigue:           minimal
+Skill type:        attack
+Affecting stat(s): dexterity and strength
+A fairly basic maneuver of polearm fighting - a quick, strong jab with the weapon,
+basically an attack of opportunity, aimed at an available bodypart. This type of
+attack is not really spectacular in any way, but it is highly reliable making
+it very valuable especially when used in a sequence of attacks.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------
+Help on skill:     Triple backstab
+Usage duration:    automatic
+Skill type:        attack
+Affecting stat(s): str and dex
+This skill will allow you to augment the damage of a backstab.
+You must first succeed with double backstab.
+---------------------------------------------------
+Help on skill:  Unfreeze
+Usage duration: 2 rounds
+Skill type:     neutral
+This skill is used in the freezetag event to unfreeze a frozen teammate.
+All players may use it during the game.
+---------------------------------------------------
+Help on skill:     Unyielding will
+Usage duration:    automatic
+Skill type:        special
+Affecting stat(s): skill percent, guild levels in paladin, healer and ranger or
+druid
+Each of the founding guilds that created the Golden Company have their own
+view on how the astral order should best be kept. The guilds are not in
+competition, but seek to complement one another to create the perfect
+specimen.
+The guild of the Paladins uses their religious fervor to fuel the defensive
+capabilities of the Golden Arts.
+The guild of the Healers use their restorative energies to heal and to
+preserve all living things so that no spark of life should ever go to waste.
+The guild of the Druids provide the Golden Company with mastery over the
+elements, most importantly that of the fire found within the stars.
+The guild of the Rangers possesses invaluable information about the
+coexistence between all manner of living creatures.
+Each of the individual guilds brings together their expertise to fuel
+the Golden Arts in different ways, known only to the invokers of the
+Golden Company.
+---------------------------------------------------
+Help on skill:     Vampiric touch
+Usage duration:    0 round
+Skill type:        Attack
+Affecting stat(s): str, con and skill percentage
+This brutal skill is used by many of the realm's undead to draw
+sustanance from a living soul, thereby prolonging their own vile
+existance.  The target of such an attack will be leeched of some
+of his health, which in turn will be given to the undead.
+---------------------------------------------------
+Help on skill:  Adrenal surge
+Usage duration: 2 rounds
+Skill type:     neutral
+The user of this skill has developed enough control
+over their bodies that they can force the pumping of
+adrenaline into their system, causing enhanced physical
+characteristics. These enhancements last only a short
+while, and it is difficult to summon the strength to
+do it again quickly.
+---------------------------------------------------
+Help on skill:  Weaponsmithing
+Usage duration: 8 rounds
+Skill type:     neutral
+This skill allows the player to perform the difficult and
+highly exacting work involved in making metal weapons.
+---------------------------------------------------
+Help on skill:  Whirlwind
+Usage duration: 0 round
+Skill type:     Defensive
+This skill creates a local weather disturbance that can be directed
+at one's enemies, forcing them from the current room.
+---------------------------------------------------
+Help on skill:     Wild blow
+Usage duration:    random
+Fatigue:           minimal
+Skill type:        attack
+Affecting stat(s): strength and constitution
+The most basic technique of polearm fighting with which the weapon is swung
+quickly about in an attempt to slash or thrust the opponent. The main purpose
+of this maneuver is not to truly injure the opponent but to lay the groundwork
+for the incricate series of attacks the polearm fighter may perform. True to its
+name this maneuver relies more on blind luck than on pure skill, and as such is
+prone to fail.
+This maneuver requires a polearm wielded either in the main hand or both hands,
+and the offhand either empty or carrying a shield.
+---------------------------------------------------

@@ -2,7 +2,7 @@
 import {useEffect, useState} from "react";
 
 const useCheckMobileScreen = (): {isMobileScreen: boolean, width: number} => {
-    const [width, setWidth] = useState<number>(window.innerWidth);
+    const [width, setWidth] = useState<number>(typeof window !== "undefined" ? window.innerWidth : 0);
     const handleWindowSizeChange = () => {
         setWidth(window.innerWidth);
     }
