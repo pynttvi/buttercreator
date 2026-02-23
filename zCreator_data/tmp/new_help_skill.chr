@@ -1,0 +1,542 @@
+Help on skill:     Ancestral call
+Usage duration:    random
+Fatigue:           minimal
+Skill type:        special
+Affecting stat(s): constitution, skill percent and inner strength
+
+The blood of ancient warriors flows in your veins. Their spirits walk beside
+you, watching over their descendants with pride. Through deep communion with
+these ancestral souls, you can call upon their wisdom and strength to guide
+your hand in battle.
+
+When you invoke this ancient rite, the spirits of your forebears manifest
+around you - not as ghosts, but as echoes of will and power that merge with
+your own. Their battle-hardened instincts guide your strikes with supernatural
+precision and speed.
+
+This is the essence of the Savage path - you do not fight alone. You carry
+the strength of generations, and when you call, they answer.
+
+Using this skill costs three points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:  Ancestral leap
+Usage duration: random
+Fatigue:        low
+Skill type:     misc
+
+An ancient primal technique passed down through countless generations
+of barbarian warriors. By calling upon ancestral spirits and tapping
+into the primal bonds that connect all barbarians to sacred places,
+a warrior can leap through the spirit realm itself, emerging at
+locations infused with tribal power.
+
+The technique requires immense physical and spiritual energy, as the
+warrior must forcefully tear open a path through the veil between
+worlds. Only places deeply bound to barbarian heritage - guild halls,
+ancient battlegrounds, ritual sites - resonate strongly enough to
+serve as anchors for this journey.
+
+Skilled warriors can also sense the spiritual echoes of other living
+souls, allowing them to tear through reality itself to reach distant
+allies or enemies. The spirits care not for distance - only that the
+barbarian's will is strong enough to breach the boundaries between
+here and there.
+
+Usage: use ancestral leap at <destination>
+       use ancestral leap at list  (to see available destinations)
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Ancestral rite
+Usage duration:    0 round
+Fatigue:           minimal
+Skill type:        special
+Affecting stat(s): strength, constitution, inner strength and skill percent
+
+Through sacred ancestral rites, the barbarian performs a ritual send-off for
+fallen enemies, honoring their warrior spirit and sending their soul to join
+the ancestors. This act of respect for worthy foes draws upon ancient spirits
+to bless the barbarian with renewed vitality, restoring both health and vigor
+while gaining the favor of those who watch from beyond.
+
+The ritual requires significant spiritual energy and can only be performed upon
+the corpse of a slain enemy. The greater the fallen warrior, the more potent
+the blessing received.
+
+Using this skill costs one point of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:  Body slam
+Usage duration: 2 rounds
+Skill type:     neutral
+
+This skill allows a monster to eject an opponent from its room.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Brutal swiftness
+Usage duration:    automatic
+Skill type:        passive
+Affecting stat(s): strength and skill percent
+
+Some believe dexterity to be the sole provider of speed, but these fools
+have not witnessed the primal fury of a charging rhino or the explosive
+power of a striking bear. A well-trained barbarian, despite being a
+towering colossus of scars and muscle, can move in short bursts with such
+violent alacrity that onlookers mistake it for witchcraft when in
+reality it is simply pure, unbridled strength.
+
+Where others rely on nimble footwork and careful positioning, a barbarian
+has learned to explode into motion through raw muscular power. Their massive
+frame doesn't gracefully sidestep danger but erupts away from it, driven
+by the same explosive force that propels an apex predator into its strike.
+Each evasive movement is less a dodge and more a controlled detonation of
+strength, the body launching itself clear of harm through sheer physical
+might rather than agility.
+
+This is not the measured dance of a duelist. This is the terrifying burst
+of a warhorse changing direction, the sudden lunge of a great cat: brutal,
+overwhelming, and devastatingly effective.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Crimson charge
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength, constitution, attack, anatomy, spot weakness and
+                   skill percent
+
+The blood calls. Not metaphorically, not symbolically - your own blood,
+ancient and knowing, demands to be spilled. The civilized recoil from
+self-inflicted wounds, calling it madness. They understand nothing of
+power written in scars, of strength purchased with sacrifice.
+
+You tear open old wounds or carve new ones, letting your blood flow free.
+As crimson streams down your body, something awakens - the blood of every
+ancestor who fell in battle, every warrior whose line led to you. Their
+fury mingles with yours, their strength becomes yours. Pain becomes fuel.
+
+When you charge, you are no longer alone. Unseen hands guide your weapon.
+Ancient rage amplifies your fury. The blood-price paid transforms you into
+something more than mortal, and when you crash into your enemy trailing
+crimson, they face not just you, but the weight of every bloodline warrior
+who demands vengeance through your hands.
+
+Blood demands blood. The ancestors accept no other currency.
+
+Using this skill generates two points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Danger sense
+Usage duration:    automatic
+Skill type:        defensive
+Affecting stat(s): strength and fury level
+
+Death teaches quickly. Survive enough battles and something primal awakens
+within: not thought, not technique, but pure predatory awareness. The kind
+of instinct that keeps apex predators alive in their brutal world.
+
+Where trained warriors analyze and calculate, the barbarian simply knows.
+The shift in air pressure before a blade falls. The tensing of muscle
+before a spell unleashes. The body moves before the mind registers the
+threat, erupting away from danger with the explosive violence of a cornered
+beast.
+
+Others call it luck. Those who possess it know better. This is what happens
+when fury and survival instinct m
+erge into something beyond mere skill. When
+one has danced with death so often that its approach is recognized by scent
+alone.
+
+And when death's strike misses? That's when the predator strikes back.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Defiant roar
+Usage duration:    0 round
+Skill type:        passive
+Affecting stat(s): constitution, fury level, stupor and skill percent
+
+There are moments when the fury burning in barbarian veins refuses to be
+contained, even when the body is battered and stunned. Berserker rage does
+not bow to pain or exhaustion - it feeds on them. When lesser warriors
+would fall helpless, barbarian fury erupts in a defiant roar that shatters
+whatever forces seek to bind.
+
+This primal surge of adrenaline breaks the stunned free and momentarily
+dulls pain, allowing the fight to continue when others would fall.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Frenzy
+Usage duration:    1 round
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): strength, constitution, dexterity, anatomy, spot weakness,
+                   critical and skill percent
+
+Trained fighters pace themselves. They calculate. They measure each strike,
+conserving energy for prolonged combat. The barbarian does not.
+
+There comes a moment when control becomes a luxury you cannot afford, when
+the only path to victory is through overwhelming, relentless violence. Your
+weapon becomes a blur. One strike flows into the next without pause, without
+thought, without mercy. Again. Again. Again. A cascade of steel that gives
+no quarter, no moment to recover, no breath to defend.
+
+This is not fighting - this is drowning your enemy in brutality. They cannot
+block all the strikes. Cannot dodge every blow. Cannot distinguish where one
+attack ends and the next begins. By the time the storm passes, they stand
+bleeding from wounds they never saw coming, their defense shattered by the
+sheer impossible speed of savage fury.
+
+Civilization teaches restraint. The frenzy teaches victory.
+
+Using this skill costs five points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Intimidating presence
+Usage duration:    random
+Fatigue:           low
+Skill type:        special
+Affecting stat(s): constitution, strength, skill percent, leadership and inner
+                   strength
+
+Reputation intimidates. Scars intimidate. But a true Warbringer projects
+menace as something more tangible, more immediate. It radiates from your
+scarred flesh, your unwavering stance, the cold certainty in your eyes that
+says you have seen death a thousand times and sent it away disappointed.
+
+When you consciously channel this aura, enemies hesitate. Their strikes
+falter. They pull back at the last moment. They aim for less vital spots,
+not from mercy, but from primal fear. The kind that makes prey reconsider
+attacking a predator. This is not magic. This is pure, distilled menace
+given form, making you a fortress that enemies batter themselves against
+with decreasing conviction.
+
+Using this skill costs three points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Last stand
+Usage duration:    random
+Fatigue:           low
+Skill type:        special
+Affecting stat(s): constitution, skill percent, inner strength and endurance
+
+Death comes for everyone. Most warriors accept this inevitability when
+wounds become too grave, when blood loss becomes too severe. A Warbringer
+knows better. Even when your body screams for mercy, when blood pools at
+your feet, when enemies smell victory, you have one final refusal left.
+
+Drawing upon reserves you did not know existed, fueled by pure stubborn
+defiance, you plant your feet and declare: not yet. Not here. Not to you.
+Your wounds seem to matter less. Your armor feels heavier on their weapons
+than on your shoulders. Your body remembers how to mend itself even as you
+fight. This is what separates the Warbringer from ordinary warriors.
+Everyone can fight when fresh. You fight hardest when you should already
+be dead.
+
+Using this skill costs three points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Overpower
+Usage duration:    automatic
+Skill type:        passive
+Affecting stat(s): strength and skill percent
+
+Civilized warriors falter when their strikes miss. They adjust, recalculate,
+hesitate. The barbarian does not. Each dodge teaches. Each parry reveals.
+Each tumbling escape maps the enemy's patterns. Failure is not setback - it
+is reconnaissance written in the language of violence.
+
+Where others see frustration in a blocked strike, the savage sees opening.
+That sidestep showed weight distribution. That parry revealed reach and
+reaction speed. That tumble displayed timing. The prey has shown its dance,
+and predators learn fast.
+
+The next strike comes differently - heavier, faster, from an unexpected
+angle. Techniques that worked moments ago suddenly fail. The barbarian
+adapts with brutal efficiency, overwhelming defensive patterns through raw
+physical dominance and learned advantage.
+
+Miss once, twice - it matters not. The barbarian will overpower.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Primal roar
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength, anatomy, attack, spot weakness, constitution and
+                   skill percent
+
+Civilized armies march in silence, maintaining discipline and formation.
+They believe noise weakens strategy. Fools. The primal tribes know what
+those orderly ranks have forgotten: sound itself i s a weapon. Not words,
+not commands - raw, inhuman, bone-shaking fury given voice.
+
+Your roar is not merely loud. It carries physical force, reverberating
+through enemy bodies like a shockwave. Ears ring. Vision blurs. The
+confident warrior who stood ready a heartbeat ago now staggers, their
+certainty shattered by the primal reminder that they are prey, and you
+are predator.
+
+Where the enemy hears terror, your allies hear something else: the call
+to war. The sound that says the hunt has begun. Their own fury rises to
+match yours.
+
+The roar is older than language, more honest than steel.
+
+Using this skill generates two points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Reckless strike
+Usage duration:    random
+Fatigue:           low
+Skill type:        attack
+Affecting stat(s): strength, constitution, attack, anatomy, spot weakness,
+                   critical and skill percent
+
+Combat instructors teach balance. Maintain your guard. Never overcommit.
+Protect yourself while attacking. The barbarian rejects this philosophy
+entirely. There are moments when caution is cowardice, when defense is
+delay, when the only path forward is through absolute, reckless violence.
+
+Throw aside every lesson about protection. Abandon guard. Overextend.
+Commit everything, body, weapon, fury itself, into one devastating strike
+delivered with such overwhelming force that the enemy's defense becomes
+meaningless. Let them see the opening you create. Let them understand what's
+coming. It changes nothing.
+
+This is not technique or strategy. This is the moment when you decide that
+killing your enemy matters more than your own safety, and you make that
+decision with steel and fury. Either they fall or you do.
+
+Civilized warriors fight to survive. The barbarian fights to kill.
+
+Using this skill generates two points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Relentless
+Usage duration:    automatic
+Skill type:        passive
+Affecting stat(s): constitution, stamina and skill percent
+
+The barbarian way is one of endless endurance. Where civilized warriors
+tire and falter, the barbarian presses on. Where others must rest and
+recover, the hunt continues. This is not mere stubbornness - it is a
+fundamental truth of existence. Pain is temporary, exhaustion is weakness,
+and surrender is death.
+
+The body forged through countless trials becomes an instrument of relentless
+warfare. Recovery from exertion comes faster than normal warriors, and
+actions frequently cost less stamina. The longer a battle extends, the more
+the advantage grows as weaker opponents exhaust themselves while the
+barbarian presses on with unyielding determination.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Relentless advance
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength, constitution, attack, anatomy, spot weakness and
+                   skill percent
+
+Trained soldiers retreat when wounded. Tactical withdrawal, they call it.
+Strategic repositioning. The berserker knows what they refuse to admit:
+these are just polite words for cowardice.
+
+You do not retreat. You do not reposition. You advance. Always forward,
+never back. Arrows find you? Advance. Spells strike you? Advance. The
+enemy lands a perfect blow that should drop you? Absorb it and advance.
+Pain is temporary. Momentum is survival. To stop moving forward is to
+acknowledge your enemy as a threat worth avoiding.
+
+Every impact you take feeds the rage. Every wound makes you more dangerous,
+not less. Where civilized warriors see injury and think of healing, you see
+fuel for the fury that propels you into striking range. By the time you
+reach your enemy, you have transformed their attacks into your own power.
+
+The berserker does not stop. The berserker arrives.
+
+Using this skill generates two points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Rending strike
+Usage duration:    1 round
+Fatigue:           mediocre
+Skill type:        attack
+Affecting stat(s): strength, constitution, anatomy, spot weakness, critical and
+                   skill percent
+
+Swordmasters practice clean cuts. Precise. Elegant. Minimal damage for
+maximum effect, they claim. The barbarian understands what they refuse to
+see: elegance is weakness. Your enemy doesn't need a clean death. They
+need to be ruined. To be bled out.
+
+You don't simply cut. You rend. The initial strike is just the beginning.
+As your weapon bites deep, you twist. Wrench. Turn a wound into catastrophe.
+Muscle tears away from bone. Tendons snap like rotted rope. What was a
+functional body becomes a ruin of separated parts still attached by stubborn
+threads of tissue.
+
+Where civilized fighters aim for quick kills, you aim for devastation. Your
+enemy will not just fall, they will break. Not just die, they will be
+torn apart. The difference between striking and rending is the difference
+between injury and destruction.
+
+What was whole becomes ruined. This is the barbarian way.
+
+Using this skill costs five or more points of fury.
+
+ 
+-----------------------------------------
+----------
+ 
+
+Help on skill:     Savage charge
+Usage duration:    random
+Fatigue:           very low
+Skill type:        attack
+Affecting stat(s): strength, constitution, attack, anatomy, spot weakness and
+                   skill percent
+
+Civilized warriors respect distance. They maneuver cautiously, close gaps
+with measured steps, maintain defensive posture while advancing. This is
+what cowards call tactics. The savage knows better: distance is an illusion
+that exists only for those too weak to shatter it.
+
+Fury demands blood now. Not after careful positioning. Not when the tactical
+situation favors it. Now. You explode forward with the momentum of an
+avalanche, closing impossible gaps in heartbeats, weapon raised, the roar
+of your charge announcing what your enemy already knows: running is futile.
+
+The impact when you arrive is not combat, it is collision. They prepared
+to fight, but you don't fight at distance. You arrive like a force of
+nature and obliterate whatever stands before you. By the time they register
+you've moved, your weapon has already found them.
+
+Distance is a courtesy. The savage extends no courtesies.
+
+Using this skill generates two points of fury.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     Spirit guidance
+Usage duration:    random
+Fatigue:           low
+Skill type:        special
+Affecting stat(s): constitution, skill percent, inner strength and awareness
+
+The spirits of the wild do not merely offer strength. They offer insight,
+clarity, wisdom that predates civilization itself. Through your deep
+connection with the spiritual realm, you can channel collective wisdom of
+nature, sharing this clarity with your allies.
+
+When you open yourself as a conduit, spiritual energy flows through you
+and into your companions. Their minds become sharper, their senses keener,
+their abilities enhanced by this touch of the otherworld. They see threats
+more clearly and perceive weaknesses that would otherwise remain hidden.
+This is the gift of the Savage to their party: not just physical might,
+but the wisdom of ancients and the clarity of spirit.
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     War paint
+Usage duration:    random
+Fatigue:           low
+Skill type:        special
+Affecting stat(s): constitution, wisdom, skill percent and inner strength
+
+Ancient tribes knew what civilized warriors have forgotten: symbols have
+power. Not through magic, but through connection. When you paint mystical
+patterns across your face and body using sacred pigments, you connect to
+primal forces: the fury of predators, the endurance of stone, the cunning
+of the hunter. As paint dries upon your skin, you feel the power of your
+ancestors flowing through sacred symbols.
+
+The patterns are many, each channeling different aspects of the primal
+world. Some enhance physical might or resilience, others sharpen combat
+instincts or bring fortune in battle. The choice of pattern reflects your
+intent: what you seek to embody in coming conflict.
+
+Usage: use war paint at <pattern>
+       use war paint at list
+
+ 
+---------------------------------------------------
+ 
+
+Help on skill:     War shout
+Usage duration:    random
+Fatigue:           low
+Skill type:        special
+Affecting stat(s): constitution, skill percent, leadership and inner strength
+
+Battlefield chaos needs an anchor. Your allies need guidance, strength,
+a rallying point for their courage. You provide this through the ancient
+tradition of the war shout: a primal battle cry that resonates with power,
+stirring the hearts of your companions and striking fear into enemies.
+
+When you unleash your war cry, those who fight beside you feel renewed
+vigor. Their strikes hit harder, their armor feels stronger, their resolve
+hardens. This is battlefield leadership at its essence. Not commands, but
+inspiration made manifest through raw vocal force. The act of rallying your
+warriors also feeds your own fury, preparing you for carnage to come. This
+is how the Warbringer leads: from the front, with strength that lifts all
+who follow.
+
+Using this skill generates three points of fury.
+
+ 
+---------------------------------------------------
+ 
+ 
