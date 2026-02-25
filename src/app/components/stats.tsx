@@ -105,7 +105,7 @@ export default function StatsList() {
 
   const checkBoxChanged = (params: GridCellParams) => {
     const { value, row, colDef } = params;
-    console.log("Checkbox changed", { value, row, colDef });
+    console.debug("Checkbox changed", { value, row, colDef });
 
     setLastEdit(`edit-stat${params.row.id}`);
 
@@ -133,7 +133,7 @@ export default function StatsList() {
   };
 
   const processRowUpdate = useCallback((oldRow: any, newRow: any) => {
-    console.log("Processing row update", { oldRow, newRow });
+    console.debug("Processing row update", { oldRow, newRow });
     return newRow;
   }, []);
 

@@ -32,7 +32,7 @@ export const useCounters = () => {
   const stats = useAppSelector((state) => state.reducer.reincContext.stats);
 
   useEffect(() => {
-    console.log("Counters updated", wishes);
+    console.debug("Counters updated", wishes);
   }, [wishes]);
 
   const countTaskPoints = (): number => {

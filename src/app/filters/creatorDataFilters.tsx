@@ -74,7 +74,7 @@ export const AbilitiesByGuildsFilter = (
       }
 
       const flatGuilds = guildUtils.getReincGuildsFlat();
-
+      console.debug("Flat guilds for abilities filter", flatGuilds);
       const mapAbility = (ability: ReincAbility): ReincAbility => {
         const enabled =
           !!flatGuilds.find((g) => g.name === ability.guild?.name);
@@ -86,9 +86,12 @@ export const AbilitiesByGuildsFilter = (
         };
       };
 
+      const enabledSkills = allSkills.map(mapAbility).filter((a) => a.enabled);
+      const enabledSpells = allSpells.map(mapAbility).filter((a) => a.enabled);
+      
       return {
-        skills: onlyUniqueNameWithHighestMax(allSkills.map(mapAbility)),
-        spells: onlyUniqueNameWithHighestMax(allSpells.map(mapAbility)),
+        skills: onlyUniqueNameWithHighestMax(enabledSkills),
+        spells: onlyUniqueNameWithHighestMax(enabledSpells),
       };
     },
   };

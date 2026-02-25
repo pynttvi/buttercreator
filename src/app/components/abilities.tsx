@@ -61,7 +61,7 @@ function TrainedInput(props: {
   );
 
   const row = props.params.row;
-  const abi = abilityList.entities[row.name] || row;
+  const abi = abilityList.entities[row.id] || row;
 
   const max =
     props.abilityType === "skills"
@@ -74,7 +74,7 @@ function TrainedInput(props: {
 
   const dispatchUpdate = useCallback(
     (trained: number) => {
-      console.log("Updating custom value", trained);
+      console.debug("Updating custom value", trained);
 
       dispatch(
         updateAbility({
@@ -143,6 +143,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
   );
 
   const abilities = useMemo(() => {
+    console.debug("Filtered data", filteredData.skills);
     const base =
       props.type === "skills" ? filteredData.skills : filteredData.spells;
 
@@ -155,9 +156,9 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
     return sortByName<ReincAbility>(
       base.map((ability) => {
         const reincAbility = reincMap.get(ability.name);
-        return reincAbility ?? ability;
+        return reincAbility || ability;
       }),
-    ).filter((a) => a.enabled);
+    )
   }, [props.type, filteredData.skills, filteredData.spells, skills, spells]);
 
   const selectionModel = abilities

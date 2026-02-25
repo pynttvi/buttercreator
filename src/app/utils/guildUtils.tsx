@@ -295,7 +295,7 @@ export function GuildUtils(
     const guilds = creatorDataState.guilds.map((gl) => {
       const guild = getGuildByGuildLevels(gl);
       if (!guild) {
-        console.log("Error getting guild", gl);
+        console.debug("Error getting guild", gl);
         throw new Error("Error getting guild");
       }
 

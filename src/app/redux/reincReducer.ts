@@ -14,8 +14,6 @@ import {
   ReincAbility,
 } from "./appContext";
 import { RootState } from "./reincStore";
-import { entityToArray } from "../utils/utils";
-import { selectBonusBaseStats } from "./selectors";
 export const MAX_LEVEL = 120;
 
 const appSlice = createSlice({
@@ -214,7 +212,7 @@ const appSlice = createSlice({
             ? state.creatorDataState.creatorData.skills
             : state.creatorDataState.creatorData.spells;
         const cost = costArray.find((s) => s.name === a.name)?.cost;
-        const existing = targetState.entities[a.name];
+        const existing = targetState.entities[a.id];
         const max = existing?.max ?? a.max;
         const trained = Math.min(a.trained, max);
 
@@ -271,7 +269,7 @@ const appSlice = createSlice({
 
       const abilities = Array.isArray(ability) ? ability : [ability];
 
-      const ids = abilities.map((a) => a.name);
+      const ids = abilities.map((a) => a.id);
 
       abilityAdapter.removeMany(targetState, ids);
     },

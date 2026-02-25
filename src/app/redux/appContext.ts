@@ -14,8 +14,8 @@ import { FullGuild } from "../utils/guildUtils";
 
 export const MAX_STAT = 50;
 
-export const abilityAdapter = createEntityAdapter<ReincAbility, string>({
-  selectId: (ability) => ability.name,
+export const abilityAdapter = createEntityAdapter<ReincAbility, number>({
+  selectId: (ability) => ability.id,
   sortComparer: (a, b) => a.name?.localeCompare(b.name),
 });
 
@@ -26,10 +26,10 @@ export type ReincContextType = {
   race: Race | null;
   guilds: FullGuild[];
   allGuilds: FullGuild[];
-  skills: EntityState<ReincAbility, string>;
-  spells: EntityState<ReincAbility, string>;
-  allSkills: EntityState<ReincAbility, string>;
-  allSpells: EntityState<ReincAbility, string>;
+  skills: EntityState<ReincAbility, number>;
+  spells: EntityState<ReincAbility, number>;
+  allSkills: EntityState<ReincAbility, number>;
+  allSpells: EntityState<ReincAbility, number>;
   skillMax: number;
   spellMax: number;
   customSkillMaxBonus: number;

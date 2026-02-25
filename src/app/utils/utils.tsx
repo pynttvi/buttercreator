@@ -153,4 +153,4 @@ export function simplifyStat(statName: string) {
   return stat;
 }
 
-export const entityToArray = <T,>(entityState: EntityState<T, string>): T[] => Object.values(entityState.entities) as T[];
+export const entityToArray = <T,>(entityState: EntityState<T, number>): T[] => Object.values(entityState.entities) as T[];
