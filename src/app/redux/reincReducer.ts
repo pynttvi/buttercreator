@@ -17,6 +17,94 @@ import {
 import { RootState } from "./reincStore";
 export const MAX_LEVEL = 120;
 
+const syncAbilitiesWithTrainedGuilds = (state: AppContext) => {
+  const guildUtils = GuildUtils(
+    state.creatorDataState.creatorData,
+    state.reincContext,
+  );
+  const flatGuilds = guildUtils.getReincGuildsFlat();
+
+  const availableAbilities = (type: "skill" | "spell") => {
+    const abilities: ReincAbility[] = [];
+
+    flatGuilds.forEach((guild) => {
+      for (let i = guild.trained; i > 0; i--) {
+        const levelData = guild.levelMap[i.toString()];
+        levelData?.abilities.forEach((ability) => {
+          if (ability.type === type) {
+            abilities.push({
+              ...ability,
+              cost: 0,
+              enabled: true,
+              guild,
+              id: -1,
+              maxed: false,
+              trained: 0,
+            });
+          }
+        });
+      }
+    });
+
+    return abilities.reduce((byName, ability) => {
+      const existing = byName.get(ability.name);
+      if (!existing || existing.max < ability.max) {
+        byName.set(ability.name, ability);
+      }
+      return byName;
+    }, new Map<string, ReincAbility>());
+  };
+
+  const syncAbilityState = (
+    type: "skills" | "spells",
+    targetState: typeof state.reincContext.skills,
+    availableByName: Map<string, ReincAbility>,
+  ) => {
+    const costArray =
+      type === "skills"
+        ? state.creatorDataState.creatorData.skills
+        : state.creatorDataState.creatorData.spells;
+
+    const updates = Object.values(targetState.entities).flatMap((ability) => {
+      if (!ability || ability.trained <= 0) return [];
+
+      const available = availableByName.get(ability.name);
+      if (!available) return [];
+
+      const cost = costArray.find((s) => s.name === ability.name)?.cost;
+      const effectiveMax = getEffectiveAbilityMax(
+        type,
+        available.max,
+        state.reincContext,
+      );
+      const trained = Math.min(ability.trained, effectiveMax);
+
+      if (trained <= 0) return [];
+
+      return {
+        ...available,
+        id: ability.id,
+        trained,
+        maxed: trained >= effectiveMax,
+        cost: cost ?? ability.cost ?? available.cost,
+      };
+    });
+
+    abilityAdapter.setAll(targetState, updates);
+  };
+
+  syncAbilityState(
+    "skills",
+    state.reincContext.skills,
+    availableAbilities("skill"),
+  );
+  syncAbilityState(
+    "spells",
+    state.reincContext.spells,
+    availableAbilities("spell"),
+  );
+};
+
 const appSlice = createSlice({
   name: "buttercreator",
   initialState,
@@ -185,6 +273,8 @@ const appSlice = createSlice({
           state.creatorDataState.creatorData,
           state.reincContext,
         ).totalTrainedLevels() + state.reincContext.freeLevels;
+
+      syncAbilitiesWithTrainedGuilds(state);
     },
 
     initializeGuilds: (state, action: PayloadAction<FullGuild[]>) => {

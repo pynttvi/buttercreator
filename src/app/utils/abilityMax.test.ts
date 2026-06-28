@@ -7,8 +7,22 @@ const baseReinc = {
   customSkillMaxBonus: 0,
   customSpellMaxBonus: 0,
   race: {
+    id: 1,
+    name: "test race",
+    str: 10,
+    dex: 10,
+    con: 10,
+    int: 10,
+    wis: 10,
+    cha: 10,
+    size: 10,
+    exp: 100,
+    spr: 100,
+    hpr: 100,
     skill_max: 100,
     spell_max: 100,
+    skill_cost: 100,
+    spell_cost: 100,
   },
 };
 
@@ -28,6 +42,7 @@ describe("getEffectiveAbilityMax", () => {
         ...baseReinc,
         spellMax: 100,
         race: {
+          ...baseReinc.race,
           skill_max: 100,
           spell_max: 90,
         },

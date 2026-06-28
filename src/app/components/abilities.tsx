@@ -167,7 +167,14 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
     return sortByName<ReincAbility>(
       base.map((ability) => {
         const reincAbility = reincMap.get(ability.name);
-        return reincAbility || ability;
+        return reincAbility
+          ? {
+              ...ability,
+              trained: reincAbility.trained,
+              maxed: reincAbility.maxed,
+              cost: reincAbility.cost,
+            }
+          : ability;
       }),
     )
   }, [props.type, filteredData.skills, filteredData.spells, skills, spells]);
