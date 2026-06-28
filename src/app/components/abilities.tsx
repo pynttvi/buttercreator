@@ -38,6 +38,7 @@ import {
   setHelpText,
   updateAbility,
 } from "../redux/reincReducer";
+import { getEffectiveAbilityMax } from "../utils/abilityMax";
 
 import SectionBox from "./sectionBox";
 
@@ -53,6 +54,13 @@ function TrainedInput(props: {
   const spellMax = useAppSelector(
     (state) => state.reducer.reincContext.spellMax,
   );
+  const race = useAppSelector((state) => state.reducer.reincContext.race);
+  const customSkillMaxBonus = useAppSelector(
+    (state) => state.reducer.reincContext.customSkillMaxBonus,
+  );
+  const customSpellMaxBonus = useAppSelector(
+    (state) => state.reducer.reincContext.customSpellMaxBonus,
+  );
 
   const abilityList = useAppSelector((state) =>
     props.abilityType === "skills"
@@ -63,10 +71,13 @@ function TrainedInput(props: {
   const row = props.params.row;
   const abi = abilityList.entities[row.id] || row;
 
-  const max =
-    props.abilityType === "skills"
-      ? Math.min(skillMax, abi.max)
-      : Math.min(spellMax, abi.max);
+  const max = getEffectiveAbilityMax(props.abilityType, abi.max, {
+    skillMax,
+    spellMax,
+    customSkillMaxBonus,
+    customSpellMaxBonus,
+    race,
+  });
 
   const [value, setValue] = useState<number>(abi.trained || max);
 
@@ -173,26 +184,14 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
   );
 
   const getMax = useCallback(
-    (max: number) => {
-      if (props.type === "skills") {
-        if (skillMax - max >= 0) {
-          max =
-            customSkillMaxBonus + Math.min(max - (100 - skillMax), skillMax);
-        } else {
-          max = customSkillMaxBonus + Math.min(max, race?.skill_max || 100);
-        }
-      }
-
-      if (props.type === "spells") {
-        if (spellMax - max >= 0) {
-          max =
-            customSpellMaxBonus + Math.min(max - (100 - spellMax), spellMax);
-        } else {
-          max = customSpellMaxBonus + Math.min(max, race?.spell_max || 100);
-        }
-      }
-      return max;
-    },
+    (max: number) =>
+      getEffectiveAbilityMax(props.type, max, {
+        skillMax,
+        spellMax,
+        customSkillMaxBonus,
+        customSpellMaxBonus,
+        race,
+      }),
     [
       props.type,
       skillMax,
@@ -205,20 +204,41 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
   );
 
   const apiRef = React.useRef<GridApiCommunity | undefined>();
-  const [lastEdit, setLastEdit] = useState("");
+  const [lastEdit, setLastEdit] = useState<{
+    className: string;
+    version: number;
+  } | null>(null);
 
   useEffect(() => {
-    (async () => {
-      await new Promise((resolve) => setTimeout(resolve, 50));
-      const active: HTMLInputElement | null = document.querySelector(
-        `.${lastEdit || "none"} .MuiInputBase-input`,
-      );
-      if (active) {
-        active.focus();
-        active.select();
-      }
-    })();
+    if (!lastEdit) return;
+
+    const timeouts = [0, 50, 150].map((delay) =>
+      setTimeout(() => {
+        const active: HTMLInputElement | null = document.querySelector(
+          `.${lastEdit.className} .MuiInputBase-input`,
+        );
+        if (active) {
+          active.focus();
+          active.select();
+        }
+      }, delay),
+    );
+
+    return () => {
+      timeouts.forEach(clearTimeout);
+    };
   }, [lastEdit]);
+
+  const activateTrainedEdit = useCallback((row: ReincAbility) => {
+    window.setTimeout(() => {
+      apiRef.current?.setCellFocus(row.id, "trained");
+      apiRef.current?.startCellEditMode({ id: row.id, field: "trained" });
+      setLastEdit((previous) => ({
+        className: `edit-ability${row.id}`,
+        version: (previous?.version ?? 0) + 1,
+      }));
+    }, 0);
+  }, []);
 
   const changeSelectionMode = (
     rowSelectionModel: GridRowSelectionModel,
@@ -264,9 +284,7 @@ export default function AbilityList(props: { type: "skills" | "spells" }) {
         });
       }
       update({ ...row, trained: max });
-      if (apiRef && apiRef.current) {
-        //     apiRef.current.startCellEditMode({id: row.id, field: 'trained'})
-      }
+      activateTrainedEdit(row);
     } else {
       dispatch(
         removeAbility({ type: props.type, ability: { ...row, trained: 0 } }),

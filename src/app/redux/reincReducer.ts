@@ -6,6 +6,7 @@ import { GuildType } from "../components/guilds";
 import { doFilter } from "../filters/creatorDataFilters";
 import { CreatorDataType } from "../parserFactory";
 import { GuildAbility } from "../parsers/guildParser";
+import { getEffectiveAbilityMax } from "../utils/abilityMax";
 import { FullGuild, GuildUtils } from "../utils/guildUtils";
 import {
   abilityAdapter,
@@ -214,12 +215,17 @@ const appSlice = createSlice({
         const cost = costArray.find((s) => s.name === a.name)?.cost;
         const existing = targetState.entities[a.id];
         const max = existing?.max ?? a.max;
-        const trained = Math.min(a.trained, max);
+        const effectiveMax = getEffectiveAbilityMax(
+          type,
+          max,
+          state.reincContext,
+        );
+        const trained = Math.min(a.trained, effectiveMax);
 
         return {
           ...a,
           trained,
-          maxed: trained >= max,
+          maxed: trained >= effectiveMax,
           cost: cost ?? a.cost,
         };
       });

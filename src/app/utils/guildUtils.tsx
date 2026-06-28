@@ -362,7 +362,9 @@ export function GuildUtils(
     max: number = 0,
   ): number => {
     guilds?.forEach((guild) => {
-      for (let i = guild.trained; i > 0; i--) {
+      const levelsToCheck = guild.trained > 0 ? guild.trained : guild.levels;
+
+      for (let i = levelsToCheck; i > 0; i--) {
         const level = guild.levelMap[i.toString()];
         level?.abilities.forEach((a) => {
           if (a.name === ability.name && a.max > max) {
@@ -371,7 +373,7 @@ export function GuildUtils(
         });
       }
       if (guild.subGuilds.length > 0) {
-        return maxForGuilds(ability, guild.subGuilds, max);
+        max = maxForGuilds(ability, guild.subGuilds, max);
       }
     });
     return max;
