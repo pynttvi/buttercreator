@@ -20,6 +20,11 @@ export type GuildServiceType = {
     guilds: FullGuild[],
     max?: number,
   ) => number;
+  bestAbilityForGuilds: (
+    ability: ReincAbility,
+    guilds: FullGuild[],
+    best?: ReincAbility,
+  ) => ReincAbility | undefined;
   getAllGuildsFlat: () => FullGuild[];
   getReincGuildsFlat: () => FullGuild[];
   getStatTotalFromGuilds: (stat: string) => number;
@@ -356,26 +361,42 @@ export function GuildUtils(
     return guild;
   };
 
-  const maxForGuilds = (
+  const bestAbilityForGuilds = (
     ability: ReincAbility,
     guilds: FullGuild[],
-    max: number = 0,
-  ): number => {
+    best?: ReincAbility,
+  ): ReincAbility | undefined => {
     guilds?.forEach((guild) => {
       const levelsToCheck = guild.trained > 0 ? guild.trained : guild.levels;
 
       for (let i = levelsToCheck; i > 0; i--) {
         const level = guild.levelMap[i.toString()];
         level?.abilities.forEach((a) => {
-          if (a.name === ability.name && a.max > max) {
-            max = a.max;
+          if (a.name === ability.name && (!best || a.max > best.max)) {
+            best = {
+              ...ability,
+              ...a,
+              guild,
+            };
           }
         });
       }
       if (guild.subGuilds.length > 0) {
-        max = maxForGuilds(ability, guild.subGuilds, max);
+        best = bestAbilityForGuilds(ability, guild.subGuilds, best);
       }
     });
+    return best;
+  };
+
+  const maxForGuilds = (
+    ability: ReincAbility,
+    guilds: FullGuild[],
+    max: number = 0,
+  ): number => {
+    const best = bestAbilityForGuilds(ability, guilds);
+    if (best && best.max > max) {
+      return best.max;
+    }
     return max;
   };
 
@@ -386,6 +407,7 @@ export function GuildUtils(
     trainedLevelForGuild,
     totalTrainedLevels,
     getReincGuildByName,
+    bestAbilityForGuilds,
     maxForGuilds,
     getAllGuildsFlat,
     getReincGuildsFlat,

@@ -47,4 +47,35 @@ describe("GuildUtils.maxForGuilds", () => {
       }).maxForGuilds(ability, [abjurer]),
     ).toBe(100);
   });
+
+  test("returns the guild with the highest max from all levels up to trained level", () => {
+    const lowGuild = createGuild("low guild", 10, 10, 40);
+    const highGuild = {
+      ...createGuild("high guild", 10, 10, 0),
+      levelMap: {
+        "3": {
+          stats: [],
+          abilities: [
+            {
+              name: "mastery of shielding",
+              type: "skill",
+              max: 80,
+              cost: 0,
+            },
+          ],
+        },
+      },
+    } as FullGuild;
+
+    const ability = {
+      name: "mastery of shielding",
+    } as ReincAbility;
+
+    const bestAbility = GuildUtils({} as never, {
+      ...initialState.reincContext,
+    }).bestAbilityForGuilds(ability, [lowGuild, highGuild]);
+
+    expect(bestAbility?.max).toBe(80);
+    expect(bestAbility?.guild?.name).toBe("high guild");
+  });
 });

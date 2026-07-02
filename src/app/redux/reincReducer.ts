@@ -294,6 +294,11 @@ const appSlice = createSlice({
         type === "skills"
           ? state.reincContext.skills
           : state.reincContext.spells;
+      const guildUtils = GuildUtils(
+        state.creatorDataState.creatorData,
+        state.reincContext,
+      );
+      const flatGuilds = guildUtils.getReincGuildsFlat();
 
       const abilities = Array.isArray(ability) ? ability : [ability];
 
@@ -305,15 +310,18 @@ const appSlice = createSlice({
         const cost = costArray.find((s) => s.name === a.name)?.cost;
         const existing = targetState.entities[a.id];
         const max = existing?.max ?? a.max;
+        const bestAbility = guildUtils.bestAbilityForGuilds(a, flatGuilds);
         const effectiveMax = getEffectiveAbilityMax(
           type,
-          max,
+          bestAbility?.max ?? max,
           state.reincContext,
         );
         const trained = Math.min(a.trained, effectiveMax);
 
         return {
           ...a,
+          guild: bestAbility?.guild ?? a.guild,
+          max: bestAbility?.max ?? max,
           trained,
           maxed: trained >= effectiveMax,
           cost: cost ?? a.cost,

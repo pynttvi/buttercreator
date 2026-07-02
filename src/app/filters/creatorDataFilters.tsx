@@ -76,13 +76,17 @@ export const AbilitiesByGuildsFilter = (
       const flatGuilds = guildUtils.getReincGuildsFlat();
       console.debug("Flat guilds for abilities filter", flatGuilds);
       const mapAbility = (ability: ReincAbility): ReincAbility => {
-        const enabled =
-          !!flatGuilds.find((g) => g.name === ability.guild?.name);
+        const bestAbility = guildUtils.bestAbilityForGuilds(
+          ability,
+          flatGuilds,
+        );
+        const enabled = !!bestAbility;
 
         return {
           ...ability,
           enabled,
-          max: guildUtils.maxForGuilds(ability, flatGuilds),
+          guild: bestAbility?.guild ?? ability.guild,
+          max: bestAbility?.max ?? guildUtils.maxForGuilds(ability, flatGuilds),
         };
       };
 
